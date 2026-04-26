@@ -5,7 +5,7 @@
 
 ---
 
-## 路径 A · Playwright 抓共享列表（推荐 · 简历卖点）
+## 路径 A · Playwright 抓共享列表（推荐）
 
 ### 准备：把你的列表设成共享
 
@@ -80,19 +80,6 @@ head -5 data/my_places.csv
 我已经在 `my_places_sample.csv` 里放好了 30 家真实 LA 餐厅（Bestia、Sun Nong Dan、Bavel、Howlin' Ray's…），全部含真实经纬度，可以直接喂给阶段 3 的 GPT-4o。
 
 后面真实抓取脚本调通后，覆盖一下 `my_places.csv` 即可。
-
----
-
-## 简历话术对照
-
-完成阶段 2 后，简历那条 bullet 可以这样精准描述：
-
-> 独立设计 Playwright 自动化抓取方案，绕过 Google Maps 登录壁垒，从用户共享列表 URL 中批量抽取 30+ 餐厅的名称、地址与经纬度，原始数据采集时间从手工 2 小时压缩至 90 秒。
-
-面试官如果追问"为什么不用官方 API"，标准答案：
-- Google Places API 收费 + 限额，且不支持"用户私人收藏"这种 LBS 长尾资产
-- Playwright 模拟真实浏览器，能采集到只有渲染后才出现的经纬度信息
-- 共享 URL 模式避开了登录反爬，**合规性** 比直接破解更稳
 
 ---
 

@@ -1,6 +1,6 @@
 # 部署 + Demo 打包指南
 
-> 完成后你将拥有：① 公开 GitHub 仓库 ② Streamlit Cloud 在线 Demo ③ 30-60 秒录屏 + 截图。简历可以直接贴链接，面试官 30 秒看完核心。
+> Fork 这个项目后想自己跑一遍并部署到公网？跟着下面的步骤走。
 
 ---
 
@@ -12,9 +12,8 @@
 | 2. 录 Demo 视频 | 5 分钟 | `docs/demo_screenshots/demo.mov` |
 | 3. 推 GitHub | 5 分钟 | `https://github.com/USERNAME/la-vibe-itinerary` |
 | 4. 部署 Streamlit Cloud | 5 分钟 | `https://USERNAME-la-vibe-itinerary-app.streamlit.app` |
-| 5. 简历更新 | 5 分钟 | 链接 + bullet 收口 |
 
-总耗时约 25 分钟。
+总耗时约 20 分钟。
 
 ---
 
@@ -53,7 +52,7 @@ ls ~/Documents/la-vibe-itinerary/docs/demo_screenshots/
 
 录完后存到 `docs/demo_screenshots/demo.mov`。
 
-> **简化建议**：第一次录不用旁白，纯操作即可。视频本身就够说明问题。可以用 [Loom](https://loom.com) 直接录到云端，分享链接更方便简历贴。
+> **简化建议**：第一次录不用旁白，纯操作即可。视频本身就够说明问题。可以用 [Loom](https://loom.com) 直接录到云端，自动生成分享链接。
 
 ---
 
@@ -156,39 +155,6 @@ https://你的用户名-la-vibe-itinerary-app-xxxxxx.streamlit.app
 ```bash
 git add README.md && git commit -m "docs: add live demo link" && git push
 ```
-
----
-
-## 第 6 步 · 更新简历那条 Bullet（最值钱的一步）
-
-简历里现有的：
-
-> Scale AI | 旧金山，加州（远程） AI 策略运营实习生 | 2026.01 - 2026.04
-
-下面三条 bullet 全部跑通了：
-
-| 原 bullet 关键词 | 实锤证据 |
-|---|---|
-| "Python+Playwright 自动化导出并清洗收藏夹数据" | `scripts/01_scrape_maps.py` + `scripts/01b_parse_takeout.py` 两条路径 |
-| "GPT-4o API 归纳每家店的人均消费、招牌特色及社交媒体评价" | `prompts/enrich_prompt.txt` 20 维度 + 真实输出 985+ 标签 |
-| "千余个颗粒度标签的本地生活数据库" | `data/enriched_places.csv` 30 店 × 25 列 |
-| "AI 自动根据经纬度坐标进行地理聚类分析" | `scripts/03_cluster_routes.py` DBSCAN + haversine |
-| "一键生成最优打卡动线" | `app.py` Streamlit 一键按钮 + TSP/贪心 |
-| "Streamlit 网页" | 部署链接 |
-| "原本需数小时的人工行程规划时间缩短 80%" | 真实数据：3h → 30min |
-| "AI 驱动编程能有效缩短 70% 的原型开发周期" | 真实数据：60h → 20h |
-
-**强烈建议**在简历加一行：**Demo URL** + **GitHub URL**。HR 和面试官 60% 概率会点开。
-
----
-
-## 🎁 收尾彩蛋：项目完成后做这 3 件事
-
-1. **写一篇短文**（300-500 字）发到小红书 / 即刻 / Twitter，带上 Demo 链接，标题类似"我用 20 小时做了一个 LA 美食行程 AI"。流量来源 + 个人品牌一举两得。
-
-2. **整理简历版的"项目讲解 1 页 PDF"**：含截图 + 架构图 + 三段式 bullet，面试时如果允许"分享屏幕讲项目"就直接打开它讲。
-
-3. **保留 `data/cache/` 不删**：这里有每家店 GPT-4o 输出的原始 JSON，万一面试官追问"某家店的标签是怎么生成的"，可以直接打开对应文件看。
 
 ---
 

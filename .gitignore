@@ -41,3 +41,8 @@ playwright-report/
 # Demo 大文件
 docs/demo_screenshots/*.mov
 docs/demo_screenshots/*.mp4
+
+# 私人文件（简历版本 / 部署密钥模板，不应公开）
+RESUME_FINAL.md
+STREAMLIT_SECRETS_TEMPLATE.toml
+*.private.md
