@@ -3,7 +3,7 @@
 > AI 决策助手：一键将 Google Maps 收藏夹转化为洛杉矶深度打卡行程
 > Scale AI 实习项目 · Vibe Coding 模式 · 2026
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Streamlit_Cloud-FF4B4B?style=for-the-badge)](https://你的部署链接.streamlit.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Streamlit_Cloud-FF4B4B?style=for-the-badge)](https://la-vibe-itinerary.streamlit.app)
 [![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)](https://python.org)
 [![GPT-4o](https://img.shields.io/badge/GPT--4o-via_OpenRouter-412991?style=for-the-badge&logo=openai)](https://openrouter.ai)
 
