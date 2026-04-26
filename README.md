@@ -38,12 +38,18 @@
 
 **数据结构、算法、网页交互全部不用改**——你只是把你的收藏数据塞进同一条管线，得到属于你的攻略页。
 
-## 🎬 30 秒看 Demo
+## 🎬 看完整 Demo (60 秒)
 
-1. 默认地图显示 30 家 LA 餐厅，按商圈着色
-2. 侧边栏筛选：氛围 + 适合场景 + 预算 + Hidden Gem 度
-3. 点击 **🚀 一键生成行程**
-4. 地图上即刻出现彩色虚线路径 + 编号 marker
+[![Watch the demo](docs/demo_screenshots/itinerary.png)](https://www.loom.com/share/f7acd3a14ca54a8ab9bd80d9cfe821f1)
+
+▶️ **[点击图片观看 Loom 完整 Demo](https://www.loom.com/share/f7acd3a14ca54a8ab9bd80d9cfe821f1)** — 看 AI Agent 如何理解需求 + 自动生成行程
+
+或先看快速操作流程：
+
+1. 默认地图显示 30 家 LA 餐厅
+2. 在 AI 框输入"今晚约会预算 $80" → 点 ✨ 让 AI 帮我选 → 金色 ⭐ marker 高亮匹配店
+3. 侧边栏筛选：氛围 + 适合场景 + 预算 + Hidden Gem 度
+4. 点击 **🚀 一键生成行程** → 地图上彩色虚线路径 + 编号 marker
 5. 下方展开"路线 1 / 路线 2…"详情，每段含步行/开车时间
 
 ## 🛠 技术栈
