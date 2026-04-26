@@ -1,0 +1,43 @@
+# 千万别把 Key 推上 GitHub
+.env
+.env.local
+*.key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# 数据：缓存和 debug 文件不上传，但样例 + 增强结果 + 路径 JSON 上传（让 Streamlit Cloud 部署能跑）
+data/cache/
+data/debug_*
+!data/my_places.csv
+!data/my_places_sample.csv
+!data/enriched_places.csv
+!data/routes.json
+!data/.gitkeep
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+.cursor/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Playwright
+.playwright/
+playwright-report/
+
+# Demo 大文件
+docs/demo_screenshots/*.mov
+docs/demo_screenshots/*.mp4

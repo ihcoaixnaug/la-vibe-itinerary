@@ -1,0 +1,1631 @@
+{
+  "meta": {
+    "total_places": 30,
+    "n_clusters": 5,
+    "n_outliers": 8,
+    "eps_km": 2.0,
+    "min_samples": 2
+  },
+  "clusters": [
+    {
+      "id": 0,
+      "name": "DTLA",
+      "size": 10,
+      "center": {
+        "lat": 34.046,
+        "lng": -118.24583
+      },
+      "total_distance_km": 8.22,
+      "estimated_walk_minutes": 98,
+      "estimated_drive_minutes": 74,
+      "places": [
+        {
+          "name": "Bottega Louie",
+          "address": "700 S Grand Ave, Los Angeles, CA 90017",
+          "lat": 34.0461,
+          "lng": -118.2547,
+          "maps_url": "https://www.google.com/maps/place/Bottega+Louie",
+          "price_per_person_usd": 50,
+          "price_tier": "$$",
+          "cuisine_primary": "French American",
+          "cuisine_tags": [
+            "french",
+            "american",
+            "bakery",
+            "downtown"
+          ],
+          "must_try_dishes": [
+            "Truffle Pizza",
+            "Lemon Ricotta Pancakes",
+            "Macarons"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "friends_group",
+            "tourist_must",
+            "date"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "brunch",
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "hard",
+          "instagrammable_score": 10,
+          "hidden_gem_score": 2,
+          "value_score": 7,
+          "crowd_typical_zh": "游客与本地美食爱好者",
+          "one_liner_zh": "网红法美餐厅，甜品精致，必试松露披萨",
+          "avoid_if_zh": "不喜欢吵闹环境",
+          "cuisine_tags_str": "french | american | bakery | downtown",
+          "must_try_dishes_str": "Truffle Pizza | Lemon Ricotta Pancakes | Macarons",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "friends_group | tourist_must | date",
+          "best_time_slots_str": "brunch | lunch | dinner",
+          "cluster_id": 0,
+          "visit_order": 0
+        },
+        {
+          "name": "Tacos 1986",
+          "address": "609 S Spring St, Los Angeles, CA 90014",
+          "lat": 34.0431,
+          "lng": -118.2517,
+          "maps_url": "https://www.google.com/maps/place/Tacos+1986",
+          "price_per_person_usd": 15,
+          "price_tier": "$",
+          "cuisine_primary": "Mexican",
+          "cuisine_tags": [
+            "mexican",
+            "tacos",
+            "street_food",
+            "downtown"
+          ],
+          "must_try_dishes": [
+            "Adobada Taco",
+            "Mushroom Quesadilla",
+            "Carne Asada Taco"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "friends_group",
+            "solo",
+            "late_night"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 10,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 6,
+          "value_score": 9,
+          "crowd_typical_zh": "年轻人和夜猫子",
+          "one_liner_zh": "DTLA 必吃街头墨西哥美食，夜宵好去处",
+          "avoid_if_zh": "不喜欢排队或嘈杂环境",
+          "cuisine_tags_str": "mexican | tacos | street_food | downtown",
+          "must_try_dishes_str": "Adobada Taco | Mushroom Quesadilla | Carne Asada Taco",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "friends_group | solo | late_night",
+          "best_time_slots_str": "lunch | dinner | late_night",
+          "cluster_id": 0,
+          "visit_order": 1
+        },
+        {
+          "name": "Rossoblu",
+          "address": "1124 San Julian St, Los Angeles, CA 90015",
+          "lat": 34.0392,
+          "lng": -118.2553,
+          "maps_url": "https://www.google.com/maps/place/Rossoblu",
+          "price_per_person_usd": 85,
+          "price_tier": "$$$",
+          "cuisine_primary": "Italian",
+          "cuisine_tags": [
+            "italian",
+            "bolognese",
+            "downtown",
+            "modern"
+          ],
+          "must_try_dishes": [
+            "Tortellini in Brodo",
+            "Tagliatelle al Ragù",
+            "Grilled Pork Chop"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "celebration",
+            "business_lunch"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 7,
+          "crowd_typical_zh": "DTLA 美食爱好者与商务人士",
+          "one_liner_zh": "意大利风情浓郁的现代餐厅，适合约会和庆祝",
+          "avoid_if_zh": "不喜欢意大利菜",
+          "cuisine_tags_str": "italian | bolognese | downtown | modern",
+          "must_try_dishes_str": "Tortellini in Brodo | Tagliatelle al Ragù | Grilled Pork Chop",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | celebration | business_lunch",
+          "best_time_slots_str": "dinner",
+          "cluster_id": 0,
+          "visit_order": 2
+        },
+        {
+          "name": "KazuNori",
+          "address": "421 S Main St, Los Angeles, CA 90013",
+          "lat": 34.0481,
+          "lng": -118.2486,
+          "maps_url": "https://www.google.com/maps/place/KazuNori",
+          "price_per_person_usd": 40,
+          "price_tier": "$$",
+          "cuisine_primary": "Sushi",
+          "cuisine_tags": [
+            "sushi",
+            "hand_roll",
+            "japanese",
+            "downtown"
+          ],
+          "must_try_dishes": [
+            "Toro Hand Roll",
+            "Yellowtail Hand Roll",
+            "Crab Hand Roll"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "solo",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "casual",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 20,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "年轻人和游客",
+          "one_liner_zh": "新鲜手卷寿司的极致体验",
+          "avoid_if_zh": "不喜欢寿司或手卷",
+          "cuisine_tags_str": "sushi | hand_roll | japanese | downtown",
+          "must_try_dishes_str": "Toro Hand Roll | Yellowtail Hand Roll | Crab Hand Roll",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "solo | friends_group | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 0,
+          "visit_order": 3
+        },
+        {
+          "name": "Eggslut",
+          "address": "317 S Broadway, Los Angeles, CA 90013",
+          "lat": 34.0506,
+          "lng": -118.2484,
+          "maps_url": "https://www.google.com/maps/place/Eggslut",
+          "price_per_person_usd": 15,
+          "price_tier": "$",
+          "cuisine_primary": "Breakfast Sandwiches",
+          "cuisine_tags": [
+            "breakfast",
+            "sandwiches",
+            "casual",
+            "downtown"
+          ],
+          "must_try_dishes": [
+            "Slut",
+            "Fairfax",
+            "Gaucho"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "tourist_must",
+            "friends_group",
+            "solo"
+          ],
+          "vibe": "lively",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "breakfast",
+            "brunch",
+            "lunch"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "hard",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 4,
+          "value_score": 8,
+          "crowd_typical_zh": "年轻游客与本地上班族",
+          "one_liner_zh": "必尝的早餐三明治，值得排队",
+          "avoid_if_zh": "不喜欢排队或赶时间",
+          "cuisine_tags_str": "breakfast | sandwiches | casual | downtown",
+          "must_try_dishes_str": "Slut | Fairfax | Gaucho",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "tourist_must | friends_group | solo",
+          "best_time_slots_str": "breakfast | brunch | lunch",
+          "cluster_id": 0,
+          "visit_order": 4
+        },
+        {
+          "name": "Grand Central Market",
+          "address": "317 S Broadway, Los Angeles, CA 90013",
+          "lat": 34.0506,
+          "lng": -118.2484,
+          "maps_url": "https://www.google.com/maps/place/Grand+Central+Market",
+          "price_per_person_usd": 25,
+          "price_tier": "$$",
+          "cuisine_primary": "Eclectic",
+          "cuisine_tags": [
+            "food_hall",
+            "variety",
+            "casual",
+            "downtown"
+          ],
+          "must_try_dishes": [
+            "Eggslut Fairfax Sandwich",
+            "Tacos Tumbras a Tomas",
+            "Wexler's Deli Pastrami"
+          ],
+          "dietary_friendly": [
+            "vegetarian",
+            "vegan",
+            "gluten_free"
+          ],
+          "best_for": [
+            "tourist_must",
+            "friends_group",
+            "family"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 20,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "游客与当地美食爱好者",
+          "one_liner_zh": "洛杉矶必去美食集市，品尝世界风味",
+          "avoid_if_zh": "不喜欢人多嘈杂的环境",
+          "cuisine_tags_str": "food_hall | variety | casual | downtown",
+          "must_try_dishes_str": "Eggslut Fairfax Sandwich | Tacos Tumbras a Tomas | Wexler's Deli Pastrami",
+          "dietary_friendly_str": "vegetarian | vegan | gluten_free",
+          "best_for_str": "tourist_must | friends_group | family",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 0,
+          "visit_order": 5
+        },
+        {
+          "name": "Sushi Gen",
+          "address": "422 E 2nd St, Los Angeles, CA 90012",
+          "lat": 34.0473,
+          "lng": -118.2418,
+          "maps_url": "https://www.google.com/maps/place/Sushi+Gen",
+          "price_per_person_usd": 60,
+          "price_tier": "$$$",
+          "cuisine_primary": "Japanese",
+          "cuisine_tags": [
+            "japanese",
+            "sushi",
+            "little_tokyo",
+            "seafood"
+          ],
+          "must_try_dishes": [
+            "Omakase",
+            "Sashimi Deluxe",
+            "Uni"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "date",
+            "tourist_must",
+            "friends_group"
+          ],
+          "vibe": "lively",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "小东京的寿司爱好者",
+          "one_liner_zh": "小东京必去寿司店，生鱼片超赞",
+          "avoid_if_zh": "不喜欢排队等位",
+          "cuisine_tags_str": "japanese | sushi | little_tokyo | seafood",
+          "must_try_dishes_str": "Omakase | Sashimi Deluxe | Uni",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "date | tourist_must | friends_group",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 0,
+          "visit_order": 6
+        },
+        {
+          "name": "Bavel",
+          "address": "500 Mateo St, Los Angeles, CA 90013",
+          "lat": 34.0367,
+          "lng": -118.2347,
+          "maps_url": "https://www.google.com/maps/place/Bavel",
+          "price_per_person_usd": 85,
+          "price_tier": "$$$",
+          "cuisine_primary": "Middle Eastern",
+          "cuisine_tags": [
+            "middle_eastern",
+            "modern",
+            "downtown",
+            "trendy"
+          ],
+          "must_try_dishes": [
+            "Lamb Neck Shawarma",
+            "Duck 'Nduja Hummus",
+            "Malawach"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "celebration",
+            "friends_group"
+          ],
+          "vibe": "trendy",
+          "noise_level": "loud",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "dinner"
+          ],
+          "avg_wait_minutes": 60,
+          "reservation_needed": "essential",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 4,
+          "value_score": 8,
+          "crowd_typical_zh": "时尚年轻人和美食爱好者",
+          "one_liner_zh": "DTLA 必去的中东风味餐厅，创意十足",
+          "avoid_if_zh": "不喜欢嘈杂环境的人",
+          "cuisine_tags_str": "middle_eastern | modern | downtown | trendy",
+          "must_try_dishes_str": "Lamb Neck Shawarma | Duck 'Nduja Hummus | Malawach",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | celebration | friends_group",
+          "best_time_slots_str": "dinner",
+          "cluster_id": 0,
+          "visit_order": 7
+        },
+        {
+          "name": "Bestia",
+          "address": "2121 E 7th Pl, Los Angeles, CA 90021",
+          "lat": 34.0339,
+          "lng": -118.2363,
+          "maps_url": "https://www.google.com/maps/place/Bestia",
+          "price_per_person_usd": 95,
+          "price_tier": "$$$",
+          "cuisine_primary": "California Italian",
+          "cuisine_tags": [
+            "italian",
+            "modern",
+            "wood_fired",
+            "downtown"
+          ],
+          "must_try_dishes": [
+            "Cavatelli alla Norcina",
+            "Bone Marrow",
+            "Roasted Marrow Tortelli"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "celebration",
+            "friends_group"
+          ],
+          "vibe": "trendy",
+          "noise_level": "loud",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "dinner"
+          ],
+          "avg_wait_minutes": 45,
+          "reservation_needed": "essential",
+          "parking_difficulty": "hard",
+          "instagrammable_score": 9,
+          "hidden_gem_score": 3,
+          "value_score": 7,
+          "crowd_typical_zh": "DTLA 时髦白领与游客",
+          "one_liner_zh": "DTLA 工业风网红意餐，骨髓塔塔必点",
+          "avoid_if_zh": "赶时间或没提前订位",
+          "cuisine_tags_str": "italian | modern | wood_fired | downtown",
+          "must_try_dishes_str": "Cavatelli alla Norcina | Bone Marrow | Roasted Marrow Tortelli",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | celebration | friends_group",
+          "best_time_slots_str": "dinner",
+          "cluster_id": 0,
+          "visit_order": 8
+        },
+        {
+          "name": "Howlin Rays",
+          "address": "727 N Broadway, Los Angeles, CA 90012",
+          "lat": 34.0644,
+          "lng": -118.2384,
+          "maps_url": "https://www.google.com/maps/place/Howlin+Rays",
+          "price_per_person_usd": 20,
+          "price_tier": "$",
+          "cuisine_primary": "Nashville Hot Chicken",
+          "cuisine_tags": [
+            "fried chicken",
+            "spicy",
+            "casual",
+            "chinatown"
+          ],
+          "must_try_dishes": [
+            "Hot Chicken Sandwich",
+            "Chicken Wings",
+            "Collard Greens"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "friends_group",
+            "solo",
+            "tourist_must"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 60,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 9,
+          "crowd_typical_zh": "年轻人和游客",
+          "one_liner_zh": "辣鸡翅和三明治，辣到过瘾！",
+          "avoid_if_zh": "不喜欢排队或怕辣",
+          "cuisine_tags_str": "fried chicken | spicy | casual | chinatown",
+          "must_try_dishes_str": "Hot Chicken Sandwich | Chicken Wings | Collard Greens",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "friends_group | solo | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 0,
+          "visit_order": 9
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "East Hollywood",
+      "size": 3,
+      "center": {
+        "lat": 34.093799999999995,
+        "lng": -118.2838
+      },
+      "total_distance_km": 2.89,
+      "estimated_walk_minutes": 34,
+      "estimated_drive_minutes": 23,
+      "places": [
+        {
+          "name": "Sqirl",
+          "address": "720 N Virgil Ave, Los Angeles, CA 90029",
+          "lat": 34.0828,
+          "lng": -118.2858,
+          "maps_url": "https://www.google.com/maps/place/Sqirl",
+          "price_per_person_usd": 30,
+          "price_tier": "$$",
+          "cuisine_primary": "California",
+          "cuisine_tags": [
+            "brunch",
+            "organic",
+            "trendy",
+            "eastside"
+          ],
+          "must_try_dishes": [
+            "Ricotta Toast",
+            "Sorrel Pesto Rice Bowl",
+            "Burnt Brioche Toast"
+          ],
+          "dietary_friendly": [
+            "vegetarian",
+            "vegan",
+            "gluten_free"
+          ],
+          "best_for": [
+            "brunch",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "brunch",
+            "lunch"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 7,
+          "crowd_typical_zh": "年轻潮人和美食爱好者",
+          "one_liner_zh": "网红早午餐圣地，必尝招牌吐司",
+          "avoid_if_zh": "不喜欢排队或人多",
+          "cuisine_tags_str": "brunch | organic | trendy | eastside",
+          "must_try_dishes_str": "Ricotta Toast | Sorrel Pesto Rice Bowl | Burnt Brioche Toast",
+          "dietary_friendly_str": "vegetarian | vegan | gluten_free",
+          "best_for_str": "brunch | friends_group | tourist_must",
+          "best_time_slots_str": "brunch | lunch",
+          "cluster_id": 1,
+          "visit_order": 0
+        },
+        {
+          "name": "Night Market Song",
+          "address": "3322 Sunset Blvd, Los Angeles, CA 90026",
+          "lat": 34.0908,
+          "lng": -118.2814,
+          "maps_url": "https://www.google.com/maps/place/Night+Market+Song",
+          "price_per_person_usd": 35,
+          "price_tier": "$$",
+          "cuisine_primary": "Thai",
+          "cuisine_tags": [
+            "thai",
+            "street_food",
+            "spicy",
+            "silver_lake"
+          ],
+          "must_try_dishes": [
+            "Khao Soi",
+            "Pork Toro",
+            "Crispy Rice Salad"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "friends_group",
+            "date",
+            "tourist_must"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 6,
+          "value_score": 8,
+          "crowd_typical_zh": "年轻潮人和美食爱好者",
+          "one_liner_zh": "银湖必尝泰国街头美食，辣味十足",
+          "avoid_if_zh": "不爱热闹或不吃辣",
+          "cuisine_tags_str": "thai | street_food | spicy | silver_lake",
+          "must_try_dishes_str": "Khao Soi | Pork Toro | Crispy Rice Salad",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "friends_group | date | tourist_must",
+          "best_time_slots_str": "dinner | late_night",
+          "cluster_id": 1,
+          "visit_order": 1
+        },
+        {
+          "name": "Yucas Hut",
+          "address": "2056 Hillhurst Ave, Los Angeles, CA 90027",
+          "lat": 34.1078,
+          "lng": -118.2842,
+          "maps_url": "https://www.google.com/maps/place/Yucas+Hut",
+          "price_per_person_usd": 12,
+          "price_tier": "$",
+          "cuisine_primary": "Mexican",
+          "cuisine_tags": [
+            "mexican",
+            "casual",
+            "taco",
+            "los_feliz"
+          ],
+          "must_try_dishes": [
+            "Burrito de Carne Asada",
+            "Taco de Pollo",
+            "Tamales"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "solo",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "casual",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 10,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 5,
+          "hidden_gem_score": 7,
+          "value_score": 9,
+          "crowd_typical_zh": "当地居民与游客",
+          "one_liner_zh": "洛杉矶必尝的墨西哥小吃店",
+          "avoid_if_zh": "寻找高档餐饮体验",
+          "cuisine_tags_str": "mexican | casual | taco | los_feliz",
+          "must_try_dishes_str": "Burrito de Carne Asada | Taco de Pollo | Tamales",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "solo | friends_group | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 1,
+          "visit_order": 2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Fairfax / La Brea",
+      "size": 5,
+      "center": {
+        "lat": 34.07974,
+        "lng": -118.35655999999999
+      },
+      "total_distance_km": 3.97,
+      "estimated_walk_minutes": 47,
+      "estimated_drive_minutes": 36,
+      "places": [
+        {
+          "name": "Pizzeria Mozza",
+          "address": "641 N Highland Ave, Los Angeles, CA 90036",
+          "lat": 34.0833,
+          "lng": -118.3389,
+          "maps_url": "https://www.google.com/maps/place/Pizzeria+Mozza",
+          "price_per_person_usd": 50,
+          "price_tier": "$$",
+          "cuisine_primary": "Italian",
+          "cuisine_tags": [
+            "italian",
+            "pizza",
+            "celebrity_chef",
+            "mid_city"
+          ],
+          "must_try_dishes": [
+            "Fennel Sausage Pizza",
+            "Burrata with Escarole",
+            "Butterscotch Budino"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 4,
+          "value_score": 8,
+          "crowd_typical_zh": "美食爱好者与游客",
+          "one_liner_zh": "名厨打造的必尝意式披萨店",
+          "avoid_if_zh": "不喜欢排队或等位",
+          "cuisine_tags_str": "italian | pizza | celebrity_chef | mid_city",
+          "must_try_dishes_str": "Fennel Sausage Pizza | Burrata with Escarole | Butterscotch Budino",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | friends_group | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 2,
+          "visit_order": 0
+        },
+        {
+          "name": "Pinks Hot Dogs",
+          "address": "709 N La Brea Ave, Los Angeles, CA 90038",
+          "lat": 34.0833,
+          "lng": -118.3447,
+          "maps_url": "https://www.google.com/maps/place/Pinks+Hot+Dogs",
+          "price_per_person_usd": 12,
+          "price_tier": "$",
+          "cuisine_primary": "Hot Dogs",
+          "cuisine_tags": [
+            "american",
+            "hot_dogs",
+            "casual",
+            "iconic"
+          ],
+          "must_try_dishes": [
+            "Chili Cheese Dog",
+            "Martha Stewart Dog",
+            "Pastrami Reuben Dog"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "tourist_must",
+            "friends_group",
+            "solo"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "游客与本地美食爱好者",
+          "one_liner_zh": "洛杉矶必打卡的传奇热狗店",
+          "avoid_if_zh": "不喜欢排队或热闹环境",
+          "cuisine_tags_str": "american | hot_dogs | casual | iconic",
+          "must_try_dishes_str": "Chili Cheese Dog | Martha Stewart Dog | Pastrami Reuben Dog",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "tourist_must | friends_group | solo",
+          "best_time_slots_str": "lunch | dinner | late_night",
+          "cluster_id": 2,
+          "visit_order": 1
+        },
+        {
+          "name": "Animal",
+          "address": "435 N Fairfax Ave, Los Angeles, CA 90036",
+          "lat": 34.0813,
+          "lng": -118.3614,
+          "maps_url": "https://www.google.com/maps/place/Animal",
+          "price_per_person_usd": 85,
+          "price_tier": "$$$",
+          "cuisine_primary": "New American",
+          "cuisine_tags": [
+            "new_american",
+            "meat",
+            "fairfax",
+            "trendy"
+          ],
+          "must_try_dishes": [
+            "Bacon Chocolate Crunch Bar",
+            "Foie Gras Biscuit",
+            "Pig Ear"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "friends_group",
+            "date",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "loud",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 7,
+          "crowd_typical_zh": "喜爱肉食的年轻食客",
+          "one_liner_zh": "Fairfax 上的肉食者天堂，创意菜肴",
+          "avoid_if_zh": "不吃肉或追求安静",
+          "cuisine_tags_str": "new_american | meat | fairfax | trendy",
+          "must_try_dishes_str": "Bacon Chocolate Crunch Bar | Foie Gras Biscuit | Pig Ear",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "friends_group | date | tourist_must",
+          "best_time_slots_str": "dinner | late_night",
+          "cluster_id": 2,
+          "visit_order": 2
+        },
+        {
+          "name": "Jon and Vinnys",
+          "address": "412 N Fairfax Ave, Los Angeles, CA 90036",
+          "lat": 34.0808,
+          "lng": -118.3614,
+          "maps_url": "https://www.google.com/maps/place/Jon+and+Vinnys",
+          "price_per_person_usd": 40,
+          "price_tier": "$$",
+          "cuisine_primary": "Italian American",
+          "cuisine_tags": [
+            "italian",
+            "pizza",
+            "casual",
+            "fairfax"
+          ],
+          "must_try_dishes": [
+            "LA Woman Pizza",
+            "Spicy Fusilli",
+            "Margherita Pizza"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "friends_group",
+            "date",
+            "tourist_must"
+          ],
+          "vibe": "lively",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "年轻潮人和美食爱好者",
+          "one_liner_zh": "Fairfax 必去的意式美食天堂",
+          "avoid_if_zh": "不喜欢排队等位",
+          "cuisine_tags_str": "italian | pizza | casual | fairfax",
+          "must_try_dishes_str": "LA Woman Pizza | Spicy Fusilli | Margherita Pizza",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "friends_group | date | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 2,
+          "visit_order": 3
+        },
+        {
+          "name": "The Bazaar by Jose Andres",
+          "address": "465 S La Cienega Blvd, Los Angeles, CA 90048",
+          "lat": 34.07,
+          "lng": -118.3764,
+          "maps_url": "https://www.google.com/maps/place/The+Bazaar",
+          "price_per_person_usd": 150,
+          "price_tier": "$$$",
+          "cuisine_primary": "Spanish Tapas",
+          "cuisine_tags": [
+            "spanish",
+            "tapas",
+            "molecular_gastronomy",
+            "beverly_hills"
+          ],
+          "must_try_dishes": [
+            "Philly Cheesesteak",
+            "Cotton Candy Foie Gras",
+            "Olives Ferran Adrià"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "celebration",
+            "date",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "upscale",
+          "best_time_slots": [
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 10,
+          "hidden_gem_score": 4,
+          "value_score": 7,
+          "crowd_typical_zh": "时尚达人与美食爱好者",
+          "one_liner_zh": "西班牙分子料理的奇幻之旅",
+          "avoid_if_zh": "预算有限或不爱创新菜",
+          "cuisine_tags_str": "spanish | tapas | molecular_gastronomy | beverly_hills",
+          "must_try_dishes_str": "Philly Cheesesteak | Cotton Candy Foie Gras | Olives Ferran Adrià",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "celebration | date | tourist_must",
+          "best_time_slots_str": "dinner",
+          "cluster_id": 2,
+          "visit_order": 4
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Venice",
+      "size": 2,
+      "center": {
+        "lat": 33.9918,
+        "lng": -118.46424999999999
+      },
+      "total_distance_km": 0.16,
+      "estimated_walk_minutes": 1,
+      "estimated_drive_minutes": 10,
+      "places": [
+        {
+          "name": "Gjelina",
+          "address": "1429 Abbot Kinney Blvd, Venice, CA 90291",
+          "lat": 33.9911,
+          "lng": -118.4644,
+          "maps_url": "https://www.google.com/maps/place/Gjelina",
+          "price_per_person_usd": 75,
+          "price_tier": "$$$",
+          "cuisine_primary": "California Mediterranean",
+          "cuisine_tags": [
+            "californian",
+            "mediterranean",
+            "trendy",
+            "venice"
+          ],
+          "must_try_dishes": [
+            "Duck Confit",
+            "Mushroom Toast",
+            "Butterscotch Pot de Crème"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "loud",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "brunch",
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "hard",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 4,
+          "value_score": 7,
+          "crowd_typical_zh": "时尚游客与本地潮人",
+          "one_liner_zh": "威尼斯潮流餐厅，必尝鸭腿与蘑菇吐司",
+          "avoid_if_zh": "不喜欢嘈杂环境的人",
+          "cuisine_tags_str": "californian | mediterranean | trendy | venice",
+          "must_try_dishes_str": "Duck Confit | Mushroom Toast | Butterscotch Pot de Crème",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | friends_group | tourist_must",
+          "best_time_slots_str": "brunch | lunch | dinner",
+          "cluster_id": 3,
+          "visit_order": 0
+        },
+        {
+          "name": "Gjusta",
+          "address": "320 Sunset Ave, Venice, CA 90291",
+          "lat": 33.9925,
+          "lng": -118.4641,
+          "maps_url": "https://www.google.com/maps/place/Gjusta",
+          "price_per_person_usd": 45,
+          "price_tier": "$$",
+          "cuisine_primary": "Bakery & Deli",
+          "cuisine_tags": [
+            "bakery",
+            "deli",
+            "venice",
+            "artisanal"
+          ],
+          "must_try_dishes": [
+            "Smoked Fish Plate",
+            "Banh Mi",
+            "Reuben Sandwich"
+          ],
+          "dietary_friendly": [
+            "vegetarian",
+            "gluten_free"
+          ],
+          "best_for": [
+            "brunch",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "brunch",
+            "lunch"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "hard",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "威尼斯的时尚年轻人",
+          "one_liner_zh": "威尼斯必去的时尚面包店和熟食店",
+          "avoid_if_zh": "不喜欢排队或找停车位",
+          "cuisine_tags_str": "bakery | deli | venice | artisanal",
+          "must_try_dishes_str": "Smoked Fish Plate | Banh Mi | Reuben Sandwich",
+          "dietary_friendly_str": "vegetarian | gluten_free",
+          "best_for_str": "brunch | friends_group | tourist_must",
+          "best_time_slots_str": "brunch | lunch",
+          "cluster_id": 3,
+          "visit_order": 1
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Koreatown",
+      "size": 2,
+      "center": {
+        "lat": 34.0542,
+        "lng": -118.30054999999999
+      },
+      "total_distance_km": 1.85,
+      "estimated_walk_minutes": 22,
+      "estimated_drive_minutes": 15,
+      "places": [
+        {
+          "name": "Guelaguetza",
+          "address": "3014 W Olympic Blvd, Los Angeles, CA 90006",
+          "lat": 34.0459,
+          "lng": -118.3003,
+          "maps_url": "https://www.google.com/maps/place/Guelaguetza",
+          "price_per_person_usd": 40,
+          "price_tier": "$$",
+          "cuisine_primary": "Oaxacan",
+          "cuisine_tags": [
+            "oaxacan",
+            "mexican",
+            "mole",
+            "koreatown"
+          ],
+          "must_try_dishes": [
+            "Mole Negro",
+            "Tlayuda",
+            "Chapulines"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "family",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "lively",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 20,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "家庭聚餐与游客",
+          "one_liner_zh": "正宗瓦哈卡风味，必尝经典墨西哥菜",
+          "avoid_if_zh": "不喜欢热闹环境",
+          "cuisine_tags_str": "oaxacan | mexican | mole | koreatown",
+          "must_try_dishes_str": "Mole Negro | Tlayuda | Chapulines",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "family | friends_group | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": 4,
+          "visit_order": 0
+        },
+        {
+          "name": "Sun Nong Dan",
+          "address": "3470 W 6th St, Los Angeles, CA 90020",
+          "lat": 34.0625,
+          "lng": -118.3008,
+          "maps_url": "https://www.google.com/maps/place/Sun+Nong+Dan",
+          "price_per_person_usd": 30,
+          "price_tier": "$$",
+          "cuisine_primary": "Korean",
+          "cuisine_tags": [
+            "korean",
+            "bbq",
+            "late_night",
+            "koreatown"
+          ],
+          "must_try_dishes": [
+            "Galbi Jjim",
+            "Seolleongtang",
+            "Kimchi Jjigae"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "friends_group",
+            "late_night",
+            "tourist_must"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "hard",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "韩国城的年轻人和游客",
+          "one_liner_zh": "深夜韩餐好去处，牛骨汤必试",
+          "avoid_if_zh": "不喜欢嘈杂环境",
+          "cuisine_tags_str": "korean | bbq | late_night | koreatown",
+          "must_try_dishes_str": "Galbi Jjim | Seolleongtang | Kimchi Jjigae",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "friends_group | late_night | tourist_must",
+          "best_time_slots_str": "dinner | late_night",
+          "cluster_id": 4,
+          "visit_order": 1
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "其他独立点",
+      "size": 8,
+      "center": {
+        "lat": 34.050475,
+        "lng": -118.38273749999999
+      },
+      "total_distance_km": 0.0,
+      "estimated_walk_minutes": 0,
+      "estimated_drive_minutes": 120,
+      "places": [
+        {
+          "name": "Fathers Office",
+          "address": "3229 Helms Ave, Los Angeles, CA 90034",
+          "lat": 34.0299,
+          "lng": -118.3902,
+          "maps_url": "https://www.google.com/maps/place/Fathers+Office",
+          "price_per_person_usd": 35,
+          "price_tier": "$$",
+          "cuisine_primary": "Gourmet Burgers",
+          "cuisine_tags": [
+            "american",
+            "burgers",
+            "craft_beer",
+            "casual"
+          ],
+          "must_try_dishes": [
+            "Office Burger",
+            "Sweet Potato Fries",
+            "Duck Confit Salad"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "friends_group",
+            "casual",
+            "tourist_must"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "年轻人和啤酒爱好者",
+          "one_liner_zh": "必尝招牌汉堡和精酿啤酒的圣地",
+          "avoid_if_zh": "不喜欢嘈杂环境",
+          "cuisine_tags_str": "american | burgers | craft_beer | casual",
+          "must_try_dishes_str": "Office Burger | Sweet Potato Fries | Duck Confit Salad",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "friends_group | casual | tourist_must",
+          "best_time_slots_str": "lunch | dinner | late_night",
+          "cluster_id": -1
+        },
+        {
+          "name": "Cassia",
+          "address": "1314 7th St, Santa Monica, CA 90401",
+          "lat": 34.0186,
+          "lng": -118.4925,
+          "maps_url": "https://www.google.com/maps/place/Cassia",
+          "price_per_person_usd": 85,
+          "price_tier": "$$$",
+          "cuisine_primary": "Southeast Asian",
+          "cuisine_tags": [
+            "southeast asian",
+            "french",
+            "fusion",
+            "santa monica"
+          ],
+          "must_try_dishes": [
+            "Vietnamese Sunbathing Prawns",
+            "Grilled Spicy Lamb Breast",
+            "Chickpea Curry"
+          ],
+          "dietary_friendly": [
+            "vegetarian",
+            "gluten_free"
+          ],
+          "best_for": [
+            "date",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 5,
+          "value_score": 7,
+          "crowd_typical_zh": "圣塔莫尼卡时尚年轻人",
+          "one_liner_zh": "融合东南亚风味的时尚餐厅",
+          "avoid_if_zh": "不喜欢融合菜系",
+          "cuisine_tags_str": "southeast asian | french | fusion | santa monica",
+          "must_try_dishes_str": "Vietnamese Sunbathing Prawns | Grilled Spicy Lamb Breast | Chickpea Curry",
+          "dietary_friendly_str": "vegetarian | gluten_free",
+          "best_for_str": "date | friends_group | tourist_must",
+          "best_time_slots_str": "dinner",
+          "cluster_id": -1
+        },
+        {
+          "name": "Republique",
+          "address": "624 S La Brea Ave, Los Angeles, CA 90036",
+          "lat": 34.0628,
+          "lng": -118.3441,
+          "maps_url": "https://www.google.com/maps/place/Republique",
+          "price_per_person_usd": 85,
+          "price_tier": "$$$",
+          "cuisine_primary": "French Californian",
+          "cuisine_tags": [
+            "french",
+            "californian",
+            "bakery",
+            "brunch"
+          ],
+          "must_try_dishes": [
+            "Kimchi Fried Rice",
+            "Mushroom Toast",
+            "Duck Confit"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "celebration",
+            "tourist_must"
+          ],
+          "vibe": "trendy",
+          "noise_level": "moderate",
+          "dress_code": "smart_casual",
+          "best_time_slots": [
+            "brunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 9,
+          "hidden_gem_score": 4,
+          "value_score": 8,
+          "crowd_typical_zh": "时尚年轻人和美食爱好者",
+          "one_liner_zh": "法式加州风味餐厅，甜点绝佳",
+          "avoid_if_zh": "不喜欢排队等候的客人",
+          "cuisine_tags_str": "french | californian | bakery | brunch",
+          "must_try_dishes_str": "Kimchi Fried Rice | Mushroom Toast | Duck Confit",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | celebration | tourist_must",
+          "best_time_slots_str": "brunch | dinner",
+          "cluster_id": -1
+        },
+        {
+          "name": "Spago",
+          "address": "176 N Canon Dr, Beverly Hills, CA 90210",
+          "lat": 34.07,
+          "lng": -118.4006,
+          "maps_url": "https://www.google.com/maps/place/Spago",
+          "price_per_person_usd": 150,
+          "price_tier": "$$$$",
+          "cuisine_primary": "California Cuisine",
+          "cuisine_tags": [
+            "california",
+            "fine_dining",
+            "celebrity_chef",
+            "beverly_hills"
+          ],
+          "must_try_dishes": [
+            "Smoked Salmon Pizza",
+            "Veal Schnitzel",
+            "Kaiserschmarrn"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "celebration",
+            "business_lunch",
+            "tourist_must"
+          ],
+          "vibe": "fine_dining",
+          "noise_level": "moderate",
+          "dress_code": "upscale",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 0,
+          "reservation_needed": "essential",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 2,
+          "value_score": 6,
+          "crowd_typical_zh": "名流与美食爱好者",
+          "one_liner_zh": "名厨Wolfgang Puck的经典餐厅，体验顶级加州美食",
+          "avoid_if_zh": "不喜欢正式用餐氛围",
+          "cuisine_tags_str": "california | fine_dining | celebrity_chef | beverly_hills",
+          "must_try_dishes_str": "Smoked Salmon Pizza | Veal Schnitzel | Kaiserschmarrn",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "celebration | business_lunch | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": -1
+        },
+        {
+          "name": "n/naka",
+          "address": "3455 S Overland Ave, Los Angeles, CA 90034",
+          "lat": 34.0244,
+          "lng": -118.4128,
+          "maps_url": "https://www.google.com/maps/place/n+naka",
+          "price_per_person_usd": 250,
+          "price_tier": "$$$$",
+          "cuisine_primary": "Kaiseki",
+          "cuisine_tags": [
+            "japanese",
+            "kaiseki",
+            "fine_dining",
+            "chef's_table"
+          ],
+          "must_try_dishes": [
+            "Abalone Spaghetti",
+            "Zensai",
+            "Wagyu Beef"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "date",
+            "celebration",
+            "tourist_must"
+          ],
+          "vibe": "fine_dining",
+          "noise_level": "quiet",
+          "dress_code": "upscale",
+          "best_time_slots": [
+            "dinner"
+          ],
+          "avg_wait_minutes": 0,
+          "reservation_needed": "essential",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 9,
+          "hidden_gem_score": 4,
+          "value_score": 8,
+          "crowd_typical_zh": "高端食客与美食爱好者",
+          "one_liner_zh": "体验顶级怀石料理的绝佳去处",
+          "avoid_if_zh": "预算有限或不提前预约",
+          "cuisine_tags_str": "japanese | kaiseki | fine_dining | chef's_table",
+          "must_try_dishes_str": "Abalone Spaghetti | Zensai | Wagyu Beef",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | celebration | tourist_must",
+          "best_time_slots_str": "dinner",
+          "cluster_id": -1
+        },
+        {
+          "name": "Jitlada",
+          "address": "5233 W Sunset Blvd, Los Angeles, CA 90027",
+          "lat": 34.0978,
+          "lng": -118.3061,
+          "maps_url": "https://www.google.com/maps/place/Jitlada",
+          "price_per_person_usd": 40,
+          "price_tier": "$$",
+          "cuisine_primary": "Southern Thai",
+          "cuisine_tags": [
+            "thai",
+            "spicy",
+            "authentic",
+            "hollywood"
+          ],
+          "must_try_dishes": [
+            "Kua Kling Phat Tha Lung",
+            "Crying Tiger Beef",
+            "Green Curry Frog"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "friends_group",
+            "tourist_must",
+            "date"
+          ],
+          "vibe": "lively",
+          "noise_level": "loud",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "喜欢正宗泰国菜的食客",
+          "one_liner_zh": "辣味十足的泰国南部美食天堂",
+          "avoid_if_zh": "不喜欢吃辣的人",
+          "cuisine_tags_str": "thai | spicy | authentic | hollywood",
+          "must_try_dishes_str": "Kua Kling Phat Tha Lung | Crying Tiger Beef | Green Curry Frog",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "friends_group | tourist_must | date",
+          "best_time_slots_str": "dinner | late_night",
+          "cluster_id": -1
+        },
+        {
+          "name": "Langers Deli",
+          "address": "704 S Alvarado St, Los Angeles, CA 90057",
+          "lat": 34.0627,
+          "lng": -118.2789,
+          "maps_url": "https://www.google.com/maps/place/Langers+Deli",
+          "price_per_person_usd": 25,
+          "price_tier": "$$",
+          "cuisine_primary": "Jewish Deli",
+          "cuisine_tags": [
+            "deli",
+            "sandwiches",
+            "historic",
+            "comfort_food"
+          ],
+          "must_try_dishes": [
+            "#19 Pastrami Sandwich",
+            "Matzo Ball Soup",
+            "Latkes"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "friends_group",
+            "tourist_must",
+            "solo"
+          ],
+          "vibe": "casual",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 20,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 5,
+          "value_score": 9,
+          "crowd_typical_zh": "本地居民与游客",
+          "one_liner_zh": "经典犹太熟食店，招牌熏牛肉三明治必试",
+          "avoid_if_zh": "不喜欢熏牛肉或犹太美食",
+          "cuisine_tags_str": "deli | sandwiches | historic | comfort_food",
+          "must_try_dishes_str": "#19 Pastrami Sandwich | Matzo Ball Soup | Latkes",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "friends_group | tourist_must | solo",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": -1
+        },
+        {
+          "name": "The Apple Pan",
+          "address": "10801 W Pico Blvd, Los Angeles, CA 90064",
+          "lat": 34.0376,
+          "lng": -118.4367,
+          "maps_url": "https://www.google.com/maps/place/The+Apple+Pan",
+          "price_per_person_usd": 20,
+          "price_tier": "$",
+          "cuisine_primary": "American Diner",
+          "cuisine_tags": [
+            "american",
+            "diner",
+            "burgers",
+            "historic"
+          ],
+          "must_try_dishes": [
+            "Hickory Burger",
+            "Steakburger",
+            "Banana Cream Pie"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "friends_group",
+            "solo",
+            "tourist_must"
+          ],
+          "vibe": "casual",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 20,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 6,
+          "value_score": 8,
+          "crowd_typical_zh": "本地居民与游客混杂",
+          "one_liner_zh": "经典美式汉堡店，历史悠久，值得一试",
+          "avoid_if_zh": "不喜欢传统美式快餐",
+          "cuisine_tags_str": "american | diner | burgers | historic",
+          "must_try_dishes_str": "Hickory Burger | Steakburger | Banana Cream Pie",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "friends_group | solo | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": -1
+        }
+      ]
+    }
+  ]
+}

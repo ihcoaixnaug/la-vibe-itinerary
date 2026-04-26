@@ -1,0 +1,23 @@
+# === 核心 ===
+openai>=1.30.0           # 官方 SDK，OpenRouter 兼容此接口
+python-dotenv>=1.0.0     # 读取 .env 里的 API Key
+pandas>=2.0.0            # CSV / 数据处理
+pydantic>=2.5.0          # GPT-4o 输出强校验
+
+# === 阶段 2：抓取 ===
+playwright>=1.40.0       # Google Maps 自动化（简历卖点）
+requests>=2.31.0         # Places API 兜底
+beautifulsoup4>=4.12.0   # HTML 解析备用
+
+# === 阶段 4：聚类 ===
+scikit-learn>=1.4.0      # DBSCAN
+numpy>=1.26.0
+
+# === 阶段 5：网页 ===
+streamlit>=1.30.0
+streamlit-folium>=0.18.0
+folium>=0.15.0
+
+# === 工具 ===
+tqdm>=4.65.0             # 进度条
+tenacity>=8.2.0          # GPT-4o 失败重试
