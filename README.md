@@ -1,9 +1,9 @@
-# 🌴 LA Vibe Itinerary
+# 🌴 Vibe Itinerary
 
-> AI 决策助手：一键将 Google Maps 收藏夹转化为洛杉矶深度打卡行程
-> Scale AI 实习项目 · Vibe Coding 模式 · 2026
+> 一个**可复用的本地生活 AI 框架** —— Fork → 替换收藏数据 → 一键部署，做出你城市的版本。
+> 当前 LA 美食版作为参考实现 · Vibe Coding 模式 · 2026
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Streamlit_Cloud-FF4B4B?style=for-the-badge)](https://la-vibe-itinerary.streamlit.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-LA版-FF4B4B?style=for-the-badge)](https://la-vibe-itinerary.streamlit.app)
 [![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)](https://python.org)
 [![GPT-4o](https://img.shields.io/badge/GPT--4o-via_OpenRouter-412991?style=for-the-badge&logo=openai)](https://openrouter.ai)
 
@@ -11,12 +11,32 @@
 
 ## ✨ 它解决什么问题
 
-打开 Google Maps 收藏夹收了 30+ 家餐厅，想在 LA 玩一天，**手工规划要 2-3 小时**：
+任何人在 Google Maps 收藏夹里都攒了几十家想去的地方，但**只有店名缺乏决策信息**：
 - 这家在哪里？哪些店离得近？
 - 价格区间合适吗？氛围匹配场景吗？
 - 谁是网红？谁是本地宝藏？
 
-**这个应用 30 秒解决全部问题**：AI 把每家店打 20 个维度标签 → 自动按地理聚类 → 每组生成最短打卡路径。
+**这个框架 30 秒解决全部问题**：AI 把每家店打 20 维度标签 → 自动按地理聚类 → 每组生成最短打卡路径 → 一句话需求即可获得 AI 推荐。
+
+## 🌍 用你自己的数据跑这个项目
+
+**这不是一个 LA 专属的 demo，而是一个城市无关 / 品类无关的通用管线**。无论你想做：
+
+- 🍣 东京美食探店
+- ☕ 北京咖啡馆地图
+- 🥐 NYC brunch 打卡
+- 🏋️ 你城市的健身房集合
+- 🛍️ 你常去的买手店清单
+
+**5 步搞定你自己的版本**：
+
+1. **Fork** 这个 repo
+2. **导出 Google Maps 收藏**（[STAGE_2_GUIDE](STAGE_2_GUIDE.md) 教你两条路径，5 分钟）
+3. **替换** `data/my_places.csv` 为你的店铺
+4. 跑 `python scripts/02_process_data.py` —— GPT-4o 自动给每家店打 20 维标签（30 家店约 $0.20）
+5. **Streamlit Cloud 一键部署** —— 5 分钟拿到你专属公开 URL
+
+**数据结构、算法、网页交互全部不用改**——你只是把你的收藏数据塞进同一条管线，得到属于你的攻略页。
 
 ## 🎬 30 秒看 Demo
 
