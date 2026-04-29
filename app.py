@@ -576,22 +576,6 @@ with header_col_reset:
 # Sidebar：AI 自然语言查询 + 筛选
 # ═══════════════════════════════════════════════════════════════
 with st.sidebar:
-    # ---- 导入个人数据指南（需求 5 · 方案 A）----
-    with st.expander(t("import_header"), expanded=False):
-        st.caption(t("import_intro"))
-        st.markdown(t("import_step1"))
-        st.markdown(t("import_step2"))
-        st.markdown(t("import_step3"))
-        st.markdown(t("import_step4"))
-        st.link_button(
-            t("import_btn"),
-            "https://takeout.google.com/",
-            use_container_width=True,
-        )
-        st.caption(t("import_note"))
-
-    st.divider()
-
     # ---- AI 自然语言查询 ----
     st.header(t("ai_header"))
     nl_query = st.text_area(
@@ -709,6 +693,21 @@ with st.sidebar:
 
     st.divider()
     generate_btn = st.button(t("gen_btn"), use_container_width=True, type="primary")
+
+    # ---- 导入个人数据指南 ----
+    st.divider()
+    with st.expander(t("import_header"), expanded=False):
+        st.caption(t("import_intro"))
+        st.markdown(t("import_step1"))
+        st.markdown(t("import_step2"))
+        st.markdown(t("import_step3"))
+        st.markdown(t("import_step4"))
+        st.link_button(
+            t("import_btn"),
+            "https://takeout.google.com/",
+            use_container_width=True,
+        )
+        st.caption(t("import_note"))
 
     st.divider()
     st.caption(
