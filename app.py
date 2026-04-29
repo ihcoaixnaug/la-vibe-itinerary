@@ -1271,36 +1271,40 @@ components.html(
             }}
         }};
 
-        // ── 右侧浮动"置顶"按钮（从 list-top-anchor 向上找滚动容器）──
+        // ── 右侧浮动"置顶"按钮（从 list-top-anchor 向上找真正在滚动的容器）──
         const setupScrollTopBtn = () => {{
             const doc = parent.document;
 
-            // 用锚点元素向上找第一个可滚动父容器，比 height/overflow 猜更可靠
+            // 找锚点并向上遍历，找第一个 scrollHeight > clientHeight 的可滚动容器
             const anchor = doc.getElementById('list-top-anchor');
             if (!anchor) return;
             let target = anchor.parentElement;
             while (target && target !== doc.body) {{
                 const s = parent.window.getComputedStyle(target);
-                if (s.overflowY === 'auto' || s.overflowY === 'scroll') break;
+                const canScroll = s.overflowY === 'auto' || s.overflowY === 'scroll';
+                const isScrolled = target.scrollHeight > target.clientHeight;
+                if (canScroll && isScrolled) break;
                 target = target.parentElement;
             }}
             if (!target || target === doc.body) return;
 
             const positionBtn = (btn) => {{
                 const rect = target.getBoundingClientRect();
-                // 贴容器右侧内沿，距顶部 16px
                 btn.style.left  = (rect.right - 52) + 'px';
                 btn.style.top   = (rect.top   + 16) + 'px';
             }};
 
             let btn = doc.getElementById('vibe-scroll-top-btn');
             if (btn) {{
-                positionBtn(btn);   // 已存在时只更新位置
+                positionBtn(btn);
+                // 更新 onclick 绑定的 target（rerun 后容器可能已换）
+                btn._scrollTarget = target;
                 return;
             }}
 
             btn = doc.createElement('div');
             btn.id = 'vibe-scroll-top-btn';
+            btn._scrollTarget = target;
             btn.innerHTML = '⬆<br>{"置顶" if init_lang() == "zh" else "Top"}';
             btn.style.cssText = `
                 position: fixed;
@@ -1325,13 +1329,9 @@ components.html(
             btn.onmouseleave = () => {{ btn.style.opacity = '0.88'; btn.style.background = 'rgba(26,115,232,0.85)'; }};
             btn.onclick = (e) => {{
                 e.stopPropagation();
-                // scrollIntoView 比直接赋 scrollTop 更可靠（Streamlit 容器层级复杂）
-                const anchor = doc.getElementById('list-top-anchor');
-                if (anchor) {{
-                    anchor.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
-                }} else {{
-                    target.scrollTop = 0;
-                }}
+                // 直接对滚动容器调 scrollTo，不用 scrollIntoView（后者可能滚外层页面）
+                const t = btn._scrollTarget;
+                if (t) {{ t.scrollTo({{ top: 0, behavior: 'smooth' }}); }}
             }};
             doc.body.appendChild(btn);
 
