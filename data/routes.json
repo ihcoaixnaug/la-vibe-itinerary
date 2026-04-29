@@ -25,30 +25,30 @@
           "lat": 34.0461,
           "lng": -118.2547,
           "maps_url": "https://www.google.com/maps/place/Bottega+Louie",
-          "price_per_person_usd": 50,
-          "price_tier": "$$",
-          "cuisine_primary": "French American",
+          "price_per_person_usd": 60,
+          "price_tier": "$$$",
+          "cuisine_primary": "Italian",
           "cuisine_tags": [
-            "french",
-            "american",
+            "italian",
             "bakery",
-            "downtown"
+            "downtown",
+            "brunch"
           ],
           "must_try_dishes": [
             "Truffle Pizza",
-            "Lemon Ricotta Pancakes",
-            "Macarons"
+            "Portobello Fries",
+            "Lemon Ricotta Pancakes"
           ],
           "dietary_friendly": [
             "vegetarian"
           ],
           "best_for": [
+            "date",
             "friends_group",
-            "tourist_must",
-            "date"
+            "tourist_must"
           ],
           "vibe": "lively",
-          "noise_level": "loud",
+          "noise_level": "moderate",
           "dress_code": "smart_casual",
           "best_time_slots": [
             "brunch",
@@ -58,16 +58,19 @@
           "avg_wait_minutes": 30,
           "reservation_needed": "recommended",
           "parking_difficulty": "hard",
-          "instagrammable_score": 10,
-          "hidden_gem_score": 2,
+          "instagrammable_score": 8,
+          "hidden_gem_score": 4,
           "value_score": 7,
-          "crowd_typical_zh": "游客与本地美食爱好者",
-          "one_liner_zh": "网红法美餐厅，甜品精致，必试松露披萨",
-          "avoid_if_zh": "不喜欢吵闹环境",
-          "cuisine_tags_str": "french | american | bakery | downtown",
-          "must_try_dishes_str": "Truffle Pizza | Lemon Ricotta Pancakes | Macarons",
+          "crowd_typical_zh": "时尚游客和当地年轻人",
+          "crowd_typical_en": "Fashionable tourists and local young professionals",
+          "one_liner_zh": "洛杉矶市中心的意式美食与甜点天堂",
+          "one_liner_en": "Downtown LA's Italian cuisine and dessert paradise",
+          "avoid_if_zh": "不喜欢热闹环境",
+          "avoid_if_en": "Avoid if you dislike lively environments",
+          "cuisine_tags_str": "italian | bakery | downtown | brunch",
+          "must_try_dishes_str": "Truffle Pizza | Portobello Fries | Lemon Ricotta Pancakes",
           "dietary_friendly_str": "vegetarian",
-          "best_for_str": "friends_group | tourist_must | date",
+          "best_for_str": "date | friends_group | tourist_must",
           "best_time_slots_str": "brunch | lunch | dinner",
           "cluster_id": 0,
           "visit_order": 0
@@ -98,10 +101,10 @@
           "best_for": [
             "friends_group",
             "solo",
-            "late_night"
+            "tourist_must"
           ],
           "vibe": "lively",
-          "noise_level": "loud",
+          "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
             "lunch",
@@ -110,17 +113,20 @@
           ],
           "avg_wait_minutes": 10,
           "reservation_needed": "no",
-          "parking_difficulty": "moderate",
+          "parking_difficulty": "hard",
           "instagrammable_score": 7,
           "hidden_gem_score": 6,
           "value_score": 9,
-          "crowd_typical_zh": "年轻人和夜猫子",
-          "one_liner_zh": "DTLA 必吃街头墨西哥美食，夜宵好去处",
-          "avoid_if_zh": "不喜欢排队或嘈杂环境",
+          "crowd_typical_zh": "年轻人和游客的聚集地",
+          "crowd_typical_en": "A hotspot for young locals and tourists seeking authentic tacos.",
+          "one_liner_zh": "DTLA 必吃的街头墨西哥美食，体验地道风味",
+          "one_liner_en": "DTLA's must-try Mexican street food for authentic flavors.",
+          "avoid_if_zh": "不喜欢排队或拥挤环境",
+          "avoid_if_en": "Avoid if you dislike lines or crowded spaces.",
           "cuisine_tags_str": "mexican | tacos | street_food | downtown",
           "must_try_dishes_str": "Adobada Taco | Mushroom Quesadilla | Carne Asada Taco",
           "dietary_friendly_str": "vegetarian",
-          "best_for_str": "friends_group | solo | late_night",
+          "best_for_str": "friends_group | solo | tourist_must",
           "best_time_slots_str": "lunch | dinner | late_night",
           "cluster_id": 0,
           "visit_order": 1
@@ -151,7 +157,7 @@
           "best_for": [
             "date",
             "celebration",
-            "business_lunch"
+            "friends_group"
           ],
           "vibe": "trendy",
           "noise_level": "moderate",
@@ -163,15 +169,18 @@
           "reservation_needed": "recommended",
           "parking_difficulty": "moderate",
           "instagrammable_score": 8,
-          "hidden_gem_score": 5,
+          "hidden_gem_score": 4,
           "value_score": 7,
-          "crowd_typical_zh": "DTLA 美食爱好者与商务人士",
-          "one_liner_zh": "意大利风情浓郁的现代餐厅，适合约会和庆祝",
-          "avoid_if_zh": "不喜欢意大利菜",
+          "crowd_typical_zh": "时尚的美食爱好者和约会情侣",
+          "crowd_typical_en": "Stylish food enthusiasts and couples on a date",
+          "one_liner_zh": "意大利风情浓郁的现代餐厅，适合浪漫约会",
+          "one_liner_en": "A modern Italian restaurant with rich flavors, perfect for a romantic date",
+          "avoid_if_zh": "不喜欢意大利面或肉类",
+          "avoid_if_en": "Avoid if you dislike pasta or meat dishes",
           "cuisine_tags_str": "italian | bolognese | downtown | modern",
           "must_try_dishes_str": "Tortellini in Brodo | Tagliatelle al Ragù | Grilled Pork Chop",
           "dietary_friendly_str": "vegetarian",
-          "best_for_str": "date | celebration | business_lunch",
+          "best_for_str": "date | celebration | friends_group",
           "best_time_slots_str": "dinner",
           "cluster_id": 0,
           "visit_order": 2
@@ -182,19 +191,18 @@
           "lat": 34.0481,
           "lng": -118.2486,
           "maps_url": "https://www.google.com/maps/place/KazuNori",
-          "price_per_person_usd": 40,
+          "price_per_person_usd": 30,
           "price_tier": "$$",
-          "cuisine_primary": "Sushi",
+          "cuisine_primary": "Japanese",
           "cuisine_tags": [
-            "sushi",
-            "hand_roll",
             "japanese",
-            "downtown"
+            "sushi",
+            "hand_rolls"
           ],
           "must_try_dishes": [
             "Toro Hand Roll",
-            "Yellowtail Hand Roll",
-            "Crab Hand Roll"
+            "Crab Hand Roll",
+            "Salmon Hand Roll"
           ],
           "dietary_friendly": [],
           "best_for": [
@@ -215,11 +223,14 @@
           "instagrammable_score": 7,
           "hidden_gem_score": 5,
           "value_score": 8,
-          "crowd_typical_zh": "年轻人和游客",
-          "one_liner_zh": "新鲜手卷寿司的极致体验",
-          "avoid_if_zh": "不喜欢寿司或手卷",
-          "cuisine_tags_str": "sushi | hand_roll | japanese | downtown",
-          "must_try_dishes_str": "Toro Hand Roll | Yellowtail Hand Roll | Crab Hand Roll",
+          "crowd_typical_zh": "年轻人和寿司爱好者",
+          "crowd_typical_en": "Young crowd and sushi enthusiasts",
+          "one_liner_zh": "寿司手卷的最佳选择，简单又美味",
+          "one_liner_en": "The go-to spot for hand rolls — simple yet delicious",
+          "avoid_if_zh": "不喜欢寿司手卷",
+          "avoid_if_en": "Avoid if you dislike sushi hand rolls",
+          "cuisine_tags_str": "japanese | sushi | hand_rolls",
+          "must_try_dishes_str": "Toro Hand Roll | Crab Hand Roll | Salmon Hand Roll",
           "dietary_friendly_str": NaN,
           "best_for_str": "solo | friends_group | tourist_must",
           "best_time_slots_str": "lunch | dinner",
@@ -234,46 +245,48 @@
           "maps_url": "https://www.google.com/maps/place/Eggslut",
           "price_per_person_usd": 15,
           "price_tier": "$",
-          "cuisine_primary": "Breakfast Sandwiches",
+          "cuisine_primary": "American",
           "cuisine_tags": [
             "breakfast",
-            "sandwiches",
-            "casual",
-            "downtown"
+            "brunch",
+            "egg",
+            "sandwich"
           ],
           "must_try_dishes": [
             "Slut",
             "Fairfax",
-            "Gaucho"
+            "Bacon, Egg & Cheese"
           ],
           "dietary_friendly": [],
           "best_for": [
+            "breakfast",
             "tourist_must",
-            "friends_group",
-            "solo"
+            "friends_group"
           ],
           "vibe": "lively",
           "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
             "breakfast",
-            "brunch",
-            "lunch"
+            "brunch"
           ],
           "avg_wait_minutes": 30,
           "reservation_needed": "no",
           "parking_difficulty": "hard",
           "instagrammable_score": 8,
-          "hidden_gem_score": 4,
-          "value_score": 8,
-          "crowd_typical_zh": "年轻游客与本地上班族",
-          "one_liner_zh": "必尝的早餐三明治，值得排队",
-          "avoid_if_zh": "不喜欢排队或赶时间",
-          "cuisine_tags_str": "breakfast | sandwiches | casual | downtown",
-          "must_try_dishes_str": "Slut | Fairfax | Gaucho",
+          "hidden_gem_score": 5,
+          "value_score": 7,
+          "crowd_typical_zh": "游客和当地年轻人",
+          "crowd_typical_en": "Tourists and local young adults",
+          "one_liner_zh": "必尝创意蛋三明治，早午餐首选",
+          "one_liner_en": "Creative egg sandwiches that are a must-try for breakfast or brunch.",
+          "avoid_if_zh": "不喜欢排队",
+          "avoid_if_en": "Avoid if you dislike waiting in line.",
+          "cuisine_tags_str": "breakfast | brunch | egg | sandwich",
+          "must_try_dishes_str": "Slut | Fairfax | Bacon, Egg & Cheese",
           "dietary_friendly_str": NaN,
-          "best_for_str": "tourist_must | friends_group | solo",
-          "best_time_slots_str": "breakfast | brunch | lunch",
+          "best_for_str": "breakfast | tourist_must | friends_group",
+          "best_time_slots_str": "breakfast | brunch",
           "cluster_id": 0,
           "visit_order": 4
         },
@@ -285,17 +298,16 @@
           "maps_url": "https://www.google.com/maps/place/Grand+Central+Market",
           "price_per_person_usd": 25,
           "price_tier": "$$",
-          "cuisine_primary": "Eclectic",
+          "cuisine_primary": "Fusion",
           "cuisine_tags": [
+            "fusion",
             "food_hall",
-            "variety",
-            "casual",
             "downtown"
           ],
           "must_try_dishes": [
             "Eggslut Fairfax Sandwich",
-            "Tacos Tumbras a Tomas",
-            "Wexler's Deli Pastrami"
+            "Tacos from Tacos Tumbras a Tomas",
+            "Ramen from Ramen Hood"
           ],
           "dietary_friendly": [
             "vegetarian",
@@ -305,29 +317,33 @@
           "best_for": [
             "tourist_must",
             "friends_group",
-            "family"
+            "solo"
           ],
           "vibe": "lively",
           "noise_level": "loud",
           "dress_code": "casual",
           "best_time_slots": [
             "lunch",
-            "dinner"
+            "dinner",
+            "late_night"
           ],
           "avg_wait_minutes": 20,
           "reservation_needed": "no",
-          "parking_difficulty": "moderate",
+          "parking_difficulty": "hard",
           "instagrammable_score": 8,
-          "hidden_gem_score": 5,
+          "hidden_gem_score": 4,
           "value_score": 8,
           "crowd_typical_zh": "游客与当地美食爱好者",
-          "one_liner_zh": "洛杉矶必去美食集市，品尝世界风味",
-          "avoid_if_zh": "不喜欢人多嘈杂的环境",
-          "cuisine_tags_str": "food_hall | variety | casual | downtown",
-          "must_try_dishes_str": "Eggslut Fairfax Sandwich | Tacos Tumbras a Tomas | Wexler's Deli Pastrami",
+          "crowd_typical_en": "Tourists and local food enthusiasts exploring diverse flavors",
+          "one_liner_zh": "体验多元美食的天堂，适合拍照打卡",
+          "one_liner_en": "A paradise of diverse cuisines perfect for Instagram moments",
+          "avoid_if_zh": "不喜欢人多嘈杂环境",
+          "avoid_if_en": "Avoid if you dislike crowded and noisy places",
+          "cuisine_tags_str": "fusion | food_hall | downtown",
+          "must_try_dishes_str": "Eggslut Fairfax Sandwich | Tacos from Tacos Tumbras a Tomas | Ramen from Ramen Hood",
           "dietary_friendly_str": "vegetarian | vegan | gluten_free",
-          "best_for_str": "tourist_must | friends_group | family",
-          "best_time_slots_str": "lunch | dinner",
+          "best_for_str": "tourist_must | friends_group | solo",
+          "best_time_slots_str": "lunch | dinner | late_night",
           "cluster_id": 0,
           "visit_order": 5
         },
@@ -343,21 +359,22 @@
           "cuisine_tags": [
             "japanese",
             "sushi",
-            "little_tokyo",
-            "seafood"
+            "little_tokyo"
           ],
           "must_try_dishes": [
-            "Omakase",
             "Sashimi Deluxe",
-            "Uni"
+            "Yellowtail Nigiri",
+            "Uni Sushi"
           ],
-          "dietary_friendly": [],
+          "dietary_friendly": [
+            "gluten_free"
+          ],
           "best_for": [
             "date",
             "tourist_must",
             "friends_group"
           ],
-          "vibe": "lively",
+          "vibe": "casual",
           "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
@@ -367,15 +384,18 @@
           "avg_wait_minutes": 30,
           "reservation_needed": "recommended",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 8,
-          "hidden_gem_score": 5,
+          "instagrammable_score": 7,
+          "hidden_gem_score": 6,
           "value_score": 8,
-          "crowd_typical_zh": "小东京的寿司爱好者",
-          "one_liner_zh": "小东京必去寿司店，生鱼片超赞",
-          "avoid_if_zh": "不喜欢排队等位",
-          "cuisine_tags_str": "japanese | sushi | little_tokyo | seafood",
-          "must_try_dishes_str": "Omakase | Sashimi Deluxe | Uni",
-          "dietary_friendly_str": NaN,
+          "crowd_typical_zh": "日本料理爱好者和游客",
+          "crowd_typical_en": "Japanese cuisine enthusiasts and tourists",
+          "one_liner_zh": "小东京寿司名店，生鱼片套餐必试",
+          "one_liner_en": "Little Tokyo's sushi hotspot — don't miss the sashimi deluxe",
+          "avoid_if_zh": "不喜欢生鱼片",
+          "avoid_if_en": "Avoid if you dislike sashimi",
+          "cuisine_tags_str": "japanese | sushi | little_tokyo",
+          "must_try_dishes_str": "Sashimi Deluxe | Yellowtail Nigiri | Uni Sushi",
+          "dietary_friendly_str": "gluten_free",
           "best_for_str": "date | tourist_must | friends_group",
           "best_time_slots_str": "lunch | dinner",
           "cluster_id": 0,
@@ -392,13 +412,13 @@
           "cuisine_primary": "Middle Eastern",
           "cuisine_tags": [
             "middle_eastern",
+            "california",
             "modern",
-            "downtown",
-            "trendy"
+            "downtown"
           ],
           "must_try_dishes": [
             "Lamb Neck Shawarma",
-            "Duck 'Nduja Hummus",
+            "Duck 'nduja Hummus",
             "Malawach"
           ],
           "dietary_friendly": [
@@ -410,22 +430,25 @@
             "friends_group"
           ],
           "vibe": "trendy",
-          "noise_level": "loud",
+          "noise_level": "moderate",
           "dress_code": "smart_casual",
           "best_time_slots": [
             "dinner"
           ],
-          "avg_wait_minutes": 60,
-          "reservation_needed": "essential",
-          "parking_difficulty": "moderate",
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "hard",
           "instagrammable_score": 8,
           "hidden_gem_score": 4,
-          "value_score": 8,
-          "crowd_typical_zh": "时尚年轻人和美食爱好者",
-          "one_liner_zh": "DTLA 必去的中东风味餐厅，创意十足",
-          "avoid_if_zh": "不喜欢嘈杂环境的人",
-          "cuisine_tags_str": "middle_eastern | modern | downtown | trendy",
-          "must_try_dishes_str": "Lamb Neck Shawarma | Duck 'Nduja Hummus | Malawach",
+          "value_score": 7,
+          "crowd_typical_zh": "时尚美食爱好者和游客",
+          "crowd_typical_en": "Fashionable food lovers and tourists",
+          "one_liner_zh": "DTLA 时尚中东餐厅，羊颈沙瓦玛必试",
+          "one_liner_en": "DTLA's chic Middle Eastern spot — try the Lamb Neck Shawarma",
+          "avoid_if_zh": "不喜欢中东风味",
+          "avoid_if_en": "Avoid if you're not into Middle Eastern flavors",
+          "cuisine_tags_str": "middle_eastern | california | modern | downtown",
+          "must_try_dishes_str": "Lamb Neck Shawarma | Duck 'nduja Hummus | Malawach",
           "dietary_friendly_str": "vegetarian",
           "best_for_str": "date | celebration | friends_group",
           "best_time_slots_str": "dinner",
@@ -440,12 +463,11 @@
           "maps_url": "https://www.google.com/maps/place/Bestia",
           "price_per_person_usd": 95,
           "price_tier": "$$$",
-          "cuisine_primary": "California Italian",
+          "cuisine_primary": "Italian",
           "cuisine_tags": [
             "italian",
-            "modern",
-            "wood_fired",
-            "downtown"
+            "california",
+            "modern"
           ],
           "must_try_dishes": [
             "Cavatelli alla Norcina",
@@ -473,9 +495,12 @@
           "hidden_gem_score": 3,
           "value_score": 7,
           "crowd_typical_zh": "DTLA 时髦白领与游客",
+          "crowd_typical_en": "DTLA fashionable professionals and food tourists",
           "one_liner_zh": "DTLA 工业风网红意餐，骨髓塔塔必点",
+          "one_liner_en": "DTLA's industrial-chic Italian darling — bone marrow is non-negotiable",
           "avoid_if_zh": "赶时间或没提前订位",
-          "cuisine_tags_str": "italian | modern | wood_fired | downtown",
+          "avoid_if_en": "Skip if you're in a rush or don't have a reservation",
+          "cuisine_tags_str": "italian | california | modern",
           "must_try_dishes_str": "Cavatelli alla Norcina | Bone Marrow | Roasted Marrow Tortelli",
           "dietary_friendly_str": "vegetarian",
           "best_for_str": "date | celebration | friends_group",
@@ -491,17 +516,16 @@
           "maps_url": "https://www.google.com/maps/place/Howlin+Rays",
           "price_per_person_usd": 20,
           "price_tier": "$",
-          "cuisine_primary": "Nashville Hot Chicken",
+          "cuisine_primary": "Southern American",
           "cuisine_tags": [
-            "fried chicken",
-            "spicy",
-            "casual",
-            "chinatown"
+            "southern",
+            "fried_chicken",
+            "spicy"
           ],
           "must_try_dishes": [
             "Hot Chicken Sandwich",
-            "Chicken Wings",
-            "Collard Greens"
+            "Howlin' Fries",
+            "Nashville Hot Chicken"
           ],
           "dietary_friendly": [],
           "best_for": [
@@ -522,11 +546,14 @@
           "instagrammable_score": 8,
           "hidden_gem_score": 5,
           "value_score": 9,
-          "crowd_typical_zh": "年轻人和游客",
-          "one_liner_zh": "辣鸡翅和三明治，辣到过瘾！",
-          "avoid_if_zh": "不喜欢排队或怕辣",
-          "cuisine_tags_str": "fried chicken | spicy | casual | chinatown",
-          "must_try_dishes_str": "Hot Chicken Sandwich | Chicken Wings | Collard Greens",
+          "crowd_typical_zh": "年轻人和游客排队尝鲜",
+          "crowd_typical_en": "Young locals and tourists lining up for a taste of spicy chicken.",
+          "one_liner_zh": "洛杉矶最火辣的炸鸡体验，绝对值得排队！",
+          "one_liner_en": "LA's hottest fried chicken experience — absolutely worth the wait!",
+          "avoid_if_zh": "不喜欢排队或辣味",
+          "avoid_if_en": "Avoid if you dislike waiting or spicy food.",
+          "cuisine_tags_str": "southern | fried_chicken | spicy",
+          "must_try_dishes_str": "Hot Chicken Sandwich | Howlin' Fries | Nashville Hot Chicken",
           "dietary_friendly_str": NaN,
           "best_for_str": "friends_group | solo | tourist_must",
           "best_time_slots_str": "lunch | dinner",
@@ -553,19 +580,19 @@
           "lat": 34.0828,
           "lng": -118.2858,
           "maps_url": "https://www.google.com/maps/place/Sqirl",
-          "price_per_person_usd": 30,
+          "price_per_person_usd": 25,
           "price_tier": "$$",
-          "cuisine_primary": "California",
+          "cuisine_primary": "Café",
           "cuisine_tags": [
+            "café",
             "brunch",
             "organic",
-            "trendy",
             "eastside"
           ],
           "must_try_dishes": [
             "Ricotta Toast",
             "Sorrel Pesto Rice Bowl",
-            "Burnt Brioche Toast"
+            "Jam on Brioche"
           ],
           "dietary_friendly": [
             "vegetarian",
@@ -575,12 +602,13 @@
           "best_for": [
             "brunch",
             "friends_group",
-            "tourist_must"
+            "solo"
           ],
           "vibe": "trendy",
           "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
+            "breakfast",
             "brunch",
             "lunch"
           ],
@@ -588,16 +616,19 @@
           "reservation_needed": "no",
           "parking_difficulty": "moderate",
           "instagrammable_score": 8,
-          "hidden_gem_score": 5,
+          "hidden_gem_score": 6,
           "value_score": 7,
-          "crowd_typical_zh": "年轻潮人和美食爱好者",
-          "one_liner_zh": "网红早午餐圣地，必尝招牌吐司",
-          "avoid_if_zh": "不喜欢排队或人多",
-          "cuisine_tags_str": "brunch | organic | trendy | eastside",
-          "must_try_dishes_str": "Ricotta Toast | Sorrel Pesto Rice Bowl | Burnt Brioche Toast",
+          "crowd_typical_zh": "东洛杉矶时尚年轻人",
+          "crowd_typical_en": "Trendy young East LA locals",
+          "one_liner_zh": "时尚咖啡馆，招牌奶油吐司必尝",
+          "one_liner_en": "Trendy café with must-try ricotta toast",
+          "avoid_if_zh": "不喜欢排队或拥挤",
+          "avoid_if_en": "Avoid if you dislike lines or crowds",
+          "cuisine_tags_str": "café | brunch | organic | eastside",
+          "must_try_dishes_str": "Ricotta Toast | Sorrel Pesto Rice Bowl | Jam on Brioche",
           "dietary_friendly_str": "vegetarian | vegan | gluten_free",
-          "best_for_str": "brunch | friends_group | tourist_must",
-          "best_time_slots_str": "brunch | lunch",
+          "best_for_str": "brunch | friends_group | solo",
+          "best_time_slots_str": "breakfast | brunch | lunch",
           "cluster_id": 1,
           "visit_order": 0
         },
@@ -618,8 +649,8 @@
           ],
           "must_try_dishes": [
             "Khao Soi",
-            "Pork Toro",
-            "Crispy Rice Salad"
+            "Moo Sadoong",
+            "Party Wings"
           ],
           "dietary_friendly": [
             "vegetarian"
@@ -637,16 +668,19 @@
             "late_night"
           ],
           "avg_wait_minutes": 30,
-          "reservation_needed": "no",
+          "reservation_needed": "recommended",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 8,
+          "instagrammable_score": 7,
           "hidden_gem_score": 6,
           "value_score": 8,
           "crowd_typical_zh": "年轻潮人和美食爱好者",
-          "one_liner_zh": "银湖必尝泰国街头美食，辣味十足",
-          "avoid_if_zh": "不爱热闹或不吃辣",
+          "crowd_typical_en": "Young hipsters and food enthusiasts",
+          "one_liner_zh": "体验正宗泰式街头美食，辣味十足",
+          "one_liner_en": "Experience authentic Thai street food with a spicy kick",
+          "avoid_if_zh": "不喜欢嘈杂环境",
+          "avoid_if_en": "Avoid if you dislike noisy environments",
           "cuisine_tags_str": "thai | street_food | spicy | silver_lake",
-          "must_try_dishes_str": "Khao Soi | Pork Toro | Crispy Rice Salad",
+          "must_try_dishes_str": "Khao Soi | Moo Sadoong | Party Wings",
           "dietary_friendly_str": "vegetarian",
           "best_for_str": "friends_group | date | tourist_must",
           "best_time_slots_str": "dinner | late_night",
@@ -664,14 +698,13 @@
           "cuisine_primary": "Mexican",
           "cuisine_tags": [
             "mexican",
-            "casual",
             "taco",
-            "los_feliz"
+            "casual"
           ],
           "must_try_dishes": [
-            "Burrito de Carne Asada",
-            "Taco de Pollo",
-            "Tamales"
+            "Carne Asada Burrito",
+            "Yucas Tacos",
+            "Chorizo Quesadilla"
           ],
           "dietary_friendly": [],
           "best_for": [
@@ -689,14 +722,17 @@
           "avg_wait_minutes": 10,
           "reservation_needed": "no",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 5,
-          "hidden_gem_score": 7,
+          "instagrammable_score": 6,
+          "hidden_gem_score": 8,
           "value_score": 9,
-          "crowd_typical_zh": "当地居民与游客",
-          "one_liner_zh": "洛杉矶必尝的墨西哥小吃店",
-          "avoid_if_zh": "寻找高档餐饮体验",
-          "cuisine_tags_str": "mexican | casual | taco | los_feliz",
-          "must_try_dishes_str": "Burrito de Carne Asada | Taco de Pollo | Tamales",
+          "crowd_typical_zh": "当地居民和游客",
+          "crowd_typical_en": "Local residents and tourists enjoying casual Mexican fare",
+          "one_liner_zh": "洛杉矶必试墨西哥小吃，价格亲民",
+          "one_liner_en": "A must-try spot for affordable Mexican bites in LA",
+          "avoid_if_zh": "不喜欢露天用餐",
+          "avoid_if_en": "Avoid if you dislike outdoor seating",
+          "cuisine_tags_str": "mexican | taco | casual",
+          "must_try_dishes_str": "Carne Asada Burrito | Yucas Tacos | Chorizo Quesadilla",
           "dietary_friendly_str": NaN,
           "best_for_str": "solo | friends_group | tourist_must",
           "best_time_slots_str": "lunch | dinner",
@@ -723,19 +759,19 @@
           "lat": 34.0833,
           "lng": -118.3389,
           "maps_url": "https://www.google.com/maps/place/Pizzeria+Mozza",
-          "price_per_person_usd": 50,
+          "price_per_person_usd": 45,
           "price_tier": "$$",
           "cuisine_primary": "Italian",
           "cuisine_tags": [
             "italian",
             "pizza",
-            "celebrity_chef",
-            "mid_city"
+            "casual",
+            "celebrity_chef"
           ],
           "must_try_dishes": [
             "Fennel Sausage Pizza",
-            "Burrata with Escarole",
-            "Butterscotch Budino"
+            "Burrata with Speck",
+            "Nancy's Chopped Salad"
           ],
           "dietary_friendly": [
             "vegetarian"
@@ -747,7 +783,7 @@
           ],
           "vibe": "trendy",
           "noise_level": "moderate",
-          "dress_code": "smart_casual",
+          "dress_code": "casual",
           "best_time_slots": [
             "lunch",
             "dinner"
@@ -757,12 +793,15 @@
           "parking_difficulty": "moderate",
           "instagrammable_score": 8,
           "hidden_gem_score": 4,
-          "value_score": 8,
-          "crowd_typical_zh": "美食爱好者与游客",
-          "one_liner_zh": "名厨打造的必尝意式披萨店",
-          "avoid_if_zh": "不喜欢排队或等位",
-          "cuisine_tags_str": "italian | pizza | celebrity_chef | mid_city",
-          "must_try_dishes_str": "Fennel Sausage Pizza | Burrata with Escarole | Butterscotch Budino",
+          "value_score": 7,
+          "crowd_typical_zh": "喜爱名厨的美食爱好者",
+          "crowd_typical_en": "Food enthusiasts who appreciate celebrity chef creations",
+          "one_liner_zh": "品尝名厨精心制作的意式披萨",
+          "one_liner_en": "Experience Italian pizzas crafted by a renowned chef",
+          "avoid_if_zh": "不喜欢排队等候",
+          "avoid_if_en": "Avoid if you dislike waiting in line",
+          "cuisine_tags_str": "italian | pizza | casual | celebrity_chef",
+          "must_try_dishes_str": "Fennel Sausage Pizza | Burrata with Speck | Nancy's Chopped Salad",
           "dietary_friendly_str": "vegetarian",
           "best_for_str": "date | friends_group | tourist_must",
           "best_time_slots_str": "lunch | dinner",
@@ -777,17 +816,16 @@
           "maps_url": "https://www.google.com/maps/place/Pinks+Hot+Dogs",
           "price_per_person_usd": 12,
           "price_tier": "$",
-          "cuisine_primary": "Hot Dogs",
+          "cuisine_primary": "American",
           "cuisine_tags": [
-            "american",
             "hot_dogs",
-            "casual",
-            "iconic"
+            "american",
+            "casual"
           ],
           "must_try_dishes": [
             "Chili Cheese Dog",
             "Martha Stewart Dog",
-            "Pastrami Reuben Dog"
+            "Lord of the Rings Dog"
           ],
           "dietary_friendly": [],
           "best_for": [
@@ -796,7 +834,7 @@
             "solo"
           ],
           "vibe": "lively",
-          "noise_level": "loud",
+          "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
             "lunch",
@@ -806,14 +844,17 @@
           "avg_wait_minutes": 30,
           "reservation_needed": "no",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 8,
+          "instagrammable_score": 7,
           "hidden_gem_score": 5,
           "value_score": 8,
-          "crowd_typical_zh": "游客与本地美食爱好者",
-          "one_liner_zh": "洛杉矶必打卡的传奇热狗店",
-          "avoid_if_zh": "不喜欢排队或热闹环境",
-          "cuisine_tags_str": "american | hot_dogs | casual | iconic",
-          "must_try_dishes_str": "Chili Cheese Dog | Martha Stewart Dog | Pastrami Reuben Dog",
+          "crowd_typical_zh": "游客和当地人热爱的小吃店",
+          "crowd_typical_en": "Beloved by tourists and locals alike for its iconic hot dogs.",
+          "one_liner_zh": "洛杉矶必去的热狗店，体验经典美味",
+          "one_liner_en": "A must-visit for classic hot dogs in LA, offering iconic flavors.",
+          "avoid_if_zh": "不喜欢排队或拥挤环境",
+          "avoid_if_en": "Avoid if you dislike lines or crowded spaces.",
+          "cuisine_tags_str": "hot_dogs | american | casual",
+          "must_try_dishes_str": "Chili Cheese Dog | Martha Stewart Dog | Lord of the Rings Dog",
           "dietary_friendly_str": NaN,
           "best_for_str": "tourist_must | friends_group | solo",
           "best_time_slots_str": "lunch | dinner | late_night",
@@ -826,46 +867,49 @@
           "lat": 34.0813,
           "lng": -118.3614,
           "maps_url": "https://www.google.com/maps/place/Animal",
-          "price_per_person_usd": 85,
+          "price_per_person_usd": 75,
           "price_tier": "$$$",
-          "cuisine_primary": "New American",
+          "cuisine_primary": "American",
           "cuisine_tags": [
-            "new_american",
+            "american",
             "meat",
             "fairfax",
-            "trendy"
+            "creative"
           ],
           "must_try_dishes": [
-            "Bacon Chocolate Crunch Bar",
+            "Pig Ear",
             "Foie Gras Biscuit",
-            "Pig Ear"
+            "Bacon Chocolate Crunch Bar"
           ],
           "dietary_friendly": [],
           "best_for": [
-            "friends_group",
             "date",
-            "tourist_must"
+            "friends_group",
+            "celebration"
           ],
           "vibe": "trendy",
           "noise_level": "loud",
-          "dress_code": "smart_casual",
+          "dress_code": "casual",
           "best_time_slots": [
             "dinner",
             "late_night"
           ],
           "avg_wait_minutes": 30,
           "reservation_needed": "recommended",
-          "parking_difficulty": "moderate",
+          "parking_difficulty": "hard",
           "instagrammable_score": 8,
-          "hidden_gem_score": 5,
+          "hidden_gem_score": 4,
           "value_score": 7,
-          "crowd_typical_zh": "喜爱肉食的年轻食客",
-          "one_liner_zh": "Fairfax 上的肉食者天堂，创意菜肴",
-          "avoid_if_zh": "不吃肉或追求安静",
-          "cuisine_tags_str": "new_american | meat | fairfax | trendy",
-          "must_try_dishes_str": "Bacon Chocolate Crunch Bar | Foie Gras Biscuit | Pig Ear",
+          "crowd_typical_zh": "年轻美食爱好者和潮人",
+          "crowd_typical_en": "Young food enthusiasts and trendy crowd",
+          "one_liner_zh": "创意美式料理，肉食爱好者天堂",
+          "one_liner_en": "Creative American cuisine, a paradise for meat lovers",
+          "avoid_if_zh": "不吃肉或讨厌嘈杂",
+          "avoid_if_en": "Avoid if you dislike meat or loud environments",
+          "cuisine_tags_str": "american | meat | fairfax | creative",
+          "must_try_dishes_str": "Pig Ear | Foie Gras Biscuit | Bacon Chocolate Crunch Bar",
           "dietary_friendly_str": NaN,
-          "best_for_str": "friends_group | date | tourist_must",
+          "best_for_str": "date | friends_group | celebration",
           "best_time_slots_str": "dinner | late_night",
           "cluster_id": 2,
           "visit_order": 2
@@ -876,9 +920,9 @@
           "lat": 34.0808,
           "lng": -118.3614,
           "maps_url": "https://www.google.com/maps/place/Jon+and+Vinnys",
-          "price_per_person_usd": 40,
+          "price_per_person_usd": 45,
           "price_tier": "$$",
-          "cuisine_primary": "Italian American",
+          "cuisine_primary": "Italian",
           "cuisine_tags": [
             "italian",
             "pizza",
@@ -887,8 +931,8 @@
           ],
           "must_try_dishes": [
             "LA Woman Pizza",
-            "Spicy Fusilli",
-            "Margherita Pizza"
+            "Spaghetti Bolognese",
+            "Fusilli alla Vodka"
           ],
           "dietary_friendly": [
             "vegetarian"
@@ -912,10 +956,13 @@
           "hidden_gem_score": 5,
           "value_score": 8,
           "crowd_typical_zh": "年轻潮人和美食爱好者",
-          "one_liner_zh": "Fairfax 必去的意式美食天堂",
-          "avoid_if_zh": "不喜欢排队等位",
+          "crowd_typical_en": "Young trendsetters and food enthusiasts",
+          "one_liner_zh": "Fairfax 的意式美食胜地，必试披萨",
+          "one_liner_en": "Fairfax's Italian hotspot with must-try pizzas",
+          "avoid_if_zh": "不喜欢热闹氛围",
+          "avoid_if_en": "Avoid if you dislike lively atmospheres",
           "cuisine_tags_str": "italian | pizza | casual | fairfax",
-          "must_try_dishes_str": "LA Woman Pizza | Spicy Fusilli | Margherita Pizza",
+          "must_try_dishes_str": "LA Woman Pizza | Spaghetti Bolognese | Fusilli alla Vodka",
           "dietary_friendly_str": "vegetarian",
           "best_for_str": "friends_group | date | tourist_must",
           "best_time_slots_str": "lunch | dinner",
@@ -929,25 +976,25 @@
           "lng": -118.3764,
           "maps_url": "https://www.google.com/maps/place/The+Bazaar",
           "price_per_person_usd": 150,
-          "price_tier": "$$$",
-          "cuisine_primary": "Spanish Tapas",
+          "price_tier": "$$$$",
+          "cuisine_primary": "Spanish",
           "cuisine_tags": [
             "spanish",
             "tapas",
-            "molecular_gastronomy",
-            "beverly_hills"
+            "modern",
+            "celebrity_chef"
           ],
           "must_try_dishes": [
-            "Philly Cheesesteak",
+            "Spherical Olive",
             "Cotton Candy Foie Gras",
-            "Olives Ferran Adrià"
+            "Patatas Bravas"
           ],
           "dietary_friendly": [
             "vegetarian"
           ],
           "best_for": [
-            "celebration",
             "date",
+            "celebration",
             "tourist_must"
           ],
           "vibe": "trendy",
@@ -957,18 +1004,21 @@
             "dinner"
           ],
           "avg_wait_minutes": 30,
-          "reservation_needed": "recommended",
+          "reservation_needed": "essential",
           "parking_difficulty": "moderate",
           "instagrammable_score": 10,
           "hidden_gem_score": 4,
-          "value_score": 7,
+          "value_score": 6,
           "crowd_typical_zh": "时尚达人与美食爱好者",
-          "one_liner_zh": "西班牙分子料理的奇幻之旅",
-          "avoid_if_zh": "预算有限或不爱创新菜",
-          "cuisine_tags_str": "spanish | tapas | molecular_gastronomy | beverly_hills",
-          "must_try_dishes_str": "Philly Cheesesteak | Cotton Candy Foie Gras | Olives Ferran Adrià",
+          "crowd_typical_en": "Fashion-forward diners and culinary enthusiasts",
+          "one_liner_zh": "体验西班牙创意美食，视觉与味觉的盛宴",
+          "one_liner_en": "Experience Spanish culinary innovation, a feast for the senses",
+          "avoid_if_zh": "预算有限或不喜创意菜",
+          "avoid_if_en": "Avoid if on a budget or dislike experimental cuisine",
+          "cuisine_tags_str": "spanish | tapas | modern | celebrity_chef",
+          "must_try_dishes_str": "Spherical Olive | Cotton Candy Foie Gras | Patatas Bravas",
           "dietary_friendly_str": "vegetarian",
-          "best_for_str": "celebration | date | tourist_must",
+          "best_for_str": "date | celebration | tourist_must",
           "best_time_slots_str": "dinner",
           "cluster_id": 2,
           "visit_order": 4
@@ -995,20 +1045,21 @@
           "maps_url": "https://www.google.com/maps/place/Gjelina",
           "price_per_person_usd": 75,
           "price_tier": "$$$",
-          "cuisine_primary": "California Mediterranean",
+          "cuisine_primary": "Mediterranean",
           "cuisine_tags": [
-            "californian",
-            "mediterranean",
-            "trendy",
+            "california",
+            "farm_to_table",
+            "seasonal",
             "venice"
           ],
           "must_try_dishes": [
-            "Duck Confit",
-            "Mushroom Toast",
-            "Butterscotch Pot de Crème"
+            "Duck Confit Pizza",
+            "Grilled Octopus",
+            "Roasted Cauliflower"
           ],
           "dietary_friendly": [
-            "vegetarian"
+            "vegetarian",
+            "vegan"
           ],
           "best_for": [
             "date",
@@ -1016,7 +1067,7 @@
             "tourist_must"
           ],
           "vibe": "trendy",
-          "noise_level": "loud",
+          "noise_level": "moderate",
           "dress_code": "smart_casual",
           "best_time_slots": [
             "brunch",
@@ -1029,12 +1080,15 @@
           "instagrammable_score": 8,
           "hidden_gem_score": 4,
           "value_score": 7,
-          "crowd_typical_zh": "时尚游客与本地潮人",
-          "one_liner_zh": "威尼斯潮流餐厅，必尝鸭腿与蘑菇吐司",
-          "avoid_if_zh": "不喜欢嘈杂环境的人",
-          "cuisine_tags_str": "californian | mediterranean | trendy | venice",
-          "must_try_dishes_str": "Duck Confit | Mushroom Toast | Butterscotch Pot de Crème",
-          "dietary_friendly_str": "vegetarian",
+          "crowd_typical_zh": "潮人和游客聚集的热门餐厅",
+          "crowd_typical_en": "A hotspot for trendy locals and tourists alike.",
+          "one_liner_zh": "威尼斯潮流餐厅，必试鸭肉披萨。",
+          "one_liner_en": "Venice's trendy eatery — the duck confit pizza is a must-try.",
+          "avoid_if_zh": "不喜欢嘈杂环境",
+          "avoid_if_en": "Avoid if you dislike bustling atmospheres.",
+          "cuisine_tags_str": "california | farm_to_table | seasonal | venice",
+          "must_try_dishes_str": "Duck Confit Pizza | Grilled Octopus | Roasted Cauliflower",
+          "dietary_friendly_str": "vegetarian | vegan",
           "best_for_str": "date | friends_group | tourist_must",
           "best_time_slots_str": "brunch | lunch | dinner",
           "cluster_id": 3,
@@ -1046,23 +1100,22 @@
           "lat": 33.9925,
           "lng": -118.4641,
           "maps_url": "https://www.google.com/maps/place/Gjusta",
-          "price_per_person_usd": 45,
+          "price_per_person_usd": 35,
           "price_tier": "$$",
-          "cuisine_primary": "Bakery & Deli",
+          "cuisine_primary": "Bakery",
           "cuisine_tags": [
             "bakery",
-            "deli",
+            "café",
             "venice",
             "artisanal"
           ],
           "must_try_dishes": [
             "Smoked Fish Plate",
-            "Banh Mi",
-            "Reuben Sandwich"
+            "Bialy Egg Sandwich",
+            "Baklava Croissant"
           ],
           "dietary_friendly": [
-            "vegetarian",
-            "gluten_free"
+            "vegetarian"
           ],
           "best_for": [
             "brunch",
@@ -1073,23 +1126,27 @@
           "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
+            "breakfast",
             "brunch",
             "lunch"
           ],
-          "avg_wait_minutes": 30,
+          "avg_wait_minutes": 20,
           "reservation_needed": "no",
           "parking_difficulty": "hard",
           "instagrammable_score": 8,
           "hidden_gem_score": 5,
-          "value_score": 8,
-          "crowd_typical_zh": "威尼斯的时尚年轻人",
-          "one_liner_zh": "威尼斯必去的时尚面包店和熟食店",
-          "avoid_if_zh": "不喜欢排队或找停车位",
-          "cuisine_tags_str": "bakery | deli | venice | artisanal",
-          "must_try_dishes_str": "Smoked Fish Plate | Banh Mi | Reuben Sandwich",
-          "dietary_friendly_str": "vegetarian | gluten_free",
+          "value_score": 7,
+          "crowd_typical_zh": "威尼斯的时尚游客和当地人",
+          "crowd_typical_en": "Trendy tourists and locals in Venice",
+          "one_liner_zh": "威尼斯必去的时尚面包店，享受美味早餐",
+          "one_liner_en": "A must-visit trendy bakery in Venice for a delicious breakfast",
+          "avoid_if_zh": "不喜欢排队或找车位",
+          "avoid_if_en": "Avoid if you dislike lines or parking challenges",
+          "cuisine_tags_str": "bakery | café | venice | artisanal",
+          "must_try_dishes_str": "Smoked Fish Plate | Bialy Egg Sandwich | Baklava Croissant",
+          "dietary_friendly_str": "vegetarian",
           "best_for_str": "brunch | friends_group | tourist_must",
-          "best_time_slots_str": "brunch | lunch",
+          "best_time_slots_str": "breakfast | brunch | lunch",
           "cluster_id": 3,
           "visit_order": 1
         }
@@ -1115,7 +1172,7 @@
           "maps_url": "https://www.google.com/maps/place/Guelaguetza",
           "price_per_person_usd": 40,
           "price_tier": "$$",
-          "cuisine_primary": "Oaxacan",
+          "cuisine_primary": "Mexican",
           "cuisine_tags": [
             "oaxacan",
             "mexican",
@@ -1145,12 +1202,15 @@
           "avg_wait_minutes": 20,
           "reservation_needed": "recommended",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 8,
-          "hidden_gem_score": 5,
+          "instagrammable_score": 7,
+          "hidden_gem_score": 6,
           "value_score": 8,
-          "crowd_typical_zh": "家庭聚餐与游客",
-          "one_liner_zh": "正宗瓦哈卡风味，必尝经典墨西哥菜",
-          "avoid_if_zh": "不喜欢热闹环境",
+          "crowd_typical_zh": "热爱墨西哥美食的家庭和游客",
+          "crowd_typical_en": "Families and tourists who love authentic Mexican cuisine",
+          "one_liner_zh": "品尝正宗瓦哈卡风味，墨西哥美食爱好者的天堂",
+          "one_liner_en": "Experience authentic Oaxacan flavors, a paradise for Mexican food lovers",
+          "avoid_if_zh": "不喜欢热闹氛围",
+          "avoid_if_en": "Avoid if you dislike lively atmospheres",
           "cuisine_tags_str": "oaxacan | mexican | mole | koreatown",
           "must_try_dishes_str": "Mole Negro | Tlayuda | Chapulines",
           "dietary_friendly_str": "vegetarian",
@@ -1171,13 +1231,12 @@
           "cuisine_tags": [
             "korean",
             "bbq",
-            "late_night",
-            "koreatown"
+            "late_night"
           ],
           "must_try_dishes": [
-            "Galbi Jjim",
-            "Seolleongtang",
-            "Kimchi Jjigae"
+            "갈비찜",
+            "설렁탕",
+            "육개장"
           ],
           "dietary_friendly": [],
           "best_for": [
@@ -1194,15 +1253,18 @@
           ],
           "avg_wait_minutes": 30,
           "reservation_needed": "no",
-          "parking_difficulty": "hard",
-          "instagrammable_score": 7,
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 6,
           "hidden_gem_score": 5,
           "value_score": 8,
-          "crowd_typical_zh": "韩国城的年轻人和游客",
-          "one_liner_zh": "深夜韩餐好去处，牛骨汤必试",
+          "crowd_typical_zh": "年轻人和韩国料理爱好者",
+          "crowd_typical_en": "Young crowd and Korean food enthusiasts",
+          "one_liner_zh": "深夜韩式美食，必尝牛肉炖汤",
+          "one_liner_en": "Late-night Korean gem, don't miss the braised beef soup",
           "avoid_if_zh": "不喜欢嘈杂环境",
-          "cuisine_tags_str": "korean | bbq | late_night | koreatown",
-          "must_try_dishes_str": "Galbi Jjim | Seolleongtang | Kimchi Jjigae",
+          "avoid_if_en": "Avoid if you dislike noisy environments",
+          "cuisine_tags_str": "korean | bbq | late_night",
+          "must_try_dishes_str": "갈비찜 | 설렁탕 | 육개장",
           "dietary_friendly_str": NaN,
           "best_for_str": "friends_group | late_night | tourist_must",
           "best_time_slots_str": "dinner | late_night",
@@ -1231,12 +1293,11 @@
           "maps_url": "https://www.google.com/maps/place/Fathers+Office",
           "price_per_person_usd": 35,
           "price_tier": "$$",
-          "cuisine_primary": "Gourmet Burgers",
+          "cuisine_primary": "American",
           "cuisine_tags": [
             "american",
-            "burgers",
-            "craft_beer",
-            "casual"
+            "burger",
+            "craft_beer"
           ],
           "must_try_dishes": [
             "Office Burger",
@@ -1246,11 +1307,11 @@
           "dietary_friendly": [],
           "best_for": [
             "friends_group",
-            "casual",
+            "solo",
             "tourist_must"
           ],
           "vibe": "lively",
-          "noise_level": "loud",
+          "noise_level": "moderate",
           "dress_code": "casual",
           "best_time_slots": [
             "lunch",
@@ -1264,13 +1325,70 @@
           "hidden_gem_score": 5,
           "value_score": 8,
           "crowd_typical_zh": "年轻人和啤酒爱好者",
-          "one_liner_zh": "必尝招牌汉堡和精酿啤酒的圣地",
-          "avoid_if_zh": "不喜欢嘈杂环境",
-          "cuisine_tags_str": "american | burgers | craft_beer | casual",
+          "crowd_typical_en": "Young crowd and craft beer enthusiasts",
+          "one_liner_zh": "品尝传奇汉堡，享受精酿啤酒",
+          "one_liner_en": "Savor the legendary burger and enjoy craft beers",
+          "avoid_if_zh": "不喜欢热闹环境",
+          "avoid_if_en": "Avoid if you dislike lively settings",
+          "cuisine_tags_str": "american | burger | craft_beer",
           "must_try_dishes_str": "Office Burger | Sweet Potato Fries | Duck Confit Salad",
           "dietary_friendly_str": NaN,
-          "best_for_str": "friends_group | casual | tourist_must",
+          "best_for_str": "friends_group | solo | tourist_must",
           "best_time_slots_str": "lunch | dinner | late_night",
+          "cluster_id": -1
+        },
+        {
+          "name": "Spago",
+          "address": "176 N Canon Dr, Beverly Hills, CA 90210",
+          "lat": 34.07,
+          "lng": -118.4006,
+          "maps_url": "https://www.google.com/maps/place/Spago",
+          "price_per_person_usd": 150,
+          "price_tier": "$$$$",
+          "cuisine_primary": "American",
+          "cuisine_tags": [
+            "california",
+            "fine_dining",
+            "celebrity_chef"
+          ],
+          "must_try_dishes": [
+            "Smoked Salmon Pizza",
+            "Veal Chop",
+            "Kaiserschmarrn"
+          ],
+          "dietary_friendly": [
+            "vegetarian",
+            "gluten_free"
+          ],
+          "best_for": [
+            "celebration",
+            "date",
+            "business_lunch"
+          ],
+          "vibe": "fine_dining",
+          "noise_level": "moderate",
+          "dress_code": "upscale",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 0,
+          "reservation_needed": "essential",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 8,
+          "hidden_gem_score": 2,
+          "value_score": 7,
+          "crowd_typical_zh": "比佛利山庄名流与美食爱好者",
+          "crowd_typical_en": "Beverly Hills elites and gourmet enthusiasts",
+          "one_liner_zh": "比佛利山庄名厨餐厅，奢华美食体验",
+          "one_liner_en": "Beverly Hills' celebrity chef restaurant offering a luxurious dining experience",
+          "avoid_if_zh": "预算有限或不喜正式着装",
+          "avoid_if_en": "Avoid if on a budget or dislike dressing up",
+          "cuisine_tags_str": "california | fine_dining | celebrity_chef",
+          "must_try_dishes_str": "Smoked Salmon Pizza | Veal Chop | Kaiserschmarrn",
+          "dietary_friendly_str": "vegetarian | gluten_free",
+          "best_for_str": "celebration | date | business_lunch",
+          "best_time_slots_str": "lunch | dinner",
           "cluster_id": -1
         },
         {
@@ -1281,26 +1399,25 @@
           "maps_url": "https://www.google.com/maps/place/Cassia",
           "price_per_person_usd": 85,
           "price_tier": "$$$",
-          "cuisine_primary": "Southeast Asian",
+          "cuisine_primary": "Fusion",
           "cuisine_tags": [
-            "southeast asian",
-            "french",
             "fusion",
-            "santa monica"
+            "asian",
+            "seafood",
+            "santa_monica"
           ],
           "must_try_dishes": [
-            "Vietnamese Sunbathing Prawns",
-            "Grilled Spicy Lamb Breast",
-            "Chickpea Curry"
+            "Grilled Pig's Tail",
+            "Laksa",
+            "Vietnamese Pot Au Feu"
           ],
           "dietary_friendly": [
-            "vegetarian",
-            "gluten_free"
+            "vegetarian"
           ],
           "best_for": [
             "date",
-            "friends_group",
-            "tourist_must"
+            "celebration",
+            "friends_group"
           ],
           "vibe": "trendy",
           "noise_level": "moderate",
@@ -1314,13 +1431,16 @@
           "instagrammable_score": 8,
           "hidden_gem_score": 5,
           "value_score": 7,
-          "crowd_typical_zh": "圣塔莫尼卡时尚年轻人",
-          "one_liner_zh": "融合东南亚风味的时尚餐厅",
-          "avoid_if_zh": "不喜欢融合菜系",
-          "cuisine_tags_str": "southeast asian | french | fusion | santa monica",
-          "must_try_dishes_str": "Vietnamese Sunbathing Prawns | Grilled Spicy Lamb Breast | Chickpea Curry",
-          "dietary_friendly_str": "vegetarian | gluten_free",
-          "best_for_str": "date | friends_group | tourist_must",
+          "crowd_typical_zh": "圣塔莫尼卡时尚美食爱好者",
+          "crowd_typical_en": "Santa Monica's trendy food enthusiasts and locals",
+          "one_liner_zh": "亚洲风味融合餐厅，必尝猪尾和叻沙",
+          "one_liner_en": "Fusion Asian flavors in Santa Monica — don't miss the pig's tail and laksa",
+          "avoid_if_zh": "不喜欢融合菜式",
+          "avoid_if_en": "Avoid if you dislike fusion cuisine",
+          "cuisine_tags_str": "fusion | asian | seafood | santa_monica",
+          "must_try_dishes_str": "Grilled Pig's Tail | Laksa | Vietnamese Pot Au Feu",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "date | celebration | friends_group",
           "best_time_slots_str": "dinner",
           "cluster_id": -1
         },
@@ -1332,17 +1452,17 @@
           "maps_url": "https://www.google.com/maps/place/Republique",
           "price_per_person_usd": 85,
           "price_tier": "$$$",
-          "cuisine_primary": "French Californian",
+          "cuisine_primary": "French",
           "cuisine_tags": [
             "french",
-            "californian",
+            "california",
             "bakery",
             "brunch"
           ],
           "must_try_dishes": [
-            "Kimchi Fried Rice",
             "Mushroom Toast",
-            "Duck Confit"
+            "Kimchi Fried Rice",
+            "Croque Madame"
           ],
           "dietary_friendly": [
             "vegetarian"
@@ -1357,73 +1477,26 @@
           "dress_code": "smart_casual",
           "best_time_slots": [
             "brunch",
+            "lunch",
             "dinner"
           ],
           "avg_wait_minutes": 30,
           "reservation_needed": "recommended",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 9,
+          "instagrammable_score": 8,
           "hidden_gem_score": 4,
           "value_score": 8,
-          "crowd_typical_zh": "时尚年轻人和美食爱好者",
-          "one_liner_zh": "法式加州风味餐厅，甜点绝佳",
-          "avoid_if_zh": "不喜欢排队等候的客人",
-          "cuisine_tags_str": "french | californian | bakery | brunch",
-          "must_try_dishes_str": "Kimchi Fried Rice | Mushroom Toast | Duck Confit",
+          "crowd_typical_zh": "时尚美食爱好者和游客",
+          "crowd_typical_en": "Trendy food enthusiasts and tourists",
+          "one_liner_zh": "法式风情与加州风味的完美结合",
+          "one_liner_en": "A perfect blend of French flair and California flavors",
+          "avoid_if_zh": "不喜欢排队等位",
+          "avoid_if_en": "Avoid if you dislike waiting in line",
+          "cuisine_tags_str": "french | california | bakery | brunch",
+          "must_try_dishes_str": "Mushroom Toast | Kimchi Fried Rice | Croque Madame",
           "dietary_friendly_str": "vegetarian",
           "best_for_str": "date | celebration | tourist_must",
-          "best_time_slots_str": "brunch | dinner",
-          "cluster_id": -1
-        },
-        {
-          "name": "Spago",
-          "address": "176 N Canon Dr, Beverly Hills, CA 90210",
-          "lat": 34.07,
-          "lng": -118.4006,
-          "maps_url": "https://www.google.com/maps/place/Spago",
-          "price_per_person_usd": 150,
-          "price_tier": "$$$$",
-          "cuisine_primary": "California Cuisine",
-          "cuisine_tags": [
-            "california",
-            "fine_dining",
-            "celebrity_chef",
-            "beverly_hills"
-          ],
-          "must_try_dishes": [
-            "Smoked Salmon Pizza",
-            "Veal Schnitzel",
-            "Kaiserschmarrn"
-          ],
-          "dietary_friendly": [
-            "vegetarian"
-          ],
-          "best_for": [
-            "celebration",
-            "business_lunch",
-            "tourist_must"
-          ],
-          "vibe": "fine_dining",
-          "noise_level": "moderate",
-          "dress_code": "upscale",
-          "best_time_slots": [
-            "lunch",
-            "dinner"
-          ],
-          "avg_wait_minutes": 0,
-          "reservation_needed": "essential",
-          "parking_difficulty": "moderate",
-          "instagrammable_score": 8,
-          "hidden_gem_score": 2,
-          "value_score": 6,
-          "crowd_typical_zh": "名流与美食爱好者",
-          "one_liner_zh": "名厨Wolfgang Puck的经典餐厅，体验顶级加州美食",
-          "avoid_if_zh": "不喜欢正式用餐氛围",
-          "cuisine_tags_str": "california | fine_dining | celebrity_chef | beverly_hills",
-          "must_try_dishes_str": "Smoked Salmon Pizza | Veal Schnitzel | Kaiserschmarrn",
-          "dietary_friendly_str": "vegetarian",
-          "best_for_str": "celebration | business_lunch | tourist_must",
-          "best_time_slots_str": "lunch | dinner",
+          "best_time_slots_str": "brunch | lunch | dinner",
           "cluster_id": -1
         },
         {
@@ -1434,17 +1507,17 @@
           "maps_url": "https://www.google.com/maps/place/n+naka",
           "price_per_person_usd": 250,
           "price_tier": "$$$$",
-          "cuisine_primary": "Kaiseki",
+          "cuisine_primary": "Japanese",
           "cuisine_tags": [
-            "japanese",
             "kaiseki",
-            "fine_dining",
-            "chef's_table"
+            "modern",
+            "japanese",
+            "fine_dining"
           ],
           "must_try_dishes": [
-            "Abalone Spaghetti",
-            "Zensai",
-            "Wagyu Beef"
+            "Abalone with Truffle",
+            "A5 Wagyu Beef",
+            "Sashimi Platter"
           ],
           "dietary_friendly": [
             "vegetarian"
@@ -1452,7 +1525,7 @@
           "best_for": [
             "date",
             "celebration",
-            "tourist_must"
+            "business_lunch"
           ],
           "vibe": "fine_dining",
           "noise_level": "quiet",
@@ -1463,68 +1536,20 @@
           "avg_wait_minutes": 0,
           "reservation_needed": "essential",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 9,
+          "instagrammable_score": 8,
           "hidden_gem_score": 4,
           "value_score": 8,
-          "crowd_typical_zh": "高端食客与美食爱好者",
-          "one_liner_zh": "体验顶级怀石料理的绝佳去处",
-          "avoid_if_zh": "预算有限或不提前预约",
-          "cuisine_tags_str": "japanese | kaiseki | fine_dining | chef's_table",
-          "must_try_dishes_str": "Abalone Spaghetti | Zensai | Wagyu Beef",
+          "crowd_typical_zh": "高端食客和美食爱好者",
+          "crowd_typical_en": "High-end diners and culinary enthusiasts",
+          "one_liner_zh": "体验精致怀石料理，预约必不可少",
+          "one_liner_en": "Experience exquisite kaiseki dining — reservations are a must",
+          "avoid_if_zh": "不想穿正装或预算有限",
+          "avoid_if_en": "Avoid if you dislike dressing up or have a tight budget",
+          "cuisine_tags_str": "kaiseki | modern | japanese | fine_dining",
+          "must_try_dishes_str": "Abalone with Truffle | A5 Wagyu Beef | Sashimi Platter",
           "dietary_friendly_str": "vegetarian",
-          "best_for_str": "date | celebration | tourist_must",
+          "best_for_str": "date | celebration | business_lunch",
           "best_time_slots_str": "dinner",
-          "cluster_id": -1
-        },
-        {
-          "name": "Jitlada",
-          "address": "5233 W Sunset Blvd, Los Angeles, CA 90027",
-          "lat": 34.0978,
-          "lng": -118.3061,
-          "maps_url": "https://www.google.com/maps/place/Jitlada",
-          "price_per_person_usd": 40,
-          "price_tier": "$$",
-          "cuisine_primary": "Southern Thai",
-          "cuisine_tags": [
-            "thai",
-            "spicy",
-            "authentic",
-            "hollywood"
-          ],
-          "must_try_dishes": [
-            "Kua Kling Phat Tha Lung",
-            "Crying Tiger Beef",
-            "Green Curry Frog"
-          ],
-          "dietary_friendly": [
-            "vegetarian"
-          ],
-          "best_for": [
-            "friends_group",
-            "tourist_must",
-            "date"
-          ],
-          "vibe": "lively",
-          "noise_level": "loud",
-          "dress_code": "casual",
-          "best_time_slots": [
-            "dinner",
-            "late_night"
-          ],
-          "avg_wait_minutes": 30,
-          "reservation_needed": "recommended",
-          "parking_difficulty": "moderate",
-          "instagrammable_score": 7,
-          "hidden_gem_score": 5,
-          "value_score": 8,
-          "crowd_typical_zh": "喜欢正宗泰国菜的食客",
-          "one_liner_zh": "辣味十足的泰国南部美食天堂",
-          "avoid_if_zh": "不喜欢吃辣的人",
-          "cuisine_tags_str": "thai | spicy | authentic | hollywood",
-          "must_try_dishes_str": "Kua Kling Phat Tha Lung | Crying Tiger Beef | Green Curry Frog",
-          "dietary_friendly_str": "vegetarian",
-          "best_for_str": "friends_group | tourist_must | date",
-          "best_time_slots_str": "dinner | late_night",
           "cluster_id": -1
         },
         {
@@ -1533,72 +1558,22 @@
           "lat": 34.0627,
           "lng": -118.2789,
           "maps_url": "https://www.google.com/maps/place/Langers+Deli",
-          "price_per_person_usd": 25,
+          "price_per_person_usd": 30,
           "price_tier": "$$",
-          "cuisine_primary": "Jewish Deli",
+          "cuisine_primary": "American",
           "cuisine_tags": [
             "deli",
-            "sandwiches",
-            "historic",
-            "comfort_food"
+            "pastrami",
+            "classic"
           ],
           "must_try_dishes": [
-            "#19 Pastrami Sandwich",
+            "Pastrami Sandwich",
             "Matzo Ball Soup",
-            "Latkes"
+            "Reuben Sandwich"
           ],
           "dietary_friendly": [],
           "best_for": [
-            "friends_group",
-            "tourist_must",
-            "solo"
-          ],
-          "vibe": "casual",
-          "noise_level": "moderate",
-          "dress_code": "casual",
-          "best_time_slots": [
-            "lunch",
-            "dinner"
-          ],
-          "avg_wait_minutes": 20,
-          "reservation_needed": "no",
-          "parking_difficulty": "moderate",
-          "instagrammable_score": 7,
-          "hidden_gem_score": 5,
-          "value_score": 9,
-          "crowd_typical_zh": "本地居民与游客",
-          "one_liner_zh": "经典犹太熟食店，招牌熏牛肉三明治必试",
-          "avoid_if_zh": "不喜欢熏牛肉或犹太美食",
-          "cuisine_tags_str": "deli | sandwiches | historic | comfort_food",
-          "must_try_dishes_str": "#19 Pastrami Sandwich | Matzo Ball Soup | Latkes",
-          "dietary_friendly_str": NaN,
-          "best_for_str": "friends_group | tourist_must | solo",
-          "best_time_slots_str": "lunch | dinner",
-          "cluster_id": -1
-        },
-        {
-          "name": "The Apple Pan",
-          "address": "10801 W Pico Blvd, Los Angeles, CA 90064",
-          "lat": 34.0376,
-          "lng": -118.4367,
-          "maps_url": "https://www.google.com/maps/place/The+Apple+Pan",
-          "price_per_person_usd": 20,
-          "price_tier": "$",
-          "cuisine_primary": "American Diner",
-          "cuisine_tags": [
-            "american",
-            "diner",
-            "burgers",
-            "historic"
-          ],
-          "must_try_dishes": [
-            "Hickory Burger",
-            "Steakburger",
-            "Banana Cream Pie"
-          ],
-          "dietary_friendly": [],
-          "best_for": [
-            "friends_group",
+            "family",
             "solo",
             "tourist_must"
           ],
@@ -1612,16 +1587,123 @@
           "avg_wait_minutes": 20,
           "reservation_needed": "no",
           "parking_difficulty": "moderate",
-          "instagrammable_score": 7,
-          "hidden_gem_score": 6,
+          "instagrammable_score": 6,
+          "hidden_gem_score": 5,
           "value_score": 8,
-          "crowd_typical_zh": "本地居民与游客混杂",
-          "one_liner_zh": "经典美式汉堡店，历史悠久，值得一试",
-          "avoid_if_zh": "不喜欢传统美式快餐",
-          "cuisine_tags_str": "american | diner | burgers | historic",
-          "must_try_dishes_str": "Hickory Burger | Steakburger | Banana Cream Pie",
+          "crowd_typical_zh": "当地居民和游客",
+          "crowd_typical_en": "Local residents and tourists",
+          "one_liner_zh": "经典美式熟食店，必尝熏牛肉三明治",
+          "one_liner_en": "Classic American deli with a must-try pastrami sandwich",
+          "avoid_if_zh": "不喜欢熏牛肉",
+          "avoid_if_en": "Avoid if you dislike pastrami",
+          "cuisine_tags_str": "deli | pastrami | classic",
+          "must_try_dishes_str": "Pastrami Sandwich | Matzo Ball Soup | Reuben Sandwich",
           "dietary_friendly_str": NaN,
-          "best_for_str": "friends_group | solo | tourist_must",
+          "best_for_str": "family | solo | tourist_must",
+          "best_time_slots_str": "lunch | dinner",
+          "cluster_id": -1
+        },
+        {
+          "name": "Jitlada",
+          "address": "5233 W Sunset Blvd, Los Angeles, CA 90027",
+          "lat": 34.0978,
+          "lng": -118.3061,
+          "maps_url": "https://www.google.com/maps/place/Jitlada",
+          "price_per_person_usd": 40,
+          "price_tier": "$$",
+          "cuisine_primary": "Thai",
+          "cuisine_tags": [
+            "thai",
+            "spicy",
+            "authentic",
+            "hollywood"
+          ],
+          "must_try_dishes": [
+            "Khua Kling Phat Tha Lung",
+            "Pla Tod Rad Prik",
+            "Tom Yum Koong"
+          ],
+          "dietary_friendly": [
+            "vegetarian"
+          ],
+          "best_for": [
+            "friends_group",
+            "tourist_must",
+            "date"
+          ],
+          "vibe": "lively",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "dinner",
+            "late_night"
+          ],
+          "avg_wait_minutes": 30,
+          "reservation_needed": "recommended",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 7,
+          "hidden_gem_score": 5,
+          "value_score": 8,
+          "crowd_typical_zh": "喜欢辣味的美食爱好者",
+          "crowd_typical_en": "Spice-loving food enthusiasts and adventurous diners",
+          "one_liner_zh": "好莱坞正宗泰餐，辣味挑战极限",
+          "one_liner_en": "Authentic Thai in Hollywood — a spice lover's paradise",
+          "avoid_if_zh": "不爱吃辣或怕等位",
+          "avoid_if_en": "Avoid if you dislike spicy food or waiting",
+          "cuisine_tags_str": "thai | spicy | authentic | hollywood",
+          "must_try_dishes_str": "Khua Kling Phat Tha Lung | Pla Tod Rad Prik | Tom Yum Koong",
+          "dietary_friendly_str": "vegetarian",
+          "best_for_str": "friends_group | tourist_must | date",
+          "best_time_slots_str": "dinner | late_night",
+          "cluster_id": -1
+        },
+        {
+          "name": "The Apple Pan",
+          "address": "10801 W Pico Blvd, Los Angeles, CA 90064",
+          "lat": 34.0376,
+          "lng": -118.4367,
+          "maps_url": "https://www.google.com/maps/place/The+Apple+Pan",
+          "price_per_person_usd": 20,
+          "price_tier": "$",
+          "cuisine_primary": "American",
+          "cuisine_tags": [
+            "burger",
+            "classic",
+            "diner"
+          ],
+          "must_try_dishes": [
+            "Hickory Burger",
+            "Apple Pie"
+          ],
+          "dietary_friendly": [],
+          "best_for": [
+            "solo",
+            "friends_group",
+            "tourist_must"
+          ],
+          "vibe": "dive",
+          "noise_level": "moderate",
+          "dress_code": "casual",
+          "best_time_slots": [
+            "lunch",
+            "dinner"
+          ],
+          "avg_wait_minutes": 15,
+          "reservation_needed": "no",
+          "parking_difficulty": "moderate",
+          "instagrammable_score": 6,
+          "hidden_gem_score": 8,
+          "value_score": 8,
+          "crowd_typical_zh": "怀旧汉堡迷和游客",
+          "crowd_typical_en": "Nostalgic burger lovers and tourists",
+          "one_liner_zh": "经典汉堡店，苹果派不可错过",
+          "one_liner_en": "Classic burger joint — don't miss the apple pie",
+          "avoid_if_zh": "不喜欢简单汉堡",
+          "avoid_if_en": "Avoid if you dislike simple burgers",
+          "cuisine_tags_str": "burger | classic | diner",
+          "must_try_dishes_str": "Hickory Burger | Apple Pie",
+          "dietary_friendly_str": NaN,
+          "best_for_str": "solo | friends_group | tourist_must",
           "best_time_slots_str": "lunch | dinner",
           "cluster_id": -1
         }

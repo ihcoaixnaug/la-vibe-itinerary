@@ -10,8 +10,10 @@ import ast
 import json
 import math
 import os
+import re
 from itertools import permutations
 from pathlib import Path
+from urllib.parse import quote_plus
 
 import folium
 import numpy as np
@@ -20,6 +22,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from sklearn.cluster import DBSCAN
 from streamlit_folium import st_folium
+import streamlit.components.v1 as components
 
 # 加载 API Key（本地从 .env，部署时从 Streamlit Secrets）
 load_dotenv()
@@ -60,6 +63,250 @@ SCENARIO_ZH = {
     "friends_group": "朋友聚会", "solo": "一人食",
     "celebration": "庆祝", "tourist_must": "游客必去",
 }
+# 适合场景的合法白名单（GPT 偶尔会漂移塞进 brunch/casual/late_night 等其他字段值，过滤掉）
+CANONICAL_SCENARIOS = list(SCENARIO_ZH.keys())
+
+# LA 餐厅常见菜系中文映射 · 全覆盖版（没匹配的兜底只显示英文）
+CUISINE_ZH = {
+    # 韩国
+    "Korean BBQ": "韩国烤肉", "Korean": "韩国菜", "Korean Soup": "韩式汤", "Korean Stew": "韩式炖煮",
+    # 意大利
+    "California Italian": "加州意餐", "Italian": "意大利菜", "Roman Italian": "罗马意餐",
+    "Italian-American": "意美融合", "Italian American": "意美融合", "Pizzeria": "比萨店",
+    # 法国
+    "California-French": "加州法餐", "California French": "加州法餐",
+    "French": "法餐", "French Bakery": "法式烘焙", "Patisserie": "法式甜品",
+    # 日本
+    "Sushi": "寿司", "Hand Roll Sushi": "手卷寿司", "Japanese": "日料",
+    "Japanese Kaiseki": "日式怀石", "Modern Japanese": "现代日料", "Ramen": "拉面",
+    "Izakaya": "居酒屋",
+    # 墨西哥
+    "Oaxacan": "瓦哈卡墨菜", "Mexican": "墨西哥菜", "Tacos": "塔可",
+    "Tex-Mex": "德州墨菜", "Taqueria": "塔可铺",
+    # 泰国 / 东南亚
+    "Modern Thai": "现代泰餐", "Thai": "泰国菜", "Southeast Asian": "东南亚菜",
+    "Asian Fusion": "亚洲融合", "Indonesian": "印尼菜", "Vietnamese": "越南菜",
+    "Asian": "亚洲菜",
+    # 中东 / 地中海
+    "Israeli": "以色列菜", "Middle Eastern": "中东菜", "Mediterranean": "地中海菜",
+    "Lebanese": "黎巴嫩菜", "Israeli Middle Eastern": "以色列中东菜",
+    # 美式
+    "American": "美式", "New American": "新美式", "Diner": "美式餐厅",
+    "Comfort Food": "家常美食", "California Cuisine": "加州菜",
+    "California Modern": "加州现代菜", "Modern American": "现代美式",
+    # 美式 fast / casual
+    "Burger": "汉堡", "Burgers": "汉堡", "Gastropub": "美食酒馆",
+    "Hot Dogs": "热狗", "Hot Chicken": "辣鸡", "Nashville Hot Chicken": "纳什维尔辣鸡",
+    "Sandwiches": "三明治", "Sandwich": "三明治", "Fried Chicken": "炸鸡",
+    "BBQ": "烧烤", "Steakhouse": "牛排馆",
+    # 欧洲
+    "Spanish": "西班牙菜", "Spanish Tapas": "西班牙小吃", "Tapas": "小吃",
+    "Greek": "希腊菜",
+    # 烘焙 / 咖啡 / 早午
+    "Bakery": "烘焙", "Cafe": "咖啡馆", "Café": "咖啡馆", "Coffee Shop": "咖啡馆",
+    "Brunch": "早午餐", "Breakfast": "早餐", "Breakfast & Brunch": "早午餐",
+    # 杂项
+    "Jewish Deli": "犹太熟食", "Deli": "熟食店",
+    "Pizza": "比萨", "Food Hall": "美食广场", "Market": "美食市场",
+    "Eclectic": "混搭料理", "International": "国际料理",
+    "Vegetarian": "素食", "Vegan": "纯素",
+    "Seafood": "海鲜",
+    # 12 个之前漏掉的（数据实际出现）
+    "American Diner": "美式餐厅",
+    "American Gastropub": "美式美食酒馆",
+    "Breakfast Sandwiches": "早餐三明治",
+    "California": "加州菜",
+    "California Bakery": "加州烘焙",
+    "California Contemporary": "加州现代菜",
+    "California Mediterranean": "加州地中海菜",
+    "French Italian": "法意融合",
+    "Kaiseki": "怀石料理",
+    "Southern Thai": "泰国南部菜",
+    "Sushi Handrolls": "手卷寿司",
+    "Thai Street Food": "泰式街头小吃",
+    # 阶段 13：菜系枚举规范化后新增的标准选项
+    "Chinese": "中餐",
+    "Indian": "印度菜",
+    "Latin American": "拉美菜",
+    "Southern American": "美式南方菜",
+    "Cajun": "卡真菜",
+    "Fusion": "融合菜",
+    "Other": "其他",
+}
+
+
+def fmt_en(value: str) -> str:
+    """把 'business_lunch' / 'fine_dining' 等下划线英文转为 'Business Lunch' / 'Fine Dining'。
+    对已经正确大小写的菜系名（如 'Korean BBQ'）原样返回。"""
+    if not isinstance(value, str):
+        return str(value)
+    if "_" in value:
+        return value.replace("_", " ").title()
+    if value.islower():
+        return value.title()
+    return value
+
+
+def fmt_locale(value: str, zh_map: dict) -> str:
+    """根据当前语言返回中文或英文标签。中文模式优先查 zh_map，没匹配兜底英文。"""
+    if "lang" in st.session_state and st.session_state["lang"] == "zh":
+        zh = zh_map.get(value, "").strip()
+        if zh:
+            return zh
+    return fmt_en(value)
+
+
+# ═══════════════════════════════════════════════════════════════
+# 双语切换（i18n）
+# ═══════════════════════════════════════════════════════════════
+T = {
+    # Header
+    "subtitle": ("AI 驱动的洛杉矶美食决策助手 · Vibe Coding Demo · 2026",
+                 "AI-Powered LA Restaurant Itinerary Assistant · Vibe Coding Demo · 2026"),
+    "reset_btn": ("🔄 重置筛选", "🔄 Reset Filters"),
+    "reset_help": ("清空所有筛选 + AI 推荐 + 行程", "Clear all filters, AI recs, and itinerary"),
+    # Sidebar AI section
+    "ai_header": ("🤖 AI 决策助手", "🤖 AI Concierge"),
+    "ai_query_label": ("用一句话描述你想要的店", "Describe what you're looking for"),
+    "ai_placeholder": ("例：今晚约会，预算 $80，安静一点不排队",
+                       "e.g., date night, budget $80, quiet, no wait"),
+    "ai_run_btn": ("✨ 让 AI 帮我选", "✨ Let AI Pick"),
+    "ai_clear_btn": ("🗑️ 清除 AI 推荐", "🗑️ Clear AI Picks"),
+    # Sidebar filters
+    "filter_header": ("🎛️ 多维筛选", "🎛️ Filters"),
+    "price_label": ("💰 人均预算 (USD)", "💰 Budget per Person (USD)"),
+    "vibe_label": ("✨ 氛围", "✨ Vibe"),
+    "scenario_label": ("🎯 适合场景", "🎯 Best For"),
+    "cuisine_label": ("🍴 主菜系", "🍴 Cuisine"),
+    "ms_placeholder": ("请选择...", "Choose options"),
+    "import_header": ("🔗 用你自己的数据", "🔗 Use Your Own Data"),
+    "import_intro": (
+        "想用你自己的 Google Maps 收藏吗？跟着 4 步把它接进来：",
+        "Want to plug in your own Google Maps favorites? Follow these 4 steps:",
+    ),
+    "import_step1": (
+        "**1.** 去 Google Takeout 申请导出，**只勾**「Maps (your places)」",
+        "**1.** Go to Google Takeout, **only check** \"Maps (your places)\"",
+    ),
+    "import_step2": (
+        "**2.** 等几分钟收到下载邮件，解压找到收藏列表 CSV",
+        "**2.** Wait for the email, unzip and find your saved-list CSV",
+    ),
+    "import_step3": (
+        "**3.** Fork [本项目仓库](https://github.com/ihcoaixnaug/la-vibe-itinerary)，把你的 CSV 替换 `data/my_places.csv`",
+        "**3.** Fork [the repo](https://github.com/ihcoaixnaug/la-vibe-itinerary), replace `data/my_places.csv` with yours",
+    ),
+    "import_step4": (
+        "**4.** 终端跑 `python scripts/02_process_data.py` → GPT-4o 自动给你的店打 20 维标签（约 30 秒、$0.20）",
+        "**4.** Run `python scripts/02_process_data.py` → GPT-4o auto-tags your places (~30s, ~$0.20)",
+    ),
+    "import_btn": ("🚀 打开 Google Takeout", "🚀 Open Google Takeout"),
+    "import_note": (
+        "💡 因 Google 隐私政策，网站不能直接读你的收藏，必须先导出。",
+        "💡 Due to Google's privacy policy, this site can't read your favorites directly — you must export first.",
+    ),
+    "gem_label": ("💎 小众度", "💎 Hidden Gem Level"),
+    "gem_help": ("1=人尽皆知，10=本地宝藏", "1=well-known, 10=local secret"),
+    "sort_label": ("🔀 排序方式", "🔀 Sort By"),
+    "sort_default": ("推荐（默认）", "Recommended (default)"),
+    "sort_cheapest": ("人均最便宜", "Cheapest"),
+    "sort_priciest": ("人均最贵", "Most Expensive"),
+    "sort_value": ("性价比最高", "Best Value"),
+    "sort_wait": ("等位最短", "Shortest Wait"),
+    "sort_gem": ("最小众", "Most Hidden"),
+    "sort_insta": ("最出片", "Most Instagrammable"),
+    "gen_btn": ("🚀 一键生成行程", "🚀 Generate Itinerary"),
+    "db_caption": ("📊 数据库：{n} 家店  ·  {dp}+ 个 AI 标签",
+                   "📊 Database: {n} places  ·  {dp}+ AI tags"),
+    "tech_caption": ("🤖 GPT-4o 自动归纳人均/招牌菜/氛围/场景\n\n🌐 DBSCAN 聚类 + TSP 最优路径",
+                     "🤖 GPT-4o auto-tags price / dishes / vibe / scenes\n\n🌐 DBSCAN clustering + TSP optimization"),
+    # Metrics
+    "metric_hits": ("命中店铺", "Matches"),
+    "metric_tags": ("AI 标签数", "AI Tags"),
+    "metric_areas": ("覆盖商圈", "Areas"),
+    "metric_areas_v": ("5 个核心 + 8 散点", "5 hubs + 8 outliers"),
+    "metric_ai_recs": ("AI 推荐", "AI Picks"),
+    "metric_ai_off": ("未启用", "Off"),
+    "metric_ai_n": ("{n} 家", "{n} places"),
+    "metric_min_price": ("最低人均", "Min/Person"),
+    # AI rec block
+    "ai_thinking": ("🤔 GPT-4o 正在分析需求：{q}", "🤔 GPT-4o analyzing: {q}"),
+    "ai_failed": ("❌ AI 推荐失败：{e}", "❌ AI rec failed: {e}"),
+    "ai_you_said": ("💬 你说：\"{q}\"", "💬 You asked: \"{q}\""),
+    "ai_recs_title": ("🎯 AI 推荐：{names}", "🎯 AI Picks: {names}"),
+    "ai_reasoning": ("💭 {r}", "💭 {r}"),
+    "ai_no_match": ("🤖 AI 没找到匹配项：{r}", "🤖 No match: {r}"),
+    # Map / itinerary
+    "map_title": ("🗺️ 美食地图", "🗺️ Restaurant Map"),
+    "map_with_routes": ("  ·  📍 已生成打卡路线", "  ·  📍 Itinerary generated"),
+    "list_title_filter": ("📋 命中店铺（{n} 家）", "📋 {n} Matches"),
+    "list_title_ai": ("🎯 AI 推荐 + 筛选结果（{a} + {b} 家）",
+                     "🎯 AI Picks + Filter Results ({a} + {b})"),
+    "sort_hint": ("🔀 已按 **{by}** 排序", "🔀 Sorted by **{by}**"),
+    "no_match": ("⚠️ 当前筛选条件下没命中。试着放宽预算/取消氛围。",
+                 "⚠️ No matches. Try relaxing budget or vibe."),
+    "must_try": ("🍴 **必点**", "🍴 **Must Try**"),
+    "warning_too_few": ("⚠️ 当前筛选结果不足 2 家，无法生成行程，请放宽条件。",
+                       "⚠️ Need at least 2 matches to build itinerary. Relax filters."),
+    "itinerary_title": ("📍 推荐打卡顺序", "📍 Suggested Visit Order"),
+    "route_label": ("路线 {i} · {n} 家店 · {km:.1f} km · 步行 {w} 分 / 开车 {d} 分",
+                    "Route {i} · {n} places · {km:.1f} km · {w} min walk / {d} min drive"),
+    "min_per_person": ("人均", "Avg/Person"),
+    # Dish dialog
+    "dish_dialog_title": ("🍴 菜品预览", "🍴 Dish Preview"),
+    "dish_dialog_at": ("@ **{r}**", "@ **{r}**"),
+    "dish_dialog_caption": (
+        "ℹ️ 这是一张通用美食示意图（来自 Flickr 摄影师），不一定是这家店的实际菜品。想看真实图片用下面按钮 ↓",
+        "ℹ️ This is a generic food image (from Flickr). For the actual dish at this restaurant, use buttons below ↓",
+    ),
+    "dish_btn_maps": ("📍 去 Google Maps 看餐厅", "📍 View Restaurant on Google Maps"),
+    "dish_btn_search": ("🖼️ Google 搜真实图", "🖼️ Real Photos via Google"),
+    "dish_load_failed": ("图片加载失败，请用下方按钮看真实图",
+                         "Image failed to load — use buttons below for real photos"),
+    # Tag dialog
+    "tag_dialog_title": ("🏷️ 同标签店铺", "🏷️ Same-Tag Restaurants"),
+    "tag_dialog_count": ("含标签 `{tag}` 的店（{n} 家）",
+                        "Places with tag `{tag}` ({n})"),
+    "tag_dialog_empty": ("没有匹配店铺", "No matches"),
+    # AI not configured
+    "ai_no_key": ("未配置 OPENROUTER_API_KEY（本地需 .env，部署需 Streamlit Secrets）",
+                  "OPENROUTER_API_KEY not set (need .env locally or Streamlit Secrets)"),
+    # Data not found
+    "data_not_found": ("❌ 没找到 data/enriched_places.csv，请先跑 `python scripts/02_process_data.py`",
+                       "❌ data/enriched_places.csv not found. Run `python scripts/02_process_data.py` first."),
+    # Tooltip
+    "back_to_top": ("回到顶部", "Back to top"),
+    "open_gmaps": ("在 Google Maps 中打开", "Open in Google Maps"),
+}
+
+
+def init_lang():
+    if "lang" not in st.session_state:
+        st.session_state["lang"] = "zh"
+    return st.session_state["lang"]
+
+
+def t(key: str, **kwargs) -> str:
+    """根据当前语言返回翻译；支持 {var} 占位符。"""
+    pair = T.get(key, (key, key))
+    text = pair[0] if init_lang() == "zh" else pair[1]
+    if kwargs:
+        try:
+            text = text.format(**kwargs)
+        except Exception:
+            pass
+    return text
+
+
+def field(row, name: str) -> str:
+    """根据当前语言返回 _zh 或 _en 字段值。"""
+    lang = init_lang()
+    val = row.get(f"{name}_{lang}")
+    if not val or (isinstance(val, float) and pd.isna(val)):
+        # 兜底：拿另一种语言
+        other = "en" if lang == "zh" else "zh"
+        val = row.get(f"{name}_{other}", "")
+    return str(val) if val else ""
 
 st.set_page_config(
     page_title="LA Vibe Itinerary",
@@ -134,6 +381,23 @@ def parse_list_field(val):
 # ═══════════════════════════════════════════════════════════════
 # AI Agent：自然语言查询 → 推荐 2-4 家店
 # ═══════════════════════════════════════════════════════════════
+def parse_budget(query: str) -> float | None:
+    """从自然语言中提取预算上限，支持中英文格式如 '预算80' '$80' 'budget 80' '80美元/刀'。"""
+    patterns = [
+        r'预算\s*[¥$]?\s*(\d+)',
+        r'[¥$]\s*(\d+)',
+        r'budget\s+[¥$]?\s*(\d+)',
+        r'(\d+)\s*(?:刀|美元|usd|dollar)',
+        r'under\s+[¥$]?\s*(\d+)',
+        r'(\d+)\s*per\s*person',
+    ]
+    for p in patterns:
+        m = re.search(p, query, re.IGNORECASE)
+        if m:
+            return float(m.group(1))
+    return None
+
+
 def build_places_summary(df: pd.DataFrame) -> str:
     """把所有店压缩成 GPT-4o 易消化的紧凑列表。"""
     rows = []
@@ -151,15 +415,29 @@ def build_places_summary(df: pd.DataFrame) -> str:
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
-def ai_recommend(query: str, places_summary: str) -> dict:
-    """调 GPT-4o 做语义推荐，返回 {recommended_names: [...], reasoning_zh: "..."}"""
+def ai_recommend(query: str, places_summary: str, lang: str = "zh") -> dict:
+    """调 GPT-4o 做语义推荐。lang='zh' 返中文 reasoning，'en' 返英文。"""
     if not OPENROUTER_API_KEY:
-        return {"error": "未配置 OPENROUTER_API_KEY（本地需 .env，部署需 Streamlit Secrets）"}
+        return {"error": "OPENROUTER_API_KEY not configured"}
     try:
         from openai import OpenAI
         client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=OPENROUTER_API_KEY,
+        )
+        lang_instruction = (
+            "用中文 2-3 句话精炼解释推荐理由（每家店指出具体匹配点；约束有偏差要诚实说明）"
+            if lang == "zh"
+            else "Explain in 2-3 concise English sentences why each is recommended; honestly note any trade-offs"
+        )
+        example = (
+            '{"recommended_names": ["Republique", "Cassia", "Sushi Gen"],'
+            ' "reasoning": "Republique 浪漫氛围+可订位，人均略高 $90 但氛围完美匹配；'
+            'Cassia 在 Santa Monica 海边，中价 $60 安静雅致；Sushi Gen 是 DTLA 经典寿司，环境安静、订位即可。"}'
+            if lang == "zh"
+            else '{"recommended_names": ["Republique", "Cassia", "Sushi Gen"],'
+            ' "reasoning": "Republique offers romantic ambiance with easy reservations — slightly over budget at $90 but worth it. '
+            'Cassia in Santa Monica delivers quiet seaside vibes at $60. Sushi Gen is a DTLA sushi classic, peaceful and reservable around $70."}'
         )
         system = f"""You are a helpful AI restaurant concierge for Los Angeles dining. Your goal is to ALWAYS give the user 2-4 actionable recommendations from the database — never refuse, never return empty results.
 
@@ -169,24 +447,17 @@ DATABASE (each line: name | cuisine | price | attributes | dishes | pitch):
 Return ONLY a JSON object:
 {{
   "recommended_names": ["exact name 1", "exact name 2", ...],
-  "reasoning_zh": "用中文 2-3 句话给出推荐理由，必须为每家店指出具体匹配点，如果某约束略有偏差要诚实说明（例：'Cassia 略超预算 $10 但氛围完美匹配约会需求'）"
+  "reasoning": "{lang_instruction}"
 }}
 
 CRITICAL RULES:
 1. ALWAYS return 2-4 recommendations — find the BEST AVAILABLE, not perfect matches.
-2. Soft matching > strict matching:
-   - 预算超 10-30%：可推荐，标注 "略超预算 $X"
-   - 噪音 moderate 当 quiet 用：可推荐，标注 "中等吵但氛围 OK"
-   - 等位 ≤30 分钟当 "无需排队"：可推荐
-3. Names MUST exactly match the database (case-sensitive, punctuation matters).
-4. ONLY return empty if database is literally empty or query is nonsensical (extremely rare).
-5. reasoning_zh: Chinese, 2-3 sentences, mention WHY each is recommended + any trade-offs.
+2. Soft matching > strict matching (e.g. 10-30% over budget OK with note).
+3. Names MUST exactly match the database (case-sensitive).
+4. reasoning field: {"Chinese (Simplified)" if lang == "zh" else "natural English"}, 2-3 sentences max.
 
 EXAMPLE for query "今晚约会，预算 $80，安静一点不排队":
-{{
-  "recommended_names": ["Republique", "Cassia", "Sushi Gen"],
-  "reasoning_zh": "Republique 浪漫氛围 + 可订位无需排队，人均略高 $90 但氛围完美匹配；Cassia 在 Santa Monica 海边，中价 $60 安静雅致；Sushi Gen 是 DTLA 经典寿司，环境安静、订位即可，约 $70。"
-}}
+{example}
 """
         resp = client.chat.completions.create(
             model="openai/gpt-4o",
@@ -218,7 +489,7 @@ def load_data():
 
 csv_path = DATA / "enriched_places.csv"
 if not csv_path.exists():
-    st.error("❌ 没找到 data/enriched_places.csv，请先跑 `python scripts/02_process_data.py`")
+    st.error(t("data_not_found"))
     st.stop()
 
 df = load_data()
@@ -229,77 +500,147 @@ total_data_points = len(df) * 20 + sum(
 
 
 # ═══════════════════════════════════════════════════════════════
-# Header
+# Header（含锚点用于"回到顶部" + 语言切换）
 # ═══════════════════════════════════════════════════════════════
-st.title("🌴 LA Vibe Itinerary")
-st.caption("AI 驱动的洛杉矶美食决策助手  ·  Vibe Coding Demo  ·  2026")
+st.markdown('<div id="top"></div>', unsafe_allow_html=True)
+header_col1, header_col_lang, header_col_reset = st.columns([6, 1, 1.2])
+with header_col1:
+    st.title("🌴 LA Vibe Itinerary")
+    st.caption(t("subtitle"))
+with header_col_lang:
+    st.write("")
+    lang_choice = st.selectbox(
+        "🌐", options=["zh", "en"],
+        index=0 if init_lang() == "zh" else 1,
+        format_func=lambda x: "中文" if x == "zh" else "English",
+        label_visibility="collapsed",
+        key="lang_selector",
+    )
+    if lang_choice != st.session_state.get("lang"):
+        st.session_state["lang"] = lang_choice
+        st.rerun()
+with header_col_reset:
+    st.write("")
+    if st.button(t("reset_btn"), use_container_width=True, help=t("reset_help")):
+        # 用 JS 真正刷新浏览器页面，彻底清除所有 session state
+        st.session_state["_do_reload"] = True
+        st.rerun()
 
 
 # ═══════════════════════════════════════════════════════════════
 # Sidebar：AI 自然语言查询 + 筛选
 # ═══════════════════════════════════════════════════════════════
 with st.sidebar:
+    # ---- 导入个人数据指南（需求 5 · 方案 A）----
+    with st.expander(t("import_header"), expanded=False):
+        st.caption(t("import_intro"))
+        st.markdown(t("import_step1"))
+        st.markdown(t("import_step2"))
+        st.markdown(t("import_step3"))
+        st.markdown(t("import_step4"))
+        st.link_button(
+            t("import_btn"),
+            "https://takeout.google.com/",
+            use_container_width=True,
+        )
+        st.caption(t("import_note"))
+
+    st.divider()
+
     # ---- AI 自然语言查询 ----
-    st.header("🤖 AI 决策助手")
+    st.header(t("ai_header"))
     nl_query = st.text_area(
-        "用一句话描述你想要的店",
+        t("ai_query_label"),
         value=st.session_state.get("last_nl_query", ""),
-        placeholder="例：今晚约会，预算 $80，安静一点不排队",
+        placeholder=t("ai_placeholder"),
         height=80,
         key="nl_query_input",
     )
-    nl_btn = st.button("✨ 让 AI 帮我选", use_container_width=True, type="primary")
+    nl_btn = st.button(t("ai_run_btn"), use_container_width=True, type="primary")
 
     if nl_btn and nl_query.strip():
         st.session_state["last_nl_query"] = nl_query.strip()
-    if st.session_state.get("last_nl_query") and st.button("🗑️ 清除 AI 推荐", use_container_width=True):
+    if st.session_state.get("last_nl_query") and st.button(t("ai_clear_btn"), use_container_width=True):
         st.session_state.pop("last_nl_query", None)
         st.rerun()
 
     st.divider()
-    st.header("🎛️ 多维筛选")
+    st.header(t("filter_header"))
 
     price_min = int(df.price_per_person_usd.min())
     price_max = int(df.price_per_person_usd.max())
     price_range = st.slider(
-        "💰 人均预算 (USD)",
+        t("price_label"),
         min_value=price_min,
         max_value=price_max,
         value=(price_min, price_max),
         step=5,
     )
 
+    # 每个筛选放进可折叠面板，默认收起，标题显示"已选 N"
+    def _expander_title(label: str, selected: list) -> str:
+        return f"{label}" + (f"  ·  {len(selected)} ✓" if selected else "")
+
+    # 氛围
     all_vibes = sorted(df.vibe.unique())
-    selected_vibes = st.multiselect(
-        "✨ 氛围（不选 = 不限）",
-        options=all_vibes,
-        default=[],
-        format_func=lambda x: f"{VIBE_ZH.get(x, x)} ({x})",
-    )
+    prev_v = st.session_state.get("pills_vibes", [])
+    with st.expander(_expander_title(t("vibe_label"), prev_v), expanded=False):
+        selected_vibes = st.pills(
+            "vibes_internal_label",
+            options=all_vibes,
+            selection_mode="multi",
+            format_func=lambda x: fmt_locale(x, VIBE_ZH),
+            key="pills_vibes",
+            label_visibility="collapsed",
+        ) or []
 
-    all_scenarios = sorted({s for lst in df.best_for for s in lst})
-    selected_scenarios = st.multiselect(
-        "🎯 适合场景",
-        options=all_scenarios,
-        format_func=lambda x: f"{SCENARIO_ZH.get(x, x)}",
-    )
+    # 适合场景
+    raw_scenarios = {s for lst in df.best_for for s in lst}
+    all_scenarios = [s for s in CANONICAL_SCENARIOS if s in raw_scenarios]
+    prev_s = st.session_state.get("pills_scenarios", [])
+    with st.expander(_expander_title(t("scenario_label"), prev_s), expanded=False):
+        selected_scenarios = st.pills(
+            "scenarios_internal_label",
+            options=all_scenarios,
+            selection_mode="multi",
+            format_func=lambda x: fmt_locale(x, SCENARIO_ZH),
+            key="pills_scenarios",
+            label_visibility="collapsed",
+        ) or []
 
+    # 主菜系
     all_cuisines = sorted(df.cuisine_primary.unique())
-    selected_cuisines = st.multiselect("🍴 主菜系", options=all_cuisines)
+    prev_c = st.session_state.get("pills_cuisines", [])
+    with st.expander(_expander_title(t("cuisine_label"), prev_c), expanded=False):
+        selected_cuisines = st.pills(
+            "cuisines_internal_label",
+            options=all_cuisines,
+            selection_mode="multi",
+            format_func=lambda x: fmt_locale(x, CUISINE_ZH),
+            key="pills_cuisines",
+            label_visibility="collapsed",
+        ) or []
 
     min_gem = st.slider(
-        "💎 最低 Hidden Gem 度", 1, 10, 1,
-        help="越高越小众，1=人尽皆知，10=本地宝藏",
+        t("gem_label"),
+        min_value=1, max_value=10, value=1,
+        help=t("gem_help"),
+    )
+
+    SORT_OPTIONS = ["sort_default", "sort_cheapest", "sort_priciest",
+                    "sort_value", "sort_wait", "sort_gem", "sort_insta"]
+    sort_by = st.selectbox(
+        t("sort_label"),
+        options=SORT_OPTIONS,
+        format_func=lambda k: t(k),
     )
 
     st.divider()
-    generate_btn = st.button("🚀 一键生成行程", use_container_width=True, type="primary")
+    generate_btn = st.button(t("gen_btn"), use_container_width=True, type="primary")
 
     st.divider()
     st.caption(
-        f"📊 数据库：{len(df)} 家店  ·  {total_data_points}+ 个 AI 标签\n\n"
-        "🤖 GPT-4o 自动归纳人均/招牌菜/氛围/场景\n\n"
-        "🌐 DBSCAN 聚类 + TSP 最优路径"
+        t("db_caption", n=len(df), dp=total_data_points) + "\n\n" + t("tech_caption")
     )
 
 
@@ -317,6 +658,20 @@ if selected_cuisines:
 mask &= df.hidden_gem_score >= min_gem
 filtered = df[mask].reset_index(drop=True)
 
+# 应用排序（key 是 T 的 key，映射到字段+方向）
+SORT_MAP = {
+    "sort_default": (None, None),
+    "sort_cheapest": ("price_per_person_usd", True),
+    "sort_priciest": ("price_per_person_usd", False),
+    "sort_value": ("value_score", False),
+    "sort_wait": ("avg_wait_minutes", True),
+    "sort_gem": ("hidden_gem_score", False),
+    "sort_insta": ("instagrammable_score", False),
+}
+sort_col, sort_asc = SORT_MAP.get(sort_by, (None, None))
+if sort_col and sort_col in filtered.columns and len(filtered) > 0:
+    filtered = filtered.sort_values(by=sort_col, ascending=sort_asc).reset_index(drop=True)
+
 
 # ═══════════════════════════════════════════════════════════════
 # AI Agent：自然语言推荐（在所有店里选，无视筛选）
@@ -324,10 +679,27 @@ filtered = df[mask].reset_index(drop=True)
 ai_rec: dict = {}
 ai_rec_names: set = set()
 if st.session_state.get("last_nl_query"):
-    with st.spinner(f"🤔 GPT-4o 正在分析需求：{st.session_state['last_nl_query']}"):
-        ai_rec = ai_recommend(st.session_state["last_nl_query"], build_places_summary(df))
+    with st.spinner(t("ai_thinking", q=st.session_state['last_nl_query'])):
+        # AI 在 filtered 范围内挑；若 NL query 含预算数字则额外硬过滤，确保不超预算
+        if len(filtered) > 0:
+            _query_str = st.session_state["last_nl_query"]
+            _budget_cap = parse_budget(_query_str)
+            _ai_pool = filtered.copy()
+            if _budget_cap is not None:
+                _budget_filtered = _ai_pool[_ai_pool["price_per_person_usd"] <= _budget_cap]
+                if len(_budget_filtered) >= 2:
+                    _ai_pool = _budget_filtered
+                # 若预算内不足 2 家，退回全 filtered（AI 会在 reasoning 中说明）
+            ai_rec = ai_recommend(
+                _query_str,
+                build_places_summary(_ai_pool),
+                lang=init_lang(),
+            )
+        else:
+            ai_rec = {"error": "筛选结果为空，请放宽条件后再用 AI 推荐"
+                      if init_lang() == "zh" else "No matches under current filters"}
     if ai_rec.get("error"):
-        st.error(f"❌ AI 推荐失败：{ai_rec['error']}")
+        st.error(t("ai_failed", e=ai_rec['error']))
     else:
         ai_rec_names = set(ai_rec.get("recommended_names", []))
         if ai_rec_names:
@@ -336,64 +708,71 @@ if st.session_state.get("last_nl_query"):
                 padding:16px 20px;border-radius:12px;border-left:5px solid #f39c12;
                 margin-bottom:16px'>
                 <div style='font-size:13px;color:#7d6608;margin-bottom:8px'>
-                💬 你说："{st.session_state['last_nl_query']}"
+                {t("ai_you_said", q=st.session_state['last_nl_query'])}
                 </div>
                 <div style='font-size:18px;font-weight:600;color:#1a1a1a;margin-bottom:6px'>
-                🎯 AI 推荐：{' · '.join(ai_rec_names)}
+                {t("ai_recs_title", names=' · '.join(ai_rec_names))}
                 </div>
                 <div style='color:#444;line-height:1.6'>
-                💭 {ai_rec.get('reasoning_zh', '（无推理）')}
+                {t("ai_reasoning", r=ai_rec.get('reasoning', '—'))}
                 </div>
                 </div>""",
                 unsafe_allow_html=True,
             )
         else:
-            st.warning(f"🤖 AI 没找到匹配项：{ai_rec.get('reasoning_zh', '尝试放宽需求')}")
+            st.warning(t("ai_no_match", r=ai_rec.get('reasoning', '—')))
 
 
 # ═══════════════════════════════════════════════════════════════
 # 顶部指标
 # ═══════════════════════════════════════════════════════════════
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("命中店铺", f"{len(filtered)} / {len(df)}")
-m2.metric("AI 标签数", f"{total_data_points}+")
-m3.metric("AI 推荐", f"{len(ai_rec_names)} 家" if ai_rec_names else "未启用")
-m4.metric(
-    "最低人均",
-    f"${filtered.price_per_person_usd.min() if len(filtered) else 0}",
-)
+# 顶部 4 指标已删（用户决策无关 + 侧栏/列表已有等价信息）
 
 
 # ═══════════════════════════════════════════════════════════════
-# 行程生成（重新聚类筛选后的店）
+# 行程生成（结果存 session_state，跨 rerun 保留——避免点 marker 后路径消失）
 # ═══════════════════════════════════════════════════════════════
-itinerary_clusters: list[dict] = []
 if generate_btn:
     if len(filtered) >= 2:
         coords = filtered[["lat", "lng"]].values
         labels = dbscan_cluster(coords, eps_km=2.5, min_samples=2)
-        filtered = filtered.assign(_cid=labels)
-
+        filtered_with_cid = filtered.assign(_cid=labels)
+        new_clusters = []
         for cid in sorted(set(labels) - {-1}):
-            sub = filtered[filtered._cid == cid].reset_index(drop=True)
+            sub = filtered_with_cid[filtered_with_cid._cid == cid].reset_index(drop=True)
             places_list = sub.to_dict("records")
             order, total_km = optimize_route(places_list)
             ordered = [places_list[i] for i in order]
-            itinerary_clusters.append({
+            new_clusters.append({
                 "id": int(cid),
                 "places": ordered,
                 "total_km": total_km,
             })
+        st.session_state["itinerary_clusters"] = new_clusters
     else:
-        st.warning("⚠️ 当前筛选结果不足 2 家，无法生成行程，请放宽条件。")
+        st.warning(t("warning_too_few"))
+        st.session_state["itinerary_clusters"] = []
+
+# 始终从 session_state 读，确保点 marker / 改语言等 rerun 后路径仍在
+itinerary_clusters: list[dict] = st.session_state.get("itinerary_clusters", [])
 
 
 # ═══════════════════════════════════════════════════════════════
 # 地图
 # ═══════════════════════════════════════════════════════════════
-st.subheader("🗺️ 美食地图" + ("  ·  📍 已生成打卡路线" if itinerary_clusters else ""))
+st.subheader(t("map_title") + (t("map_with_routes") if itinerary_clusters else ""))
 
-m = folium.Map(location=LA_CENTER, zoom_start=11, tiles="cartodbpositron")
+# 地图自动居中：如果用户点击了某家店的 📍，地图重新中心 + 拉近到那家店
+_map_center = LA_CENTER
+_map_zoom = 11
+_highlighted_now = st.session_state.get("highlighted_name")
+if _highlighted_now:
+    _matching = df[df["name"] == _highlighted_now]
+    if len(_matching):
+        _row = _matching.iloc[0]
+        _map_center = [float(_row["lat"]), float(_row["lng"])]
+        _map_zoom = 14
+m = folium.Map(location=_map_center, zoom_start=_map_zoom, tiles="cartodbpositron")
 
 # 标记哪些店在行程内（带顺序号）
 in_itinerary: dict[str, dict] = {}
@@ -407,18 +786,45 @@ for c in itinerary_clusters:
     folium.PolyLine(coords_path, color=color, weight=4, opacity=0.75, dash_array="5").add_to(m)
 
 
+def gmap_link(row) -> str:
+    """生成 Google Maps 官方搜索 URL（用 ?api=1&query= 协议，
+    用店名+地址确保 100% 跳到正确餐厅；完全忽略数据里的占位 maps_url）。"""
+    q = quote_plus(f"{row['name']} {row.get('address', '')}".strip())
+    return f"https://www.google.com/maps/search/?api=1&query={q}"
+
+
+def gmap_route_url(places_in_order: list[dict]) -> str | None:
+    """生成 Google Maps 路线规划 URL（含起点/终点/途经点），用户可在 GMaps 选交通方式。"""
+    if len(places_in_order) < 2:
+        return None
+    addrs = [
+        f"{p['name']} {p.get('address', '')}".strip()
+        for p in places_in_order
+    ]
+    origin = quote_plus(addrs[0])
+    destination = quote_plus(addrs[-1])
+    base = f"https://www.google.com/maps/dir/?api=1&origin={origin}&destination={destination}"
+    if len(addrs) > 2:
+        waypoints = "|".join(quote_plus(a) for a in addrs[1:-1])
+        base += f"&waypoints={waypoints}"
+    return base
+
+
 def make_popup(row, order=None):
+    """简化版地图弹窗：只显示店名（链接）+ 一句话点评 + 价位。多余信息留给右侧卡片。"""
     badge = ""
     if order is not None:
         badge = f"<span style='background:#1a1a1a;color:white;padding:2px 8px;border-radius:50%;font-weight:bold;margin-right:6px'>{order + 1}</span>"
-    must_try = ", ".join(row["must_try_dishes"][:2]) if row["must_try_dishes"] else "—"
+    name_link = (
+        f"<a href='{gmap_link(row)}' target='_blank' "
+        f"style='color:#1a73e8;text-decoration:none;font-weight:bold' "
+        f"title='{t('open_gmaps')}'>{row['name']} ↗</a>"
+    )
     return (
-        f"<div style='font-family:system-ui,sans-serif;min-width:230px'>"
-        f"<div style='font-size:14px;font-weight:bold;margin-bottom:4px'>{badge}{row['name']}</div>"
-        f"<div style='color:#666;font-size:11px;margin-bottom:6px'>{row['cuisine_primary']}  ·  {row['price_tier']}  ·  ~${row['price_per_person_usd']}</div>"
-        f"<div style='font-style:italic;color:#222;margin-bottom:6px'>{row['one_liner_zh']}</div>"
-        f"<div style='font-size:11px;color:#444'>🍴 必点：{must_try}</div>"
-        f"<div style='font-size:11px;color:#444'>✨ {VIBE_ZH.get(row['vibe'], row['vibe'])}  ·  💎 Gem {row['hidden_gem_score']}/10</div>"
+        f"<div style='font-family:system-ui,sans-serif;min-width:200px;max-width:240px'>"
+        f"<div style='font-size:15px;margin-bottom:6px'>{badge}{name_link}</div>"
+        f"<div style='color:#666;font-size:11px;margin-bottom:6px'>~${row['price_per_person_usd']}/人</div>"
+        f"<div style='font-style:italic;color:#222;font-size:12px;line-height:1.4'>{field(row, 'one_liner')}</div>"
         f"</div>"
     )
 
@@ -430,6 +836,20 @@ display_df = df[df["name"].isin(display_names)]
 for _, row in display_df.iterrows():
     is_ai = row["name"] in ai_rec_names
     iti = in_itinerary.get(row["name"])
+    is_highlighted = (row["name"] == _highlighted_now)
+
+    # 被选中的店：先画一个蓝色大圆环作为高亮底层
+    if is_highlighted:
+        folium.CircleMarker(
+            location=[row["lat"], row["lng"]],
+            radius=22,
+            color="#1a73e8",
+            fill=True,
+            fill_color="#1a73e8",
+            fill_opacity=0.22,
+            weight=3,
+            opacity=0.9,
+        ).add_to(m)
 
     if is_ai:
         # AI 推荐：金色五角星 marker，最显眼
@@ -482,89 +902,388 @@ for _, row in display_df.iterrows():
             weight=1,
         ).add_to(m)
 
-st_folium(m, height=560, use_container_width=True, returned_objects=[])
+# ─── 菜名弹窗：点击菜名直接显示图 ───
+@st.dialog("🍴 Dish Preview", width="medium")
+def show_dish_dialog(dish: str, restaurant: str, gmap_url: str):
+    st.markdown(f"### {dish}")
+    st.caption(t("dish_dialog_at", r=restaurant))
+
+    first_kw = quote_plus(dish.split()[0].lower())
+    img_url = f"https://loremflickr.com/640/420/{first_kw},food,plate"
+    try:
+        st.image(img_url, use_container_width=True)
+    except Exception:
+        st.warning(t("dish_load_failed"))
+    st.caption(t("dish_dialog_caption"))
+
+    cols = st.columns(2)
+    cols[0].link_button(t("dish_btn_maps"), gmap_url, use_container_width=True)
+    image_search_url = (
+        f"https://www.google.com/search?q={quote_plus(dish + ' ' + restaurant)}&tbm=isch"
+    )
+    cols[1].link_button(t("dish_btn_search"), image_search_url, use_container_width=True)
 
 
-# ═══════════════════════════════════════════════════════════════
-# 行程详情
-# ═══════════════════════════════════════════════════════════════
-if itinerary_clusters:
-    st.subheader("📍 推荐打卡顺序")
-    for c in itinerary_clusters:
-        color = CLUSTER_COLORS[c["id"] % len(CLUSTER_COLORS)]
-        walk_min = int(c["total_km"] * 12)
-        drive_min = int(c["total_km"] * 3 + len(c["places"]) * 5)
-        with st.container(border=True):
-            st.markdown(
-                f"<h4><span style='color:{color};font-size:1.3em'>●</span> "
-                f"路线 {c['id'] + 1} · "
-                f"<span style='font-weight:400'>{len(c['places'])} 家店 · "
-                f"{c['total_km']:.1f} km · 步行 {walk_min} 分 / 开车 {drive_min} 分</span></h4>",
-                unsafe_allow_html=True,
-            )
-            for i, p in enumerate(c["places"]):
-                cols = st.columns([0.4, 3, 1])
-                cols[0].markdown(
-                    f"<div style='background:{color};color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold'>{i + 1}</div>",
-                    unsafe_allow_html=True,
-                )
-                cols[1].markdown(f"**{p['name']}** · {p['cuisine_primary']} · {p['price_tier']}")
-                cols[1].caption(f"💬 {p['one_liner_zh']}")
-                cols[2].metric("人均", f"${p['price_per_person_usd']}", label_visibility="collapsed")
+# Tag 弹窗已删除（标签区块已移除）
 
 
-# ═══════════════════════════════════════════════════════════════
-# 卡片列表
-# ═══════════════════════════════════════════════════════════════
-st.subheader(f"📋 全部命中店铺（{len(filtered)}）")
-if len(filtered) == 0:
-    st.info("⚠️ 当前筛选条件下没有命中店铺，请放宽预算或场景。")
-else:
-    for _, row in filtered.iterrows():
-        with st.container(border=True):
-            c1, c2, c3 = st.columns([3, 1, 1])
-            with c1:
-                st.markdown(f"### {row['name']}")
-                st.caption(f"📍 {row['cuisine_primary']}  ·  {row['address']}")
-                st.markdown(f"💬 *{row['one_liner_zh']}*")
-                if row["must_try_dishes"]:
-                    st.markdown(
-                        "🍴 **必点**：" + " · ".join(f"`{d}`" for d in row["must_try_dishes"][:3])
+# ─── 主区两栏：地图(左) + 可滚动结果列表(右) ───
+LIST_HEIGHT = 580
+map_col, list_col = st.columns([3, 2], gap="medium")  # 地图变窄，列表变宽
+
+with map_col:
+    map_state = st_folium(
+        m,
+        height=LIST_HEIGHT,
+        use_container_width=True,
+        returned_objects=["last_object_clicked_tooltip"],
+        # key 带上卡片点击计数器：卡片每次点击都会强制地图重渲染到新中心
+        key=f"main_map_{st.session_state.get('_card_click_count', 0)}",
+    )
+    # 解析 tooltip 拿到店名（兼容 "Name", "1. Name", "⭐ AI 推荐：Name"）
+    # 若本次是卡片按钮触发的 rerun，跳过 tooltip 覆盖（避免旧 tooltip 覆盖卡片选中）
+    if map_state and map_state.get("last_object_clicked_tooltip"):
+        if not st.session_state.pop("_card_just_clicked", False):
+            tip = map_state["last_object_clicked_tooltip"]
+            for n in df["name"]:
+                if str(n) in tip:
+                    st.session_state["highlighted_name"] = n
+                    break
+
+highlighted = st.session_state.get("highlighted_name")
+
+with list_col:
+    if ai_rec_names:
+        st.markdown(f"##### {t('list_title_ai', a=len(filtered), b=len(ai_rec_names - set(filtered.name)))}")
+    else:
+        st.markdown(f"##### {t('list_title_filter', n=len(filtered))}")
+
+    # 排序提示
+    if sort_by != "sort_default":
+        st.caption(t("sort_hint", by=t(sort_by)))
+
+    with st.container(height=LIST_HEIGHT - 50, border=False):
+        # 列表内"回到顶部"锚点（需求 4）
+        st.markdown('<div id="list-top-anchor"></div>', unsafe_allow_html=True)
+        # 行程详情：如果生成了行程，置顶显示（这样地图+行程同屏可见，不用上下翻）
+        if itinerary_clusters:
+            st.markdown(f"### {t('itinerary_title')}")
+            for c in itinerary_clusters:
+                color = CLUSTER_COLORS[c["id"] % len(CLUSTER_COLORS)]
+                walk_min = int(c["total_km"] * 12)
+                drive_min = int(c["total_km"] * 3 + len(c["places"]) * 5)
+                with st.container(border=True):
+                    route_text = t(
+                        "route_label",
+                        i=c["id"] + 1, n=len(c["places"]),
+                        km=c["total_km"], w=walk_min, d=drive_min,
                     )
-                if row["cuisine_tags"]:
                     st.markdown(
-                        "🏷️ " + "  ".join(f"`{t}`" for t in row["cuisine_tags"][:5])
+                        f"<div style='font-size:14px'><span style='color:{color};font-size:1.4em'>●</span> "
+                        f"{route_text}</div>",
+                        unsafe_allow_html=True,
                     )
-                with st.expander("🤔 别去的时候"):
-                    st.write(row["avoid_if_zh"])
-                    st.caption(f"客群：{row['crowd_typical_zh']}")
-            with c2:
-                st.metric("人均", f"${row['price_per_person_usd']}")
-                st.caption(f"价位 {row['price_tier']}")
-                st.caption(f"✨ {VIBE_ZH.get(row['vibe'], row['vibe'])}")
-            with c3:
-                st.metric("Insta", f"{row['instagrammable_score']}/10")
-                st.metric("Gem", f"{row['hidden_gem_score']}/10", label_visibility="collapsed")
-                st.caption(f"⏱ 等位 ~{row['avg_wait_minutes']}min")
+                    for i, p in enumerate(c["places"]):
+                        rcols = st.columns([0.4, 3])
+                        rcols[0].markdown(
+                            f"<div style='background:{color};color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px'>{i + 1}</div>",
+                            unsafe_allow_html=True,
+                        )
+                        rcols[1].markdown(
+                            f"**[{p['name']}]({gmap_link(p)})** · ${p['price_per_person_usd']}"
+                        )
+                    # GMaps 路线导出按钮（需求 2）
+                    route_url = gmap_route_url(c["places"])
+                    if route_url:
+                        btn_label = (
+                            "🗺️ 在 Google Maps 看路线"
+                            if init_lang() == "zh"
+                            else "🗺️ Open route in Google Maps"
+                        )
+                        st.link_button(btn_label, route_url, use_container_width=True)
+            st.divider()
+
+        # AI 推荐的店在 filtered 内排到最前面（不再 union 外部数据，确保不会超出筛选）
+        list_df = filtered.copy()
+        if ai_rec_names:
+            ai_in_filter = list_df[list_df["name"].isin(ai_rec_names)]
+            others = list_df[~list_df["name"].isin(ai_rec_names)]
+            list_df = pd.concat([ai_in_filter, others]).drop_duplicates(subset=["name"]).reset_index(drop=True)
+
+        if len(list_df) == 0:
+            st.info(t("no_match"))
+        else:
+            for idx, row in list_df.iterrows():
+                is_ai = row["name"] in ai_rec_names
+                is_picked = (row["name"] == highlighted)
+                with st.container(border=True):
+                    # 顶部 badges + 隐藏 anchor（用于自动滚动）
+                    safe_id = str(row["name"]).replace(" ", "_").replace("/", "_").replace("'", "")
+                    badges = [f'<a id="card-{safe_id}"></a>']
+                    if is_ai:
+                        badges.append(
+                            '<span class="ai-pick-badge" '
+                            'style="background:linear-gradient(90deg,#ffd54f,#ffa000);'
+                            'color:white;padding:3px 10px;border-radius:10px;'
+                            'font-size:11px;font-weight:bold;letter-spacing:0.3px">⭐ AI PICK</span>'
+                        )
+                    if is_picked:
+                        badges.append(
+                            '<span class="picked-marker" '
+                            'style="background:#1a73e8;color:white;'
+                            'padding:3px 10px;border-radius:10px;'
+                            'font-size:11px;font-weight:bold;letter-spacing:0.3px">📍 ON MAP</span>'
+                        )
+                    if len(badges) > 1:  # 至少有一个 badge（不是只有 anchor）
+                        st.markdown(
+                            f'<div style="margin-bottom:6px">{" ".join(badges)}</div>',
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        # 只渲染隐藏 anchor 用于滚动定位
+                        st.markdown(badges[0], unsafe_allow_html=True)
+
+                    # 店名行：点击店名 → 地图高亮；↗ 跳 Google Maps
+                    name_cols = st.columns([5, 1])
+                    if name_cols[0].button(
+                        row["name"],
+                        key=f"card_name_{idx}_{row['name']}",
+                        use_container_width=True,
+                        help="在地图上定位" if init_lang() == "zh" else "Highlight on map",
+                    ):
+                        st.session_state["highlighted_name"] = row["name"]
+                        st.session_state["_card_just_clicked"] = True  # 防止 map tooltip 覆盖
+                        # 递增计数器 → st_folium key 变化 → 强制地图重渲染到新中心
+                        st.session_state["_card_click_count"] = (
+                            st.session_state.get("_card_click_count", 0) + 1
+                        )
+                        st.rerun()
+                    name_cols[1].link_button(
+                        "↗",
+                        gmap_link(row),
+                        use_container_width=True,
+                        help=t("open_gmaps"),
+                    )
+                    st.caption(
+                        f"{row['cuisine_primary']} · "
+                        f"💰 ${row['price_per_person_usd']} · ⏱ ~{row['avg_wait_minutes']}min"
+                    )
+                    st.markdown(f"💬 *{field(row, 'one_liner')}*")
+
+                    # 必点菜：每个菜名是按钮，点击弹窗显示图片
+                    if row["must_try_dishes"]:
+                        dish_show = row["must_try_dishes"][:3]
+                        st.markdown(t("must_try"))
+                        dish_btn_cols = st.columns(min(3, len(dish_show)))
+                        for di, d in enumerate(dish_show):
+                            if dish_btn_cols[di].button(
+                                d, key=f"dish_{idx}_{d}", use_container_width=True
+                            ):
+                                show_dish_dialog(d, row["name"], gmap_link(row))
+
+                    # Tag 区块已按需求删除（信息和菜系/氛围重复）
+
+                    cap_cols = st.columns(3)
+                    cap_cols[0].caption(f"✨ {fmt_locale(row['vibe'], VIBE_ZH)}")
+                    cap_cols[1].caption(f"📸 {row['instagrammable_score']}/10")
+                    cap_cols[2].caption(f"💎 {row['hidden_gem_score']}/10")
+
+        # 底部留一点空白，置顶按钮已改为右侧浮动（见下方 JS）
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════════════
-# Footer
+# 重置筛选 → 真正刷新页面（清空所有 session state）
 # ═══════════════════════════════════════════════════════════════
-with st.expander("ℹ️ 项目说明 & 技术栈"):
-    st.markdown(f"""
-**LA Vibe Itinerary** — 验证 AI Agent 将 LBS 长尾资产（用户私人收藏）转化为结构化决策资产的可行性。
+if st.session_state.get("_do_reload"):
+    st.session_state.pop("_do_reload")
+    components.html("<script>parent.window.location.reload();</script>", height=0)
 
-| 阶段 | 实现 |
-|---|---|
-| 数据采集 | Playwright + Google Maps 共享列表 |
-| AI 增强 | GPT-4o (via OpenRouter) · 20 维结构化标签 · Pydantic 校验 |
-| 地理聚类 | scikit-learn DBSCAN（haversine 度量）|
-| 路径优化 | 簇内 ≤8 家用暴力 TSP，>8 家用最近邻贪心 |
-| 前端 | Streamlit + folium + streamlit-folium |
 
-**当前数据**：{len(df)} 家店 × 20 字段 + 列表展开 ≈ **{total_data_points} 个颗粒度数据点**
+# ═══════════════════════════════════════════════════════════════
+# JS 注入：① 给 AI 卡 / 选中卡加彩色边框 ② 滚动到选中卡
+# ═══════════════════════════════════════════════════════════════
+_safe_highlighted = (
+    str(highlighted).replace(" ", "_").replace("/", "_").replace("'", "")
+    if highlighted else ""
+)
+components.html(
+    f"""
+    <script>
+    (function() {{
+        // 从徽章往上找：第一个"真的有可见边框"的祖先 = st.container(border=True) 的容器
+        const findCardContainer = (badge) => {{
+            let el = badge.parentElement;
+            for (let i = 0; i < 25 && el && el !== parent.document.body; i++) {{
+                try {{
+                    const cs = parent.window.getComputedStyle(el);
+                    const w = parseFloat(cs.borderTopWidth || '0');
+                    const style = cs.borderTopStyle;
+                    if (w >= 1 && style !== 'none' && style !== 'hidden') {{
+                        return el;  // 这就是 st.container(border=True) 的实际容器
+                    }}
+                }} catch (e) {{}}
+                el = el.parentElement;
+            }}
+            return null;
+        }};
 
-**Vibe Coding 实践**：从业务意图描述 → Prompt 调优 → Web 部署，AI 全流程参与，
-原型周期从传统 60+ 小时压缩到 20 小时（↓70%）。
-""")
+        // Multiselect 选完自动关闭下拉（用事件委托一次性挂载）
+        const setupAutoCloseDropdown = () => {{
+            const doc = parent.document;
+            if (doc.body.dataset.msAutoClose) return;
+            doc.body.dataset.msAutoClose = "1";
+            doc.addEventListener('click', (e) => {{
+                const opt = e.target.closest('[role="option"]');
+                const sel = e.target.closest('[data-baseweb="select"]');
+                if (opt && sel) {{
+                    setTimeout(() => {{
+                        // 触发 mousedown 在 body 上 → BaseWeb 检测到外部点击 → 关闭弹窗
+                        const ev = new MouseEvent('mousedown', {{
+                            bubbles: true, cancelable: true, view: parent.window
+                        }});
+                        doc.body.dispatchEvent(ev);
+                        // 同时 blur 输入框双保险
+                        const input = sel.querySelector('input');
+                        if (input) input.blur();
+                    }}, 80);
+                }}
+            }}, true);
+        }};
+
+        const apply = () => {{
+            const doc = parent.document;
+            setupAutoCloseDropdown();
+            // AI 推荐 → 金色
+            doc.querySelectorAll('.ai-pick-badge').forEach(badge => {{
+                const card = findCardContainer(badge);
+                if (card) {{
+                    card.style.cssText += `
+                        border: 2px solid #ffa000 !important;
+                        box-shadow: 0 2px 12px rgba(255,165,0,0.28) !important;
+                        background: linear-gradient(180deg, #fff8e1 0%, transparent 50%) !important;
+                        border-radius: 10px !important;
+                    `;
+                }}
+            }});
+            // 地图选中 → 蓝色（覆盖金色，如果同时存在）
+            doc.querySelectorAll('.picked-marker').forEach(badge => {{
+                const card = findCardContainer(badge);
+                if (card) {{
+                    // 如果同时有 ai-pick-badge → 紫色（混合）
+                    const hasAi = card.querySelector('.ai-pick-badge');
+                    if (hasAi) {{
+                        card.style.cssText += `
+                            border: 2px solid #8e44ad !important;
+                            box-shadow: 0 2px 14px rgba(142,68,173,0.35) !important;
+                            background: linear-gradient(180deg, #f3e5f5 0%, transparent 50%) !important;
+                        `;
+                    }} else {{
+                        card.style.cssText += `
+                            border: 2px solid #1a73e8 !important;
+                            box-shadow: 0 2px 12px rgba(26,115,232,0.30) !important;
+                            background: linear-gradient(180deg, #e8f0fe 0%, transparent 50%) !important;
+                            border-radius: 10px !important;
+                        `;
+                    }}
+                }}
+            }});
+        }};
+
+        const scroll = () => {{
+            const id = "{_safe_highlighted}";
+            if (!id) return;
+            const target = parent.document.getElementById("card-" + id);
+            if (target) {{
+                target.scrollIntoView({{behavior: 'smooth', block: 'center'}});
+            }}
+        }};
+
+        // ── 右侧浮动"置顶"按钮（从 list-top-anchor 向上找滚动容器）──
+        const setupScrollTopBtn = () => {{
+            const doc = parent.document;
+
+            // 用锚点元素向上找第一个可滚动父容器，比 height/overflow 猜更可靠
+            const anchor = doc.getElementById('list-top-anchor');
+            if (!anchor) return;
+            let target = anchor.parentElement;
+            while (target && target !== doc.body) {{
+                const s = parent.window.getComputedStyle(target);
+                if (s.overflowY === 'auto' || s.overflowY === 'scroll') break;
+                target = target.parentElement;
+            }}
+            if (!target || target === doc.body) return;
+
+            const positionBtn = (btn) => {{
+                const rect = target.getBoundingClientRect();
+                // 贴容器右侧内沿，距顶部 16px
+                btn.style.left  = (rect.right - 52) + 'px';
+                btn.style.top   = (rect.top   + 16) + 'px';
+            }};
+
+            let btn = doc.getElementById('vibe-scroll-top-btn');
+            if (btn) {{
+                positionBtn(btn);   // 已存在时只更新位置
+                return;
+            }}
+
+            btn = doc.createElement('div');
+            btn.id = 'vibe-scroll-top-btn';
+            btn.innerHTML = '⬆<br>{"置顶" if init_lang() == "zh" else "Top"}';
+            btn.style.cssText = `
+                position: fixed;
+                z-index: 9999;
+                background: rgba(26,115,232,0.85);
+                color: white;
+                padding: 6px 9px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 11px;
+                font-weight: bold;
+                line-height: 1.5;
+                text-align: center;
+                min-width: 36px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+                user-select: none;
+                transition: background 0.15s, opacity 0.15s;
+                opacity: 0.88;
+            `;
+            positionBtn(btn);
+            btn.onmouseenter = () => {{ btn.style.opacity = '1'; btn.style.background = 'rgba(26,115,232,1)'; }};
+            btn.onmouseleave = () => {{ btn.style.opacity = '0.88'; btn.style.background = 'rgba(26,115,232,0.85)'; }};
+            btn.onclick = (e) => {{
+                e.stopPropagation();
+                // scrollIntoView 比直接赋 scrollTop 更可靠（Streamlit 容器层级复杂）
+                const anchor = doc.getElementById('list-top-anchor');
+                if (anchor) {{
+                    anchor.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+                }} else {{
+                    target.scrollTop = 0;
+                }}
+            }};
+            doc.body.appendChild(btn);
+
+            // 窗口 resize 时重新定位
+            parent.window.addEventListener('resize', () => positionBtn(btn), {{ passive: true }});
+        }};
+
+        // 多次尝试，因为卡片可能延迟渲染
+        setTimeout(() => {{ apply(); scroll(); setupScrollTopBtn(); }}, 300);
+        setTimeout(() => {{ apply(); setupScrollTopBtn(); }}, 800);
+        setTimeout(() => {{ apply(); setupScrollTopBtn(); }}, 1500);
+    }})();
+    </script>
+    """,
+    height=0,
+)
+
+
+# ═══════════════════════════════════════════════════════════════
+# 行程详情已移入右侧栏（不再需要往下滚）
+# ═══════════════════════════════════════════════════════════════
+
+
+# 全局浮动"回到顶部"按钮已删除（按需求 4 改为列表内置顶按钮）
+
+
+# 底部"项目说明 & 技术栈"已按需求 5 删除

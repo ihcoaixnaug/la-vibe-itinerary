@@ -77,13 +77,23 @@ NoiseEnum = Literal["quiet", "moderate", "loud"]
 DressEnum = Literal["casual", "smart_casual", "upscale"]
 ReservationEnum = Literal["no", "recommended", "essential"]
 ParkingEnum = Literal["easy", "moderate", "hard"]
+# 国际公认菜系标准（按地理 / 民族划分，不混业态）
+CuisineEnum = Literal[
+    "Italian", "French", "Spanish", "Mediterranean", "Greek",
+    "Japanese", "Korean", "Chinese", "Thai", "Vietnamese", "Indian",
+    "Mexican", "Latin American",
+    "Middle Eastern", "Israeli",
+    "American", "Southern American", "Cajun",
+    "Bakery", "Café", "BBQ", "Pizza", "Burger",
+    "Fusion", "Other",
+]
 
 
 class EnrichedPlace(BaseModel):
     """20 维度结构化标签（每家店一份）。"""
     price_per_person_usd: int = Field(ge=5, le=500)
     price_tier: PriceTierEnum
-    cuisine_primary: str
+    cuisine_primary: CuisineEnum
     cuisine_tags: list[str] = Field(min_length=1, max_length=5)
     must_try_dishes: list[str] = Field(min_length=1, max_length=5)
     dietary_friendly: list[str] = Field(default_factory=list)
@@ -99,8 +109,11 @@ class EnrichedPlace(BaseModel):
     hidden_gem_score: int = Field(ge=1, le=10)
     value_score: int = Field(ge=1, le=10)
     crowd_typical_zh: str = Field(min_length=2, max_length=40)
+    crowd_typical_en: str = Field(min_length=2, max_length=120)
     one_liner_zh: str = Field(min_length=2, max_length=60)
+    one_liner_en: str = Field(min_length=2, max_length=180)
     avoid_if_zh: str = Field(min_length=2, max_length=50)
+    avoid_if_en: str = Field(min_length=2, max_length=150)
 
 
 # ---- 工具函数 ----
