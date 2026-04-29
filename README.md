@@ -1,154 +1,173 @@
-# 🌴 Vibe Itinerary
+# 🌴 LA Vibe Itinerary
 
-> 一个**可复用的本地生活 AI 框架** —— Fork → 替换收藏数据 → 一键部署，做出你城市的版本。
-> 当前 LA 美食版作为参考实现 · Vibe Coding 模式 · 2026
+> 把 Google Maps 收藏夹变成可执行打卡攻略的 AI Agent —— 自然语言选店 · 地理聚类 · TSP 最优路径
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-LA版-FF4B4B?style=for-the-badge)](https://la-vibe-itinerary.streamlit.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-立即体验-FF4B4B?style=for-the-badge)](https://la-vibe-itinerary.streamlit.app)
 [![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)](https://python.org)
 [![GPT-4o](https://img.shields.io/badge/GPT--4o-via_OpenRouter-412991?style=for-the-badge&logo=openai)](https://openrouter.ai)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Cloud-FF4B4B?style=for-the-badge&logo=streamlit)](https://streamlit.io)
 
-![Demo Screenshot](docs/demo_screenshots/main.png)
+![主界面截图](docs/demo_screenshots/main.png)
 
-## ✨ 它解决什么问题
+---
 
-任何人在 Google Maps 收藏夹里都攒了几十家想去的地方，但**只有店名缺乏决策信息**：
-- 这家在哪里？哪些店离得近？
-- 价格区间合适吗？氛围匹配场景吗？
-- 谁是网红？谁是本地宝藏？
+## 它解决什么问题
 
-**这个框架 30 秒解决全部问题**：AI 把每家店打 20 维度标签 → 自动按地理聚类 → 每组生成最短打卡路径 → 一句话需求即可获得 AI 推荐。
+Google Maps 收藏夹里攒了几十家想去的店，但面对一堆店名根本不知道怎么选——哪家适合今晚的场景？预算合适吗？哪几家离得近可以连着打卡？
 
-## 🌍 用你自己的数据跑这个项目
+**这个工具让你说一句话，AI 帮你决策**：
 
-**这不是一个 LA 专属的 demo，而是一个城市无关 / 品类无关的通用管线**。无论你想做：
-
-- 🍣 东京美食探店
-- ☕ 北京咖啡馆地图
-- 🥐 NYC brunch 打卡
-- 🏋️ 你城市的健身房集合
-- 🛍️ 你常去的买手店清单
-
-**5 步搞定你自己的版本**：
-
-1. **Fork** 这个 repo
-2. **导出 Google Maps 收藏**（[STAGE_2_GUIDE](STAGE_2_GUIDE.md) 教你两条路径，5 分钟）
-3. **替换** `data/my_places.csv` 为你的店铺
-4. 跑 `python scripts/02_process_data.py` —— GPT-4o 自动给每家店打 20 维标签（30 家店约 $0.20）
-5. **Streamlit Cloud 一键部署** —— 5 分钟拿到你专属公开 URL
-
-**数据结构、算法、网页交互全部不用改**——你只是把你的收藏数据塞进同一条管线，得到属于你的攻略页。
-
-## 🎬 看完整 Demo (60 秒)
+1. 输入"今晚约会预算 $80，安静一点"
+2. GPT-4o 从收藏夹里语义匹配 + 预算过滤，推荐 2-4 家
+3. DBSCAN 自动把附近的店归成一组，TSP 算出最短打卡路径
+4. 地图上画出彩色路线，点卡片即跳转到对应位置
 
 [![Watch the demo](docs/demo_screenshots/itinerary.png)](https://www.loom.com/share/f7acd3a14ca54a8ab9bd80d9cfe821f1)
 
-▶️ **[点击图片观看 Loom 完整 Demo](https://www.loom.com/share/f7acd3a14ca54a8ab9bd80d9cfe821f1)** — 看 AI Agent 如何理解需求 + 自动生成行程
+▶️ **[点击图片观看 60 秒完整 Demo](https://www.loom.com/share/f7acd3a14ca54a8ab9bd80d9cfe821f1)**
 
-或先看快速操作流程：
+---
 
-1. 默认地图显示 30 家 LA 餐厅
-2. 在 AI 框输入"今晚约会预算 $80" → 点 ✨ 让 AI 帮我选 → 金色 ⭐ marker 高亮匹配店
-3. 侧边栏筛选：氛围 + 适合场景 + 预算 + Hidden Gem 度
-4. 点击 **🚀 一键生成行程** → 地图上彩色虚线路径 + 编号 marker
-5. 下方展开"路线 1 / 路线 2…"详情，每段含步行/开车时间
+## 技术架构
 
-## 🛠 技术栈
+```
+【离线管线】（数据准备阶段，运行一次）
+
+Google Maps 收藏
+       ↓
+  Playwright 抓取 / Google Takeout 解析
+       ↓
+ my_places.csv（5 列原始数据）
+       ↓
+  GPT-4o 增强（Pydantic 强校验 + 文件缓存）
+       ↓
+enriched_places.csv（25 列 · 双语 · 20 维 AI 标签）
+       ↓
+  DBSCAN 聚类（haversine）+ 簇内 TSP / 贪心
+       ↓
+   routes.json
+
+
+【实时 Web 层】（Streamlit app.py · ~1200 行）
+
+  侧边栏：多维筛选 + AI 自然语言查询
+  左栏（60%）：folium 交互地图 · 状态感知 marker
+  右栏（40%）：可滚动卡片 · 行程详情 · 一键 Google Maps 导航
+```
+
+---
+
+## 关键技术决策
+
+### 为什么用 DBSCAN 而不是 K-means？
+用户的收藏在地理上分布不均匀：有 5 家集中在 DTLA，也有 3 家散落在 Santa Monica。K-means 需要预设 K 且会强行归并离群点；DBSCAN 能自动发现密集簇，并把孤立的店标为"独立站点"，无需人工干预。
+
+### 为什么用 Pydantic 约束 GPT-4o 输出？
+GPT-4o 在没有 schema 约束时会产生漂移，比如 `cuisine_primary` 输出 "California Bakery"（业态，不是菜系）。用 `Literal[25 种标准菜系]` 枚举 + tenacity 指数退避重试，强制标准化输出，下游筛选逻辑不需要额外容错处理。
+
+### 为什么双语内容在数据管线里预生成？
+运行时实时翻译 = 每次页面加载消耗 API 调用 + 5-10 秒延迟。将 `_zh` / `_en` 字段在 `02_process_data.py` 阶段一次性生成，运行时零成本切换语言。Pydantic schema 确保两个字段同时存在，不会出现"只有中文没有英文"的情况。
+
+### 为什么 AI 查询时要做预算硬过滤而不只是软匹配？
+测试发现 GPT-4o 的"软约束匹配"会把超预算的店也推出来（理由是"略超但值得"）。解决方案：在把数据传给 AI 之前，先用 `parse_budget()` 从 query 里提取预算数字，把候选池硬截断到 `price_per_person_usd ≤ budget`，再让 AI 在合规范围内做语义选择。
+
+---
+
+## 技术栈
 
 | 层 | 工具 | 选择理由 |
 |---|---|---|
-| 包管理 | conda | 与现有数据分析环境隔离 |
-| 抓取 | Playwright | 自动化 Google Maps 共享列表（vs Selenium 更现代）|
-| LLM | GPT-4o (via OpenRouter) | 多模型容易切换 + 兼容 OpenAI SDK |
-| 数据校验 | Pydantic v2 | 强约束 LLM 输出 schema |
-| 重试 | tenacity | 指数退避，3 次失败才放弃 |
-| 聚类 | scikit-learn DBSCAN | 不预设 K + 识别孤立点 |
-| 距离度量 | Haversine | 球面距离，地理数据正确姿势 |
-| 路径优化 | 暴力 TSP / 最近邻贪心 | 簇 ≤8 用最优解，>8 用启发式 |
-| 地图 | folium + streamlit-folium | Streamlit 集成最丝滑 |
-| 前端 | Streamlit | "AI 应用快速原型"工业标准 |
-| 部署 | Streamlit Community Cloud | 免费 + 5 分钟上线 |
+| LLM | GPT-4o via OpenRouter | 多模型统一接口，兼容 OpenAI SDK，方便切换 |
+| 数据校验 | Pydantic v2 | 强 schema 约束 + 类型安全，LLM 输出可信赖 |
+| 重试策略 | tenacity | 指数退避，3 次失败才放弃，避免偶发 API 错误丢数据 |
+| 聚类 | scikit-learn DBSCAN | 无需预设 K，自动识别孤立点，地理分布场景天然适配 |
+| 距离度量 | Haversine | 球面距离，地理坐标计算的正确姿势 |
+| 路径优化 | 暴力 TSP / 最近邻贪心 | 簇 ≤8 用全排列最优解；>8 用启发式，在精度和性能间取平衡 |
+| 前端 | Streamlit + folium | 最快的 Python 数据应用路径，folium 地图嵌入丝滑 |
+| 抓取 | Playwright | 现代化自动化，支持 Google Maps 共享列表 |
+| 部署 | Streamlit Community Cloud | 免费、5 分钟上线、代码推送自动重部署 |
 
-## 📊 项目数据
+---
 
-- **30 家** LA 真实餐厅（从 Bestia 到 Pink's Hot Dogs）
-- **20 维度** AI 标签 × 30 店 + 列表展开 = **985+ 颗粒度数据点**
-- **5 个聚类商圈** + 8 个孤立目的地点
-- **API 成本**：全量增强一轮约 $0.15，调试加上不超过 $1
-- **原型周期**：从需求描述到部署 ≈ 20 小时（vs 传统 60+ 小时，↓70%）
-
-## 🏗️ 架构
-
-```
-Google Maps 收藏 → Playwright 抓取 → my_places.csv (5 列)
-                                    ↓
-                      GPT-4o 增强（Pydantic 校验 + 缓存）
-                                    ↓
-                   enriched_places.csv (5 + 20 = 25 列)
-                                    ↓
-                  DBSCAN 聚类（haversine）+ 簇内 TSP/贪心
-                                    ↓
-                            routes.json
-                                    ↓
-                   Streamlit + folium 网页（filter + map + 行程）
-```
-
-## 🚀 本地启动
+## 本地快速启动
 
 ```bash
 # 1. 环境
 conda create -n lbs python=3.12 -y && conda activate lbs
 pip install -r requirements.txt
-playwright install chromium
 
-# 2. API Key（去 https://openrouter.ai/keys）
-cp .env.example .env  # 然后编辑 .env 填入 sk-or-... key
+# 2. API Key（去 https://openrouter.ai/keys 申请，免费额度够用）
+cp .env.example .env   # 编辑 .env，填入 OPENROUTER_API_KEY=sk-or-...
 
-# 3. 跑全链路（如果你有自己的 my_places.csv 就用真数据，否则用样例）
-cp data/my_places_sample.csv data/my_places.csv
-python scripts/02_process_data.py        # GPT-4o 增强 ~1 分钟 ~$0.15
-python scripts/03_cluster_routes.py      # 本地聚类 ~毫秒
-streamlit run app.py                      # 浏览器自动打开 8501
+# 3. 用样例数据跑起来（30 家 LA 餐厅，已预处理）
+streamlit run app.py   # 浏览器自动打开 http://localhost:8501
+
+# 4. 可选：用你自己的 Google Maps 数据
+cp data/my_places.csv data/my_places_backup.csv  # 备份
+# 替换 my_places.csv 为你的数据，然后：
+python scripts/02_process_data.py   # GPT-4o 增强，~30 家店约 $0.20、1 分钟
+python scripts/03_cluster_routes.py # 聚类 + 路径优化，即时完成
 ```
 
-## 📂 项目结构
+---
+
+## 这个框架是城市无关的
+
+当前 LA 美食版只是**参考实现**。同样的管线可以做：
+
+- 🍣 东京拉面探店地图
+- ☕ 上海独立咖啡馆清单
+- 🏋️ 你城市的健身房推荐
+- 🛍️ 任何 Google Maps 收藏场景
+
+Fork → 替换 `data/my_places.csv` → 跑管线 → 部署，得到你专属的决策工具。
+
+---
+
+## 项目数字
+
+| 指标 | 数值 |
+|---|---|
+| 收录餐厅 | 30 家（Bestia · Sushi Gen · Spago 等 LA 代表性餐厅） |
+| AI 标签维度 | 20 维 × 30 店 = 985+ 结构化数据点 |
+| 地理聚类 | 5 个核心商圈 + 8 个独立站点 |
+| 管线成本 | 全量增强约 $0.20，调试总计不超过 $1 |
+| 主程序体量 | app.py 单文件 ~1200 行，含完整双语 i18n |
+
+---
+
+## 项目结构
 
 ```
 la-vibe-itinerary/
-├── app.py                     # Streamlit 主程序（401 行单文件）
+├── app.py                      # Streamlit 主程序（~1200 行，单文件）
 ├── requirements.txt
-├── .env.example
-├── README.md / PROJECT_MAP.md / STAGE_2_GUIDE.md
+├── .env.example                # API Key 模板
 ├── prompts/
-│   └── enrich_prompt.txt     # 20 维度 GPT-4o Prompt 模板（含 few-shot）
+│   └── enrich_prompt.txt       # 20 维度 GPT-4o Prompt（含 few-shot 示例）
 ├── scripts/
-│   ├── 01_scrape_maps.py     # Playwright 共享列表抓取
-│   ├── 01b_parse_takeout.py  # Google Takeout 兜底解析
-│   ├── 02_process_data.py    # GPT-4o 增强 + Pydantic + 缓存
-│   └── 03_cluster_routes.py  # DBSCAN 聚类 + 路径优化
+│   ├── 01_scrape_maps.py       # Playwright 抓取 Google Maps 共享列表
+│   ├── 01b_parse_takeout.py    # Google Takeout 解析（兜底方案）
+│   ├── 02_process_data.py      # GPT-4o 增强 + Pydantic 校验 + 文件缓存
+│   └── 03_cluster_routes.py    # DBSCAN 聚类 + 路径优化
 ├── data/
-│   ├── my_places_sample.csv  # 30 家 LA 样例
-│   ├── enriched_places.csv   # 25 列含 985+ 数据点
-│   └── routes.json           # 聚类输出
-└── docs/demo_screenshots/    # Demo 截图 / 录屏
+│   ├── my_places_sample.csv    # 30 家 LA 样例（开箱即用）
+│   ├── enriched_places.csv     # 管线输出（25 列双语）
+│   └── routes.json             # 聚类结果
+└── docs/demo_screenshots/      # README 截图
 ```
 
-## 💼 项目业务价值
+---
 
-| 维度 | 改善 |
-|---|---|
-| 用户决策时间 | 3 小时 → 30 分钟（**↓80%**）|
-| 原型开发周期 | 60+ 小时 → 20 小时（**↓70%**）|
-| 数据资产化 | 30 家店 × 20 维度 = **985+ 标签**，从 LBS 长尾资产生成 UGC 结构化数据 |
+## Roadmap
 
-验证了 **AI Agent 在长尾 LBS 内容资产化场景下的商业可行性**，为平台后续优化用户决策链路提供决策依据。
+- [ ] **多模态增强** — 抓取店铺照片，用 GPT-4V 自动评估 Instagrammable 度
+- [ ] **协同过滤** — 基于用户历史选择做个性化推荐
+- [ ] **多日行程规划** — 支持跨天、跨城市的行程编排
+- [ ] **无障碍支持（a11y）** — 键盘导航 + 屏幕阅读器兼容
 
-## 🔮 未来扩展
+---
 
-- [ ] **自然语言查询**："今晚约会，预算 $80/人，想吃日料" → GPT-4o 直接出方案
-- [ ] **多模态增强**：抓店铺照片，用 GPT-4V 评 Insta 度
-- [ ] **协同过滤**：用户历史选择 → 个性化推荐
-- [ ] **实时反爬升级**：Playwright Stealth 模式抓真实 Google Maps 数据
-
-## 📜 License
+## License
 
 MIT
