@@ -240,8 +240,8 @@ T = {
     "map_title": ("🗺️ 美食地图", "🗺️ Restaurant Map"),
     "map_with_routes": ("  ·  📍 已生成打卡路线", "  ·  📍 Itinerary generated"),
     "list_title_filter": ("📋 命中店铺（{n} 家）", "📋 {n} Matches"),
-    "list_title_ai": ("🎯 AI 推荐 + 筛选结果（{a} + {b} 家）",
-                     "🎯 AI Picks + Filter Results ({a} + {b})"),
+    "list_title_ai": ("📋 命中 {a} 家 · 🎯 AI 推荐 {c} 家",
+                     "📋 {a} Matches · 🎯 {c} AI Picks"),
     "sort_hint": ("🔀 已按 **{by}** 排序", "🔀 Sorted by **{by}**"),
     "no_match": ("⚠️ 当前筛选条件下没命中。试着放宽预算/取消氛围。",
                  "⚠️ No matches. Try relaxing budget or vibe."),
@@ -381,6 +381,46 @@ def parse_list_field(val):
 # ═══════════════════════════════════════════════════════════════
 # AI Agent：自然语言查询 → 推荐 2-4 家店
 # ═══════════════════════════════════════════════════════════════
+def parse_intent(query: str) -> dict:
+    """从自然语言中解析筛选意图：预算、氛围、场景。返回 dict，未命中的 key 不存在。"""
+    result = {}
+    q = query.lower()
+
+    # 预算
+    budget = parse_budget(query)
+    if budget:
+        result["budget"] = budget
+
+    # 氛围
+    # 只映射数据库实际存在的 5 种 vibe：casual / dive / fine_dining / lively / trendy
+    vibe_map = {
+        "fine_dining": ["约会", "浪漫", "romantic", "情侣", "高档", "精致", "正式", "fine dining", "upscale"],
+        "casual":      ["安静", "quiet", "温馨", "不吵", "低调", "随意", "casual", "轻松", "休闲"],
+        "lively":      ["热闹", "lively", "活跃", "气氛好", "嗨"],
+        "trendy":      ["网红", "trendy", "时髦", "打卡", "ins"],
+        "dive":        ["平价", "接地气", "苍蝇馆", "便宜", "实惠"],
+    }
+    matched_vibes = [v for v, kws in vibe_map.items() if any(kw in q for kw in kws)]
+    if matched_vibes:
+        result["vibes"] = matched_vibes
+
+    # 场景
+    scenario_map = {
+        "date":           ["约会", "date", "情侣", "浪漫", "两人"],
+        "friends_group":  ["朋友", "friend", "聚会", "一起吃", "一群"],
+        "family":         ["家庭", "家人", "family", "父母", "孩子", "全家"],
+        "business_lunch": ["商务", "business", "客户", "商谈", "工作餐"],
+        "solo":           ["一人", "solo", "一个人", "独自", "自己吃"],
+        "celebration":    ["庆祝", "生日", "周年", "纪念", "celebration"],
+        "tourist_must":   ["必去", "游客", "第一次", "tourist", "打卡"],
+    }
+    matched_scenarios = [s for s, kws in scenario_map.items() if any(kw in q for kw in kws)]
+    if matched_scenarios:
+        result["scenarios"] = matched_scenarios
+
+    return result
+
+
 def parse_budget(query: str) -> float | None:
     """从自然语言中提取预算上限，支持中英文格式如 '预算80' '$80' 'budget 80' '80美元/刀'。"""
     patterns = [
@@ -414,7 +454,7 @@ def build_places_summary(df: pd.DataFrame) -> str:
     return "\n".join(rows)
 
 
-@st.cache_data(show_spinner=False, ttl=3600)
+@st.cache_data(show_spinner=False, ttl=600)
 def ai_recommend(query: str, places_summary: str, lang: str = "zh") -> dict:
     """调 GPT-4o 做语义推荐。lang='zh' 返中文 reasoning，'en' 返英文。"""
     if not OPENROUTER_API_KEY:
@@ -426,9 +466,11 @@ def ai_recommend(query: str, places_summary: str, lang: str = "zh") -> dict:
             api_key=OPENROUTER_API_KEY,
         )
         lang_instruction = (
-            "用中文 2-3 句话精炼解释推荐理由（每家店指出具体匹配点；约束有偏差要诚实说明）"
+            "用中文 2-3 句话精炼解释推荐理由（每家店必须写出数据库里的实际人均价格，如'人均 $60'；"
+            "若低于用户预算写'人均 $X，在预算内'；若高于则写'人均 $X，略超预算'；不得凭空估价）"
             if lang == "zh"
-            else "Explain in 2-3 concise English sentences why each is recommended; honestly note any trade-offs"
+            else "Explain in 2-3 concise English sentences. For each place, state the EXACT price from the database "
+            "(e.g. '$60/person'); if under budget say 'within budget'; if over say 'slightly over budget at $X'. Never guess the price."
         )
         example = (
             '{"recommended_names": ["Republique", "Cassia", "Sushi Gen"],'
@@ -455,6 +497,7 @@ CRITICAL RULES:
 2. Soft matching > strict matching (e.g. 10-30% over budget OK with note).
 3. Names MUST exactly match the database (case-sensitive).
 4. reasoning field: {"Chinese (Simplified)" if lang == "zh" else "natural English"}, 2-3 sentences max.
+5. PRICE ACCURACY: Always quote the EXACT price from the database for each place. Never estimate or hallucinate prices.
 
 EXAMPLE for query "今晚约会，预算 $80，安静一点不排队":
 {example}
@@ -493,6 +536,8 @@ if not csv_path.exists():
     st.stop()
 
 df = load_data()
+PRICE_MIN_GLOBAL = int(df.price_per_person_usd.min())
+PRICE_MAX_GLOBAL = int(df.price_per_person_usd.max())
 total_data_points = len(df) * 20 + sum(
     sum(len(df.at[i, c]) for c in ["cuisine_tags", "must_try_dishes", "best_for", "best_time_slots", "dietary_friendly"] if isinstance(df.at[i, c], list))
     for i in range(len(df))
@@ -560,21 +605,48 @@ with st.sidebar:
 
     if nl_btn and nl_query.strip():
         st.session_state["last_nl_query"] = nl_query.strip()
+        # 解析意图 → 同步到筛选器（让筛选条件可视化反映 AI 的理解）
+        _intent = parse_intent(nl_query.strip())
+        # 只保留数据库里实际存在的 vibe / scenario 值，避免 pills 出现"1✓但无选项"的幽灵状态
+        _available_vibes = set(df.vibe.unique())
+        _available_scenarios = {s for lst in df.best_for for s in lst}
+        if _intent.get("vibes"):
+            _intent["vibes"] = [v for v in _intent["vibes"] if v in _available_vibes]
+            if not _intent["vibes"]:
+                del _intent["vibes"]
+        if _intent.get("scenarios"):
+            _intent["scenarios"] = [s for s in _intent["scenarios"] if s in _available_scenarios]
+            if not _intent["scenarios"]:
+                del _intent["scenarios"]
+        st.session_state["_last_parsed_intent"] = _intent
+        # 只同步预算（硬约束）；氛围/场景由 AI 语义匹配处理，不转成 pills 硬过滤
+        if _intent.get("budget"):
+            st.session_state["price_range_slider"] = (
+                PRICE_MIN_GLOBAL, int(_intent["budget"])
+            )
+
     if st.session_state.get("last_nl_query") and st.button(t("ai_clear_btn"), use_container_width=True):
         st.session_state.pop("last_nl_query", None)
+        st.session_state.pop("_last_parsed_intent", None)
         st.rerun()
+
+    # 已同步的筛选条件提示
+    _intent_display = st.session_state.get("_last_parsed_intent", {})
+    if _intent_display.get("budget"):
+        st.caption(f"🤖 已同步预算上限：≤ ${int(_intent_display['budget'])}")
 
     st.divider()
     st.header(t("filter_header"))
 
-    price_min = int(df.price_per_person_usd.min())
-    price_max = int(df.price_per_person_usd.max())
+    price_min = PRICE_MIN_GLOBAL
+    price_max = PRICE_MAX_GLOBAL
     price_range = st.slider(
         t("price_label"),
         min_value=price_min,
         max_value=price_max,
         value=(price_min, price_max),
         step=5,
+        key="price_range_slider",
     )
 
     # 每个筛选放进可折叠面板，默认收起，标题显示"已选 N"
@@ -954,7 +1026,8 @@ highlighted = st.session_state.get("highlighted_name")
 
 with list_col:
     if ai_rec_names:
-        st.markdown(f"##### {t('list_title_ai', a=len(filtered), b=len(ai_rec_names - set(filtered.name)))}")
+        _ai_in_filter = len(ai_rec_names & set(filtered["name"]))
+        st.markdown(f"##### {t('list_title_ai', a=len(filtered), c=_ai_in_filter)}")
     else:
         st.markdown(f"##### {t('list_title_filter', n=len(filtered))}")
 
