@@ -509,7 +509,7 @@ EXAMPLE for query "今晚约会，预算 $80，安静一点不排队":
                 {"role": "user", "content": f"Query: {query}"},
             ],
             response_format={"type": "json_object"},
-            temperature=0.3,
+            temperature=0,
             max_tokens=400,
         )
         return json.loads(resp.choices[0].message.content or "{}")
