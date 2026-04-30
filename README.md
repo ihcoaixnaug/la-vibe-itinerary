@@ -120,6 +120,67 @@ python scripts/03_cluster_routes.py # 聚类 + 路径优化，即时完成
 
 ---
 
+## 数据格式
+
+**输入：`data/my_places.csv`（5 列，管线起点）**
+
+| 列名 | 说明 | 示例 |
+|---|---|---|
+| `name` | 店铺名称 | Bestia |
+| `address` | 地址（用于地理编码） | 2121 E 7th Pl, Los Angeles |
+| `lat` / `lng` | 经纬度（已抓取时直接填） | 34.0401 / -118.2317 |
+| `url` | Google Maps 链接（可选） | https://maps.google.com/... |
+
+**输出：`data/enriched_places.csv`（25 列，关键字段说明）**
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `vibe` | enum | 氛围标签：`casual / trendy / fine_dining / lively / dive` |
+| `cuisine_primary` | enum | 主菜系，25 种标准值（Pydantic Literal 约束） |
+| `price_per_person_usd` | int | 人均消费（美元） |
+| `best_for` | list[str] | 适合场景，如 `["date","friends_group"]` |
+| `must_order_zh/en` | list[str] | 必点菜品（双语） |
+| `one_liner_zh/en` | str | 一句话介绍（双语） |
+| `instagrammable_score` | int 1-10 | 出片指数 |
+| `hidden_gem_score` | int 1-10 | 小众度 |
+| `cluster_id` | int | DBSCAN 聚类编号（-1 = 孤立站点） |
+
+完整 schema 见 `scripts/02_process_data.py` 中的 `PlaceEnriched` Pydantic 模型。
+
+---
+
+## 自定义指南
+
+**换城市 / 换场景**
+
+1. 准备你的 `my_places.csv`（5 列格式见上）
+2. 修改 `prompts/enrich_prompt.txt` 里的场景描述（可选，默认 prompt 已较通用）
+3. 跑管线：`02_process_data.py` → `03_cluster_routes.py`
+4. `streamlit run app.py` 即可
+
+**调整 AI 推荐行为**
+
+- 修改 `app.py` 中 `query_ai_recommendations()` 的 `system` prompt
+- 推荐数量上限：`"recommend exactly 3"` 改成你想要的数字
+- 字段权重：在 prompt 里强调特定维度（如"优先考虑 hidden_gem_score 高的"）
+
+**调整聚类参数**
+
+`scripts/03_cluster_routes.py` 中：
+- `eps=0.8`：簇半径（km），调小 → 更多小簇，调大 → 合并更多店
+- `min_samples=2`：簇内最少店数，设为 1 则没有孤立点
+
+---
+
+## 已知限制 & 踩坑
+
+- **Streamlit session state**：`st_folium` 的 `last_object_clicked_tooltip` 在 rerun 间持久，卡片点击高亮需要用 `_card_just_clicked` flag 跳过 tooltip 处理，见 `app.py` 注释。
+- **地图强制重渲染**：`st_folium` 固定 key 不会触发浏览器重绘，需要在 key 里加 `_card_click_count` 计数器。
+- **GPT-4o 输出漂移**：即使 `temperature=0`，极少情况下仍可能返回非标准 enum 值，`02_process_data.py` 里有 tenacity 重试兜底。
+- **Playwright 抓取**：Google Maps 共享列表结构偶尔变动，若 `01_scrape_maps.py` 失败，用 `01b_parse_takeout.py`（Google Takeout JSON）作为备选。
+
+---
+
 ## 这个框架是城市无关的
 
 当前 LA 美食版只是**参考实现**。同样的管线可以做：
