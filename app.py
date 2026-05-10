@@ -17,6 +17,8 @@ from pathlib import Path
 from typing import Literal, Optional
 from urllib.parse import quote_plus
 
+import requests
+
 from pydantic import BaseModel, Field, ValidationError
 
 import folium
@@ -30,6 +32,36 @@ import streamlit.components.v1 as components
 
 # 加载 API Key（本地从 .env，部署时从 Streamlit Secrets）
 load_dotenv()
+
+# ── Nominatim 地理编码（用于无坐标 CSV / Takeout CSV 场景）──
+_NOM_URL = "https://nominatim.openstreetmap.org/search"
+_NOM_HEADERS = {"User-Agent": "la-vibe-itinerary/1.0"}
+_LA_LAT = (33.5, 34.8)
+_LA_LNG = (-119.0, -117.0)
+
+
+def _in_la_bounds(lat: float, lng: float) -> bool:
+    return _LA_LAT[0] <= lat <= _LA_LAT[1] and _LA_LNG[0] <= lng <= _LA_LNG[1]
+
+
+def _nom_geocode(name: str) -> tuple[Optional[float], Optional[float], str]:
+    """用 Nominatim 查坐标，只接受大洛杉矶范围内的结果。"""
+    for query in (f"{name}, Los Angeles, CA", name):
+        try:
+            r = requests.get(
+                _NOM_URL,
+                params={"q": query, "format": "json", "limit": 10, "countrycodes": "us"},
+                headers=_NOM_HEADERS,
+                timeout=10,
+            )
+            for item in r.json():
+                lat, lng = float(item["lat"]), float(item["lon"])
+                if _in_la_bounds(lat, lng):
+                    return lat, lng, item.get("display_name", "")
+        except Exception:
+            pass
+        _time.sleep(1.1)
+    return None, None, ""
 
 
 def _get_api_key() -> str:
@@ -860,10 +892,19 @@ with st.sidebar:
             if _uploaded is not None:
                 try:
                     _raw = pd.read_csv(_uploaded)
-                    _missing = [c for c in ["name", "lat", "lng"] if c not in _raw.columns]
-                    if _missing:
-                        st.error(f"缺少必要列：{', '.join(_missing)}")
-                    else:
+                    _name_col = next(
+                        (c for c in ("name", "Name", "Title", "title") if c in _raw.columns),
+                        None,
+                    )
+                    _has_coords = "lat" in _raw.columns and "lng" in _raw.columns
+
+                    if not _name_col:
+                        st.error(f"找不到店名列（需要 name 或 Title），实际列：{list(_raw.columns)}")
+
+                    elif _has_coords:
+                        # ─── 路径 A：CSV 已含经纬度，直接使用 ───
+                        if _name_col != "name":
+                            _raw = _raw.rename(columns={_name_col: "name"})
                         _valid = _raw.dropna(subset=["name", "lat", "lng"]).reset_index(drop=True)
                         _n = len(_valid)
                         _cost = _n * 0.007
@@ -882,6 +923,67 @@ with st.sidebar:
                                      use_container_width=True):
                             st.session_state["_pending_upload"] = _valid.to_dict("records")
                             st.rerun()
+
+                    else:
+                        # ─── 路径 B：无经纬度（Takeout CSV 等），用 Nominatim 查坐标 ───
+                        _cache_key = f"_geocoded_{_uploaded.name}_{_uploaded.size}"
+                        if _cache_key not in st.session_state:
+                            _place_names = [
+                                str(r[_name_col]).strip()
+                                for _, r in _raw.iterrows()
+                                if str(r[_name_col]).strip().lower() not in ("", "nan")
+                            ]
+                            _total = len(_place_names)
+                            _prog = st.progress(0, text="🌍 正在用 OpenStreetMap 查找坐标…")
+                            _status = st.empty()
+                            _geocoded: list[dict] = []
+                            _done = 0
+                            for _, _row in _raw.iterrows():
+                                _name = str(_row[_name_col]).strip()
+                                if not _name or _name.lower() == "nan":
+                                    continue
+                                _status.caption(f"查询中 {_done + 1}/{_total}：{_name}")
+                                _lat, _lng, _addr = _nom_geocode(_name)
+                                _geocoded.append({"name": _name, "lat": _lat, "lng": _lng,
+                                                  "address": _addr})
+                                _done += 1
+                                _prog.progress(_done / _total)
+                            _prog.empty()
+                            _status.empty()
+                            st.session_state[_cache_key] = _geocoded
+
+                        _geo_df = pd.DataFrame(st.session_state[_cache_key])
+                        _found = _geo_df.dropna(subset=["lat", "lng"]).reset_index(drop=True)
+                        _missed = _geo_df[_geo_df["lat"].isna()]["name"].tolist()
+
+                        st.success(f"✅ 地理编码完成：{len(_found)}/{len(_geo_df)} 家找到坐标")
+                        if _missed:
+                            st.warning(
+                                f"以下 {len(_missed)} 家未在 OpenStreetMap 中找到，已跳过：\n"
+                                + "、".join(_missed)
+                            )
+                        if _found.empty:
+                            st.error("没有找到任何有效坐标，请检查地点名称或改用含坐标的 CSV。")
+                        else:
+                            _valid = _found
+                            _n = len(_valid)
+                            _cost = _n * 0.007
+                            _mins = max(1, _n // 5)
+                            st.info(
+                                f"📊 **{_n}** 家店将进入 AI 处理 · "
+                                f"预计 **{_mins}** 分钟 · "
+                                f"API 费用约 **${_cost:.2f}**"
+                            )
+                            st.dataframe(
+                                _valid[["name", "lat", "lng"]].head(5),
+                                use_container_width=True,
+                                hide_index=True,
+                            )
+                            if st.button("🚀 开始 AI 数据处理", type="primary",
+                                         use_container_width=True):
+                                st.session_state["_pending_upload"] = _valid.to_dict("records")
+                                st.rerun()
+
                 except Exception as _e:
                     st.error(f"CSV 读取失败：{_e}")
 

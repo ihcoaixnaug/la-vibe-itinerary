@@ -19,6 +19,7 @@ env/
 # 数据：缓存和 debug 文件不上传，但样例 + 增强结果 + 路径 JSON 上传（让 Streamlit Cloud 部署能跑）
 data/cache/
 data/debug_*
+data/Takeout*/
 !data/my_places.csv
 !data/my_places_sample.csv
 !data/enriched_places.csv
