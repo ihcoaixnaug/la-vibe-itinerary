@@ -149,6 +149,7 @@ def _enrich_place_sync(row: dict) -> Optional[dict]:
         return None
     from openai import OpenAI as _OpenAI
     _client = _OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
+    last_err: str = ""
     for attempt in range(3):
         try:
             resp = _client.chat.completions.create(
@@ -167,9 +168,12 @@ def _enrich_place_sync(row: dict) -> Optional[dict]:
             raw = json.loads(resp.choices[0].message.content or "{}")
             validated = EnrichedPlace.model_validate(raw)
             return {**row, **validated.model_dump()}
-        except Exception:
+        except Exception as _e:
+            last_err = f"{type(_e).__name__}: {_e}"
             if attempt < 2:
                 _time.sleep(2 ** attempt)
+    import streamlit as _st
+    _st.warning(f"⚠️ [{name}] 处理失败（3次重试后）：{last_err}")
     return None
 
 # LA 餐厅常见菜系中文映射 · 全覆盖版（没匹配的兜底只显示英文）
