@@ -11,6 +11,9 @@ import json
 import math
 import os
 import re
+import subprocess
+import sys
+import tempfile
 import time as _time
 from itertools import permutations
 from pathlib import Path
@@ -703,6 +706,49 @@ with header_col_reset:
 
 
 # ═══════════════════════════════════════════════════════════════
+# Google Maps URL 抓取（检测到 _pending_scrape 时运行）
+# ═══════════════════════════════════════════════════════════════
+if "_pending_scrape" in st.session_state:
+    _scrape_url = st.session_state.pop("_pending_scrape")
+    st.info("🗺️ 正在通过 Playwright 抓取列表，约 3–5 分钟……")
+    _scrape_log = st.empty()
+    _tmp_csv = Path(tempfile.mktemp(suffix=".csv"))
+    _scrape_script = ROOT / "scripts" / "01_scrape_maps.py"
+    try:
+        _proc = subprocess.Popen(
+            [sys.executable, str(_scrape_script), "--url", _scrape_url,
+             "--output", str(_tmp_csv)],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            text=True, bufsize=1,
+        )
+        for _sline in iter(_proc.stdout.readline, ""):
+            _sline = _sline.strip()
+            if _sline:
+                _scrape_log.caption(_sline)
+        _proc.wait()
+        _scrape_log.empty()
+
+        if _proc.returncode == 0 and _tmp_csv.exists():
+            _sdf = pd.read_csv(_tmp_csv).dropna(subset=["lat", "lng"])
+            _tmp_csv.unlink(missing_ok=True)
+            if len(_sdf) > 0:
+                st.session_state["_scraped_data"] = _sdf.to_dict("records")
+                st.rerun()
+            else:
+                st.error("❌ 抓取到 0 条数据，请检查列表链接是否正确。")
+        else:
+            st.error(
+                f"❌ 抓取失败（返回码 {_proc.returncode}）。\n\n"
+                "请确认已在 lbs 环境安装浏览器驱动：`playwright install chromium`"
+            )
+    except FileNotFoundError:
+        st.error("❌ 找不到 Python 或脚本，请确认项目环境完整。")
+    except Exception as _se:
+        st.error(f"❌ 抓取异常：{_se}")
+    st.stop()
+
+
+# ═══════════════════════════════════════════════════════════════
 # 用户上传数据处理（检测到 _pending_upload 时运行，展示进度条）
 # ═══════════════════════════════════════════════════════════════
 if "_pending_upload" in st.session_state:
@@ -887,35 +933,61 @@ with st.sidebar:
                 st.session_state.pop("_custom_df", None)
                 st.session_state.pop("_custom_data_info", None)
                 st.rerun()
+        elif st.session_state.get("_scraped_data") is not None:
+            # ── 已抓取数据：预览 + AI 处理 ──
+            _srows = st.session_state["_scraped_data"]
+            _sdf_preview = pd.DataFrame(_srows)
+            _n = len(_sdf_preview)
+            _cost = _n * 0.007
+            _mins = max(1, _n // 5)
+            st.success(f"✅ 成功抓取 **{_n}** 家店（来自 Google Maps）")
+            st.info(f"预计 **{_mins}** 分钟 · API 费用约 **${_cost:.2f}**")
+            st.dataframe(
+                _sdf_preview[["name", "lat", "lng"]].head(5),
+                use_container_width=True,
+                hide_index=True,
+            )
+            col_ai, col_cancel = st.columns(2)
+            with col_ai:
+                if st.button("🚀 开始 AI 数据处理", type="primary", use_container_width=True):
+                    st.session_state["_pending_upload"] = _srows
+                    st.session_state.pop("_scraped_data", None)
+                    st.rerun()
+            with col_cancel:
+                if st.button("取消，重新输入", use_container_width=True):
+                    st.session_state.pop("_scraped_data", None)
+                    st.rerun()
+
         else:
-            # ── 步骤 1 ──
-            st.markdown("**① 从 Google Maps 导出收藏**")
-            st.link_button(
-                "前往 Google Takeout ↗",
-                "https://takeout.google.com/",
-                use_container_width=True,
-                help="打开 Google Maps → 收藏夹 → 选择列表 → 分享 → 复制链接，或通过 Google Takeout 批量导出。",
+            # ── 方法一（推荐）：Google Maps 分享链接 ──
+            st.markdown("**① 粘贴 Google Maps 分享链接**")
+            st.caption(
+                "打开 Google Maps → 收藏夹 → 你的列表 → 右上角分享 → 复制链接"
             )
-
-            # ── 步骤 2 ──
-            st.markdown("**② 整理为 CSV 文件**")
-            _template = "name,address,lat,lng\n烤鸭店,1 Main St Los Angeles CA,34.052,-118.243\n"
-            st.download_button(
-                "下载 CSV 模板",
-                data=_template,
-                file_name="my_places_template.csv",
-                mime="text/csv",
-                use_container_width=True,
-                help="CSV 必须包含 3 列：name（店名）、lat（纬度）、lng（经度）。address 列可选，填入后 AI 标注更准确。",
+            _maps_url = st.text_input(
+                "Google Maps 列表链接",
+                placeholder="https://maps.app.goo.gl/...",
+                label_visibility="collapsed",
             )
+            if st.button("🗺️ 开始抓取", type="primary", use_container_width=True,
+                         disabled=not _maps_url.strip()):
+                st.session_state["_pending_scrape"] = _maps_url.strip()
+                st.rerun()
 
-            # ── 步骤 3 ──
-            st.markdown("**③ 上传 CSV，AI 自动处理**")
+            st.caption("💡 抓取约需 2–3 分钟，抓完后 AI 自动补全餐厅详情。仅支持在本地运行（云端无浏览器）。")
+
+            st.divider()
+
+            # ── 方法二（备选）：Google Takeout CSV ──
+            st.markdown("**② 备选：上传 Google Takeout CSV**")
+            st.caption(
+                "前往 [Google Takeout](https://takeout.google.com/) → 仅选择 Google Maps → 下载 → 解压后上传 CSV"
+            )
             _uploaded = st.file_uploader(
                 "上传 CSV",
                 type=["csv"],
                 label_visibility="collapsed",
-                help='上传后点击「开始 AI 数据处理」，GPT-4o 会自动为每家店生成 20 维标签，约 1 分钟完成。',
+                help="支持 Google Takeout 导出的 CSV（无需经纬度）或自制含 lat/lng 列的 CSV。",
             )
 
             if _uploaded is not None:
@@ -957,7 +1029,6 @@ with st.sidebar:
                         # ─── 路径 B：无经纬度（Takeout CSV 等），用 Nominatim 查坐标 ───
                         _cache_key = f"_geocoded_{_uploaded.name}_{_uploaded.size}"
                         if _cache_key not in st.session_state:
-                            # 先探活 Nominatim，避免云端 IP 被封时白等几十秒
                             with st.spinner("🌍 检测 OpenStreetMap 连通性…"):
                                 _probe_err = _nom_probe()
                             if _probe_err:
@@ -974,12 +1045,10 @@ with st.sidebar:
                                     "上传 `geocoded.csv` 后会自动走「含坐标」路径，无需再查询。"
                                 )
                             else:
-                                _place_names = [
-                                    str(r[_name_col]).strip()
-                                    for _, r in _raw.iterrows()
+                                _total = sum(
+                                    1 for _, r in _raw.iterrows()
                                     if str(r[_name_col]).strip().lower() not in ("", "nan")
-                                ]
-                                _total = len(_place_names)
+                                )
                                 _prog = st.progress(0, text="🌍 正在用 OpenStreetMap 查找坐标…")
                                 _status = st.empty()
                                 _geocoded: list[dict] = []
@@ -999,7 +1068,7 @@ with st.sidebar:
                                 st.session_state[_cache_key] = _geocoded
 
                         if _cache_key not in st.session_state:
-                            st.stop()  # 探活失败时上面已展示错误，终止渲染
+                            st.stop()
 
                         _geo_df = pd.DataFrame(st.session_state[_cache_key])
                         _found = _geo_df.dropna(subset=["lat", "lng"]).reset_index(drop=True)
