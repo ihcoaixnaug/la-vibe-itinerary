@@ -258,7 +258,10 @@ async def collect_by_clicking(page: Page, max_items: Optional[int] = None) -> li
 
 async def run(list_url: str, output: Path, headless: bool, max_items: Optional[int]):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=headless)
+        browser = await p.chromium.launch(
+            headless=headless,
+            args=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
         ctx = await browser.new_context(
             locale="en-US",
             viewport={"width": 1280, "height": 900},

@@ -6,6 +6,11 @@ LA Vibe Itinerary - Streamlit 主应用
 """
 from __future__ import annotations
 
+import os as _os
+# 在 Streamlit Cloud 上安装 Playwright 浏览器二进制（每次冷启动执行一次，约 10-20s）
+if not _os.path.exists(_os.path.expanduser("~/.cache/ms-playwright/chromium-*/chrome-linux/chrome")):
+    _os.system("playwright install chromium --with-deps 2>&1")
+
 import ast
 import json
 import math

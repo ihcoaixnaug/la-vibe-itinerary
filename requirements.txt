@@ -5,7 +5,7 @@ pandas>=2.0.0            # CSV / 数据处理
 pydantic>=2.5.0          # GPT-4o 输出强校验
 
 # === 阶段 2：抓取 ===
-playwright>=1.40.0       # Google Maps 自动化（简历卖点）
+playwright==1.49.0       # 固定版本：1.50+ 在 Streamlit Cloud 的旧 Debian 上缺库
 requests>=2.31.0         # Places API 兜底
 beautifulsoup4>=4.12.0   # HTML 解析备用
 
