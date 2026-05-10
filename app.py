@@ -54,6 +54,7 @@ def _nom_geocode(name: str) -> tuple[Optional[float], Optional[float], str]:
                 headers=_NOM_HEADERS,
                 timeout=10,
             )
+            r.raise_for_status()
             for item in r.json():
                 lat, lng = float(item["lat"]), float(item["lon"])
                 if _in_la_bounds(lat, lng):
@@ -62,6 +63,21 @@ def _nom_geocode(name: str) -> tuple[Optional[float], Optional[float], str]:
             pass
         _time.sleep(1.1)
     return None, None, ""
+
+
+def _nom_probe() -> str:
+    """探活 Nominatim，返回空字符串表示可用，否则返回错误描述。"""
+    try:
+        r = requests.get(
+            _NOM_URL,
+            params={"q": "Los Angeles", "format": "json", "limit": 1, "countrycodes": "us"},
+            headers=_NOM_HEADERS,
+            timeout=8,
+        )
+        r.raise_for_status()
+        return ""
+    except Exception as e:
+        return f"{type(e).__name__}: {e}"
 
 
 def _get_api_key() -> str:
@@ -691,6 +707,15 @@ with header_col_reset:
 # ═══════════════════════════════════════════════════════════════
 if "_pending_upload" in st.session_state:
     _rows = st.session_state.pop("_pending_upload")
+    if not OPENROUTER_API_KEY:
+        st.error(
+            "❌ 未检测到 API Key，无法调用 AI 处理。\n\n"
+            "**本地运行**：在项目根目录新建 `.env` 文件，写入：\n"
+            "```\nOPENROUTER_API_KEY=sk-or-v1-...\n```\n"
+            "**Streamlit Cloud**：进入 App → Settings → Secrets，添加：\n"
+            "```\nOPENROUTER_API_KEY = \"sk-or-v1-...\"\n```"
+        )
+        st.stop()
     _n = len(_rows)
     st.info(f"⚙️ 正在用 GPT-4o 处理 {_n} 家店，请稍候……")
     _prog = st.progress(0)
@@ -932,29 +957,49 @@ with st.sidebar:
                         # ─── 路径 B：无经纬度（Takeout CSV 等），用 Nominatim 查坐标 ───
                         _cache_key = f"_geocoded_{_uploaded.name}_{_uploaded.size}"
                         if _cache_key not in st.session_state:
-                            _place_names = [
-                                str(r[_name_col]).strip()
-                                for _, r in _raw.iterrows()
-                                if str(r[_name_col]).strip().lower() not in ("", "nan")
-                            ]
-                            _total = len(_place_names)
-                            _prog = st.progress(0, text="🌍 正在用 OpenStreetMap 查找坐标…")
-                            _status = st.empty()
-                            _geocoded: list[dict] = []
-                            _done = 0
-                            for _, _row in _raw.iterrows():
-                                _name = str(_row[_name_col]).strip()
-                                if not _name or _name.lower() == "nan":
-                                    continue
-                                _status.caption(f"查询中 {_done + 1}/{_total}：{_name}")
-                                _lat, _lng, _addr = _nom_geocode(_name)
-                                _geocoded.append({"name": _name, "lat": _lat, "lng": _lng,
-                                                  "address": _addr})
-                                _done += 1
-                                _prog.progress(_done / _total)
-                            _prog.empty()
-                            _status.empty()
-                            st.session_state[_cache_key] = _geocoded
+                            # 先探活 Nominatim，避免云端 IP 被封时白等几十秒
+                            with st.spinner("🌍 检测 OpenStreetMap 连通性…"):
+                                _probe_err = _nom_probe()
+                            if _probe_err:
+                                st.error(
+                                    f"无法连接 OpenStreetMap（{_probe_err}）。\n\n"
+                                    "云端部署的应用通常会被 Nominatim 拒绝访问。\n\n"
+                                    "**解决方法**：在本地运行以下命令生成含坐标的 CSV，再上传：\n"
+                                    "```bash\n"
+                                    "conda activate lbs\n"
+                                    'python scripts/01c_geocode_takeout.py \\\n'
+                                    '    --input "你的Takeout导出.csv" \\\n'
+                                    '    --output geocoded.csv\n'
+                                    "```\n"
+                                    "上传 `geocoded.csv` 后会自动走「含坐标」路径，无需再查询。"
+                                )
+                            else:
+                                _place_names = [
+                                    str(r[_name_col]).strip()
+                                    for _, r in _raw.iterrows()
+                                    if str(r[_name_col]).strip().lower() not in ("", "nan")
+                                ]
+                                _total = len(_place_names)
+                                _prog = st.progress(0, text="🌍 正在用 OpenStreetMap 查找坐标…")
+                                _status = st.empty()
+                                _geocoded: list[dict] = []
+                                _done = 0
+                                for _, _row in _raw.iterrows():
+                                    _name = str(_row[_name_col]).strip()
+                                    if not _name or _name.lower() == "nan":
+                                        continue
+                                    _status.caption(f"查询中 {_done + 1}/{_total}：{_name}")
+                                    _lat, _lng, _addr = _nom_geocode(_name)
+                                    _geocoded.append({"name": _name, "lat": _lat, "lng": _lng,
+                                                      "address": _addr})
+                                    _done += 1
+                                    _prog.progress(_done / _total)
+                                _prog.empty()
+                                _status.empty()
+                                st.session_state[_cache_key] = _geocoded
+
+                        if _cache_key not in st.session_state:
+                            st.stop()  # 探活失败时上面已展示错误，终止渲染
 
                         _geo_df = pd.DataFrame(st.session_state[_cache_key])
                         _found = _geo_df.dropna(subset=["lat", "lng"]).reset_index(drop=True)
