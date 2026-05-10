@@ -120,15 +120,25 @@ git push -u origin main
    - Branch: `main`
    - Main file path: `app.py`
    - App URL（可改）：`la-vibe-itinerary` 之类的
-5. 点 **"Deploy"**
+5. 展开 **"Advanced settings"**：
+   - **Python version → 选 3.12**（关键！默认 3.14 会导致 greenlet 编译失败）
+6. 点 **"Deploy"**
 
-等待约 3-5 分钟（首次安装依赖较慢），完成后会得到一个公开 URL，形如：
+等待约 5-8 分钟（首次安装依赖 + Playwright 下载浏览器较慢），完成后会得到一个公开 URL：
 
 ```
 https://你的用户名-la-vibe-itinerary-app-xxxxxx.streamlit.app
 ```
 
-✅ **不需要配 Secrets**，因为 app.py 不再调用 OpenRouter API（只用预生成的 CSV 和 JSON）。
+### 配置 Secrets（必须！用于 AI 功能）
+
+部署成功后，点 app 右上角 **⋮ → Settings → Secrets**，填入：
+
+```toml
+OPENROUTER_API_KEY = "sk-or-你的key"
+```
+
+去 [openrouter.ai/keys](https://openrouter.ai/keys) 申请（免费额度够测试用）。
 
 ### 部署后的检查清单
 
@@ -136,7 +146,8 @@ https://你的用户名-la-vibe-itinerary-app-xxxxxx.streamlit.app
 - [ ] 地图能渲染，看到 30 个 marker
 - [ ] 侧边栏筛选条能动
 - [ ] "一键生成行程"按钮能用
-- [ ] 不要在 URL 里看到任何 API Key
+- [ ] 侧边栏 AI 框输入"今晚约会 预算80"→ 点"让 AI 帮我选"→ 返回推荐
+- [ ] 侧边栏"用你自己的数据"→ 粘贴 Google Maps 分享链接 → 开始抓取
 
 如果某个步骤失败，看 Streamlit Cloud 仪表盘的 **"Manage app" → "Logs"**，把错误堆栈贴给我。
 
@@ -162,7 +173,10 @@ git add README.md && git commit -m "docs: add live demo link" && git push
 
 | 问题 | 解决 |
 |---|---|
-| Streamlit Cloud 装依赖超时 | 检查 requirements.txt，确认没有大包（playwright 浏览器不会被装到云端，没问题）|
+| `greenlet` / `Building wheel` 编译失败 | Python 版本不对，在 Dashboard → Settings → Advanced → Python version 手动选 **3.12** |
+| `Unable to locate package #` | packages.txt 里有注释，apt 不支持 `#`，删掉所有注释行 |
+| Playwright 抓取返回码 1 | 看 UI 显示的 stderr；常见原因：chromium 未下载（等冷启动完成）或内存不足 |
+| AI 推荐失败 401 | Secrets 里没有配 OPENROUTER_API_KEY，或 key 已过期 |
 | folium 地图不渲染 | 检查 streamlit-folium 版本 ≥ 0.18 |
 | ModuleNotFoundError | requirements.txt 里漏了某个包，加上后 git push 触发自动重部 |
 | API Key 误推到 GitHub | 立即去 [openrouter.ai/keys](https://openrouter.ai/keys) 撤销，重新生成 |

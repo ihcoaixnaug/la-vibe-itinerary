@@ -1,11 +1,26 @@
 # 阶段 2 操作指南：拿到 my_places.csv
 
 > 目标：得到一个含 30-50 行、5 列（name/address/lat/lng/maps_url）的 CSV 文件，放在 `data/my_places.csv`。
-> 给你 **3 条路径**，按推荐度排序。任选一条跑通即可。
+> 给你 **4 条路径**，按推荐度排序。任选一条跑通即可。
 
 ---
 
-## 路径 A · Playwright 抓共享列表（推荐）
+## 路径 0 · 直接在网页 UI 导入（最简单，无需命令行）
+
+如果你只是想用自己的数据体验一下，不需要跑任何脚本：
+
+1. 打开 app（本地 `streamlit run app.py` 或云端部署的链接）
+2. 侧边栏 → 展开"用你自己的数据"
+3. **方法一（推荐）**：粘贴 Google Maps 分享链接 → 点"开始抓取"
+   - 打开 Google Maps → 你的列表 → 右上角分享 → 复制链接（`maps.app.goo.gl/...`）
+   - ⚠️ 注意：抓取需要 Playwright，仅在本地运行时可用（Streamlit Cloud 云端需等冷启动完成）
+4. **方法二（备选）**：上传 Google Takeout CSV
+   - 有经纬度列：直接进 AI 处理
+   - 无经纬度列（Takeout 原始格式）：自动用 Nominatim 查坐标（仅本地可用，云端 IP 被封）
+
+---
+
+## 路径 A · Playwright 抓共享列表（推荐，命令行）
 
 ### 准备：把你的列表设成共享
 
@@ -43,7 +58,9 @@ python scripts/01_scrape_maps.py \
 
 ---
 
-## 路径 B · Google Takeout（最稳 · 5 分钟）
+## 路径 B · Google Takeout + Nominatim 地理编码
+
+Google Takeout 导出的 CSV 只有店名，没有经纬度。用 `01c_geocode_takeout.py` 通过 OpenStreetMap 自动查坐标。
 
 ### 步骤
 
@@ -51,19 +68,26 @@ python scripts/01_scrape_maps.py \
 2. 点 **"Deselect all"**
 3. 滚到 **"Maps (your places)"**，勾上
 4. 拉到底点 **"Next step"** → 选 ".zip" → **"Create export"**
-5. 等几分钟收到邮件 → 下载 ZIP
-6. 解压到 `~/Downloads/Takeout/`
-7. 找到你的列表 CSV，例如 `~/Downloads/Takeout/Saved/Want to go.csv`
+5. 等邮件 → 下载 ZIP → 解压
+6. 找到你的列表 CSV，例如 `~/Downloads/Takeout/Saved/Default list.csv`
 
 ### 跑脚本
 
 ```bash
 cd ~/Documents/la-vibe-itinerary
-python scripts/01b_parse_takeout.py \
-  --input "~/Downloads/Takeout/Saved/Want to go.csv"
+conda activate lbs
+python scripts/01c_geocode_takeout.py \
+  --input "~/Downloads/Takeout/Saved/Default list.csv" \
+  --output data/my_places.csv \
+  --city "Los Angeles, CA"
 ```
 
-脚本会自动用 Playwright 访问每条 URL，抽出经纬度和地址。
+约 1-2 秒/家店（Nominatim 限速 1 req/s）。结果直接写到 `data/my_places.csv`。
+
+**注意**：
+- 命中率约 60-80%（中文店名或冷门地点可能查不到）
+- 查不到的店会在终端打印出来，可手动补充经纬度（Google Maps URL 里的 `@lat,lng`）
+- Nominatim 对 Streamlit Cloud 的 IP 封锁，必须在本地运行此脚本
 
 ---
 

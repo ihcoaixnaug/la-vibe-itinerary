@@ -178,7 +178,8 @@ python scripts/03_cluster_routes.py # 聚类 + 路径优化，即时完成
 - **Streamlit session state**：`st_folium` 的 `last_object_clicked_tooltip` 在 rerun 间持久，卡片点击高亮需要用 `_card_just_clicked` flag 跳过 tooltip 处理，见 `app.py` 注释。
 - **地图强制重渲染**：`st_folium` 固定 key 不会触发浏览器重绘，需要在 key 里加 `_card_click_count` 计数器。
 - **GPT-4o 输出漂移**：即使 `temperature=0`，极少情况下仍可能返回非标准 enum 值，`02_process_data.py` 里有 tenacity 重试兜底。
-- **Playwright 抓取**：Google Maps 共享列表结构偶尔变动，若 `01_scrape_maps.py` 失败，用 `01b_parse_takeout.py`（Google Takeout JSON）作为备选。
+- **Playwright 在 Streamlit Cloud 上**：需固定 `playwright==1.49.0`（更新版本与云端旧 Debian 不兼容）、`packages.txt` 提供系统依赖、Dashboard 手动选 Python 3.12。详见 [TECHNICAL.md](./TECHNICAL.md)。
+- **Nominatim 在云端被封**：Streamlit Cloud 的 AWS IP 会被 OpenStreetMap 拒绝，无坐标 CSV 需在本地用 `scripts/01c_geocode_takeout.py` 处理后再上传。
 
 ---
 
@@ -211,22 +212,28 @@ Fork → 替换 `data/my_places.csv` → 跑管线 → 部署，得到你专属�
 
 ```
 la-vibe-itinerary/
-├── app.py                      # Streamlit 主程序（~1200 行，单文件）
-├── requirements.txt
-├── .env.example                # API Key 模板
+├── app.py                        # Streamlit 主程序（~1765 行，单文件）
+├── requirements.txt              # playwright==1.49.0 固定版本
+├── packages.txt                  # Streamlit Cloud Chromium 系统依赖
+├── runtime.txt                   # Streamlit Cloud Python 版本锁（python-3.12）
+├── .python-version               # pyenv 版本锁（3.12）
+├── .env.example                  # API Key 模板
 ├── prompts/
-│   └── enrich_prompt.txt       # 20 维度 GPT-4o Prompt（含 few-shot 示例）
+│   └── enrich_prompt.txt         # 20 维度 GPT-4o Prompt（含 few-shot 示例）
 ├── scripts/
-│   ├── 01_scrape_maps.py       # Playwright 抓取 Google Maps 共享列表
-│   ├── 01b_parse_takeout.py    # Google Takeout 解析（兜底方案）
-│   ├── 02_process_data.py      # GPT-4o 增强 + Pydantic 校验 + 文件缓存
-│   └── 03_cluster_routes.py    # DBSCAN 聚类 + 路径优化
+│   ├── 01_scrape_maps.py         # Playwright 抓取 Google Maps 共享列表（主路径）
+│   ├── 01b_parse_takeout.py      # Google Takeout JSON 解析（旧备选）
+│   ├── 01c_geocode_takeout.py    # Takeout CSV → Nominatim 地理编码（新）
+│   ├── 02_process_data.py        # GPT-4o 增强 + Pydantic 校验 + 文件缓存
+│   └── 03_cluster_routes.py      # DBSCAN 聚类 + 路径优化
 ├── data/
-│   ├── my_places_sample.csv    # 30 家 LA 样例（开箱即用）
-│   ├── enriched_places.csv     # 管线输出（25 列双语）
-│   └── routes.json             # 聚类结果
-└── docs/demo_screenshots/      # README 截图
+│   ├── my_places_sample.csv      # 30 家 LA 样例（开箱即用）
+│   ├── enriched_places.csv       # 管线输出（25 列双语）
+│   └── routes.json               # 聚类结果
+└── docs/demo_screenshots/        # README 截图
 ```
+
+完整技术细节（函数索引、状态机、部署配置、踩坑手册）见 [TECHNICAL.md](./TECHNICAL.md)。
 
 ---
 
