@@ -6,10 +6,11 @@ LA Vibe Itinerary - Streamlit 主应用
 """
 from __future__ import annotations
 
+import glob as _glob
 import os as _os
-# 在 Streamlit Cloud 上安装 Playwright 浏览器二进制（每次冷启动执行一次，约 10-20s）
-if not _os.path.exists(_os.path.expanduser("~/.cache/ms-playwright/chromium-*/chrome-linux/chrome")):
-    _os.system("playwright install chromium --with-deps 2>&1")
+# 在 Streamlit Cloud 上安装 Playwright 浏览器二进制（系统依赖已由 packages.txt 提供）
+if not _glob.glob(_os.path.expanduser("~/.cache/ms-playwright/chromium-*/chrome-linux/chrome")):
+    _os.system("playwright install chromium")
 
 import ast
 import json
@@ -723,13 +724,14 @@ if "_pending_scrape" in st.session_state:
         _proc = subprocess.Popen(
             [sys.executable, str(_scrape_script), "--url", _scrape_url,
              "--output", str(_tmp_csv)],
-            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, bufsize=1,
         )
         for _sline in iter(_proc.stdout.readline, ""):
             _sline = _sline.strip()
             if _sline:
                 _scrape_log.caption(_sline)
+        _stderr_out = _proc.stderr.read()
         _proc.wait()
         _scrape_log.empty()
 
@@ -742,9 +744,10 @@ if "_pending_scrape" in st.session_state:
             else:
                 st.error("❌ 抓取到 0 条数据，请检查列表链接是否正确。")
         else:
+            _err_detail = _stderr_out.strip()[-1000:] if _stderr_out.strip() else "（无错误输出）"
             st.error(
-                f"❌ 抓取失败（返回码 {_proc.returncode}）。\n\n"
-                "请确认已在 lbs 环境安装浏览器驱动：`playwright install chromium`"
+                f"❌ 抓取失败（返回码 {_proc.returncode}）\n\n"
+                f"```\n{_err_detail}\n```"
             )
     except FileNotFoundError:
         st.error("❌ 找不到 Python 或脚本，请确认项目环境完整。")
