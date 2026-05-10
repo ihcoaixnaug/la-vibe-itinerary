@@ -1,4 +1,3 @@
-# Chromium 系统依赖（Playwright 在 Streamlit Cloud 上需要）
 libnss3
 libnspr4
 libatk1.0-0
