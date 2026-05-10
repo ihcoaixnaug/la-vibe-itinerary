@@ -829,34 +829,32 @@ with st.sidebar:
         else:
             # ── 步骤 1 ──
             st.markdown("**① 从 Google Maps 导出收藏**")
-            st.caption(
-                "打开 Google Maps → 收藏夹 → 选择列表 → 分享 → 复制链接，"
-                "或通过 Google Takeout 批量导出。"
+            st.link_button(
+                "前往 Google Takeout ↗",
+                "https://takeout.google.com/",
+                use_container_width=True,
+                help="打开 Google Maps → 收藏夹 → 选择列表 → 分享 → 复制链接，或通过 Google Takeout 批量导出。",
             )
-            st.link_button("前往 Google Takeout ↗", "https://takeout.google.com/",
-                           use_container_width=True)
 
             # ── 步骤 2 ──
             st.markdown("**② 整理为 CSV 文件**")
-            st.caption(
-                "CSV 必须包含 3 列：`name`（店名）、`lat`（纬度）、`lng`（经度）。"
-                "`address` 列可选，填入后 AI 标注更准确。"
-            )
             _template = "name,address,lat,lng\n烤鸭店,1 Main St Los Angeles CA,34.052,-118.243\n"
             st.download_button(
-                "📥 下载 CSV 模板",
+                "下载 CSV 模板",
                 data=_template,
                 file_name="my_places_template.csv",
                 mime="text/csv",
                 use_container_width=True,
+                help="CSV 必须包含 3 列：name（店名）、lat（纬度）、lng（经度）。address 列可选，填入后 AI 标注更准确。",
             )
 
             # ── 步骤 3 ──
             st.markdown("**③ 上传 CSV，AI 自动处理**")
             _uploaded = st.file_uploader(
-                "选择你的 CSV 文件",
+                "上传 CSV",
                 type=["csv"],
                 label_visibility="collapsed",
+                help='上传后点击「开始 AI 数据处理」，GPT-4o 会自动为每家店生成 20 维标签，约 1 分钟完成。',
             )
 
             if _uploaded is not None:
