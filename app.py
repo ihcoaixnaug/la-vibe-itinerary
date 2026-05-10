@@ -11,9 +11,13 @@ import json
 import math
 import os
 import re
+import time as _time
 from itertools import permutations
 from pathlib import Path
+from typing import Literal, Optional
 from urllib.parse import quote_plus
+
+from pydantic import BaseModel, Field, ValidationError
 
 import folium
 import numpy as np
@@ -65,6 +69,76 @@ SCENARIO_ZH = {
 }
 # 适合场景的合法白名单（GPT 偶尔会漂移塞进 brunch/casual/late_night 等其他字段值，过滤掉）
 CANONICAL_SCENARIOS = list(SCENARIO_ZH.keys())
+
+# ── 用户自定义数据：Pydantic Schema（与 scripts/02_process_data.py 保持一致）──
+class EnrichedPlace(BaseModel):
+    price_per_person_usd: int = Field(ge=5, le=500)
+    price_tier: Literal["$", "$$", "$$$", "$$$$"]
+    cuisine_primary: Literal[
+        "Italian", "French", "Spanish", "Mediterranean", "Greek",
+        "Japanese", "Korean", "Chinese", "Thai", "Vietnamese", "Indian",
+        "Mexican", "Latin American", "Middle Eastern", "Israeli",
+        "American", "Southern American", "Cajun",
+        "Bakery", "Café", "BBQ", "Pizza", "Burger", "Fusion", "Other",
+    ]
+    cuisine_tags: list[str] = Field(min_length=1, max_length=5)
+    must_try_dishes: list[str] = Field(min_length=1, max_length=5)
+    dietary_friendly: list[str] = Field(default_factory=list)
+    best_for: list[str] = Field(min_length=1, max_length=4)
+    vibe: Literal["casual", "trendy", "fine_dining", "dive", "cozy", "lively", "romantic"]
+    noise_level: Literal["quiet", "moderate", "loud"]
+    dress_code: Literal["casual", "smart_casual", "upscale"]
+    best_time_slots: list[str] = Field(min_length=1, max_length=5)
+    avg_wait_minutes: int = Field(ge=0, le=300)
+    reservation_needed: Literal["no", "recommended", "essential"]
+    parking_difficulty: Literal["easy", "moderate", "hard"]
+    instagrammable_score: int = Field(ge=1, le=10)
+    hidden_gem_score: int = Field(ge=1, le=10)
+    value_score: int = Field(ge=1, le=10)
+    crowd_typical_zh: str = Field(min_length=2, max_length=40)
+    crowd_typical_en: str = Field(min_length=2, max_length=120)
+    one_liner_zh: str = Field(min_length=2, max_length=60)
+    one_liner_en: str = Field(min_length=2, max_length=180)
+    avoid_if_zh: str = Field(min_length=2, max_length=50)
+    avoid_if_en: str = Field(min_length=2, max_length=150)
+
+
+def _enrich_place_sync(row: dict) -> Optional[dict]:
+    """对单家店调用 GPT-4o 做 20 维标注，失败最多重试 2 次。"""
+    if not OPENROUTER_API_KEY:
+        return None
+    prompt_path = ROOT / "prompts" / "enrich_prompt.txt"
+    if not prompt_path.exists():
+        return None
+    system_prompt = prompt_path.read_text(encoding="utf-8")
+    name = str(row.get("name", "")).strip()
+    address = str(row.get("address", "")).strip()
+    if not name:
+        return None
+    from openai import OpenAI as _OpenAI
+    _client = _OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
+    for attempt in range(3):
+        try:
+            resp = _client.chat.completions.create(
+                model="openai/gpt-4o",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": (
+                        f"Restaurant: {name}\nAddress: {address}\n\n"
+                        "Generate the 20-dimension JSON profile now."
+                    )},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0,
+                max_tokens=900,
+            )
+            raw = json.loads(resp.choices[0].message.content or "{}")
+            validated = EnrichedPlace.model_validate(raw)
+            return {**row, **validated.model_dump()}
+        except Exception:
+            if attempt < 2:
+                _time.sleep(2 ** attempt)
+    return None
 
 # LA 餐厅常见菜系中文映射 · 全覆盖版（没匹配的兜底只显示英文）
 CUISINE_ZH = {
@@ -535,7 +609,11 @@ if not csv_path.exists():
     st.error(t("data_not_found"))
     st.stop()
 
-df = load_data()
+# 优先使用用户本次会话上传的自定义数据，否则加载默认 LA 样例
+if st.session_state.get("_custom_df") is not None:
+    df = st.session_state["_custom_df"]
+else:
+    df = load_data()
 PRICE_MIN_GLOBAL = int(df.price_per_person_usd.min())
 PRICE_MAX_GLOBAL = int(df.price_per_person_usd.max())
 total_data_points = len(df) * 20 + sum(
@@ -571,6 +649,47 @@ with header_col_reset:
         st.session_state["_do_reload"] = True
         st.rerun()
 
+
+# ═══════════════════════════════════════════════════════════════
+# 用户上传数据处理（检测到 _pending_upload 时运行，展示进度条）
+# ═══════════════════════════════════════════════════════════════
+if "_pending_upload" in st.session_state:
+    _rows = st.session_state.pop("_pending_upload")
+    _n = len(_rows)
+    st.info(f"⚙️ 正在用 GPT-4o 处理 {_n} 家店，请稍候……")
+    _prog = st.progress(0)
+    _status = st.empty()
+    _results, _failed = [], []
+    for _i, _row in enumerate(_rows):
+        _status.caption(f"处理中 {_i + 1}/{_n}：{_row.get('name', '')}")
+        _out = _enrich_place_sync(_row)
+        if _out:
+            _results.append(_out)
+        else:
+            _failed.append(_row.get("name", f"#{_i+1}"))
+        _prog.progress((_i + 1) / _n)
+    _prog.empty()
+    _status.empty()
+
+    if _results:
+        _enriched = pd.DataFrame(_results)
+        for _col in ["cuisine_tags", "must_try_dishes", "best_for",
+                     "best_time_slots", "dietary_friendly"]:
+            if _col in _enriched.columns:
+                _enriched[_col] = _enriched[_col].apply(
+                    lambda x: x if isinstance(x, list) else parse_list_field(x)
+                )
+        _enriched = _enriched.dropna(subset=["lat", "lng"]).reset_index(drop=True)
+        st.session_state["_custom_df"] = _enriched
+        st.session_state["_custom_data_info"] = {"n": len(_enriched), "failed": _failed}
+        if _failed:
+            st.warning(f"完成！{len(_enriched)} 家成功，{len(_failed)} 家失败：{', '.join(_failed)}")
+        else:
+            st.success(f"✅ 完成！成功处理 {len(_enriched)} 家店，页面已刷新。")
+        _time.sleep(1)
+        st.rerun()
+    else:
+        st.error("所有店铺处理失败，请检查 API Key 或 CSV 格式。")
 
 # ═══════════════════════════════════════════════════════════════
 # Sidebar：AI 自然语言查询 + 筛选
@@ -697,17 +816,76 @@ with st.sidebar:
     # ---- 导入个人数据指南 ----
     st.divider()
     with st.expander(t("import_header"), expanded=False):
-        st.caption(t("import_intro"))
-        st.markdown(t("import_step1"))
-        st.markdown(t("import_step2"))
-        st.markdown(t("import_step3"))
-        st.markdown(t("import_step4"))
-        st.link_button(
-            t("import_btn"),
-            "https://takeout.google.com/",
-            use_container_width=True,
-        )
-        st.caption(t("import_note"))
+        # ── 已有自定义数据时显示状态 ──
+        if st.session_state.get("_custom_df") is not None:
+            info = st.session_state.get("_custom_data_info", {})
+            st.success(f"✅ 当前使用：你的数据（{info.get('n', '?')} 家店）")
+            if info.get("failed"):
+                st.caption(f"⚠️ {len(info['failed'])} 家处理失败：{', '.join(info['failed'][:3])}")
+            if st.button("🔄 恢复默认数据（LA 样例）", use_container_width=True):
+                st.session_state.pop("_custom_df", None)
+                st.session_state.pop("_custom_data_info", None)
+                st.rerun()
+        else:
+            # ── 步骤 1 ──
+            st.markdown("**① 从 Google Maps 导出收藏**")
+            st.caption(
+                "打开 Google Maps → 收藏夹 → 选择列表 → 分享 → 复制链接，"
+                "或通过 Google Takeout 批量导出。"
+            )
+            st.link_button("前往 Google Takeout ↗", "https://takeout.google.com/",
+                           use_container_width=True)
+
+            # ── 步骤 2 ──
+            st.markdown("**② 整理为 CSV 文件**")
+            st.caption(
+                "CSV 必须包含 3 列：`name`（店名）、`lat`（纬度）、`lng`（经度）。"
+                "`address` 列可选，填入后 AI 标注更准确。"
+            )
+            _template = "name,address,lat,lng\n烤鸭店,1 Main St Los Angeles CA,34.052,-118.243\n"
+            st.download_button(
+                "📥 下载 CSV 模板",
+                data=_template,
+                file_name="my_places_template.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
+
+            # ── 步骤 3 ──
+            st.markdown("**③ 上传 CSV，AI 自动处理**")
+            _uploaded = st.file_uploader(
+                "选择你的 CSV 文件",
+                type=["csv"],
+                label_visibility="collapsed",
+            )
+
+            if _uploaded is not None:
+                try:
+                    _raw = pd.read_csv(_uploaded)
+                    _missing = [c for c in ["name", "lat", "lng"] if c not in _raw.columns]
+                    if _missing:
+                        st.error(f"缺少必要列：{', '.join(_missing)}")
+                    else:
+                        _valid = _raw.dropna(subset=["name", "lat", "lng"]).reset_index(drop=True)
+                        _n = len(_valid)
+                        _cost = _n * 0.007
+                        _mins = max(1, _n // 5)
+                        st.info(
+                            f"📊 检测到 **{_n}** 家店 · "
+                            f"预计 **{_mins}** 分钟 · "
+                            f"API 费用约 **${_cost:.2f}**"
+                        )
+                        st.dataframe(
+                            _valid[["name", "lat", "lng"]].head(5),
+                            use_container_width=True,
+                            hide_index=True,
+                        )
+                        if st.button("🚀 开始 AI 数据处理", type="primary",
+                                     use_container_width=True):
+                            st.session_state["_pending_upload"] = _valid.to_dict("records")
+                            st.rerun()
+                except Exception as _e:
+                    st.error(f"CSV 读取失败：{_e}")
 
     st.divider()
     st.caption(
