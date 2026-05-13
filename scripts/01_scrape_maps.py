@@ -12,6 +12,7 @@
 可选参数：
   --show-browser     显示浏览器窗口（调试用）
   --max-items N      只抓前 N 个（快速测试用）
+  --concurrency N    详情页并发数（默认 3）
   --output PATH      自定义输出路径
 """
 from __future__ import annotations
@@ -148,6 +149,40 @@ async def enrich_one(page: Page, row: dict) -> dict:
     return row
 
 
+async def enrich_rows_parallel(ctx, rows: list[dict], concurrency: int) -> list[dict]:
+    """并发打开详情页补齐 lat/lng/address。"""
+    if not rows:
+        return rows
+
+    queue: asyncio.Queue[tuple[int, dict]] = asyncio.Queue()
+    results: list[Optional[dict]] = [None] * len(rows)
+    for item in enumerate(rows):
+        queue.put_nowait(item)
+
+    pbar = tqdm(total=len(rows), desc="并发补地址")
+
+    async def worker() -> None:
+        page = await ctx.new_page()
+        try:
+            while True:
+                try:
+                    idx, row = queue.get_nowait()
+                except asyncio.QueueEmpty:
+                    break
+                try:
+                    results[idx] = await enrich_one(page, row)
+                finally:
+                    queue.task_done()
+                    pbar.update(1)
+        finally:
+            await page.close()
+
+    worker_count = max(1, min(concurrency, len(rows)))
+    await asyncio.gather(*(worker() for _ in range(worker_count)))
+    pbar.close()
+    return [r if r is not None else rows[i] for i, r in enumerate(results)]
+
+
 # ── 路径 B：基于按钮点击（共享列表 / 自定义列表）──
 
 async def scroll_shared_list(page: Page, max_scrolls: int = 60) -> int:
@@ -193,7 +228,11 @@ async def scroll_shared_list(page: Page, max_scrolls: int = 60) -> int:
 
 
 async def collect_by_clicking(page: Page, max_items: Optional[int] = None) -> list[dict]:
-    """点击每个地点按钮 → 从详情页 URL 提取坐标 + 地址，然后回到列表。"""
+    """串行点击每个地点按钮，只收集详情页 URL/坐标，然后回到列表。
+
+    共享列表本身是状态ful DOM，不适合多个 page 同时点击。这里保持低风险串行点击，
+    后续再并发打开详情 URL 补地址。
+    """
     n_loaded = await scroll_shared_list(page)
     print(f"📍 共加载 {n_loaded} 个地点按钮")
 
@@ -209,7 +248,7 @@ async def collect_by_clicking(page: Page, max_items: Optional[int] = None) -> li
             names.append(f"未命名_{i}")
 
     rows: list[dict] = []
-    for i, name in enumerate(tqdm(names, desc="点击抓取")):
+    for i, name in enumerate(tqdm(names, desc="收集详情链接")):
         row: dict = {"name": name, "address": "", "lat": None, "lng": None, "maps_url": ""}
         try:
             btn = page.locator(_BTN_SEL).nth(i)
@@ -225,16 +264,6 @@ async def collect_by_clicking(page: Page, max_items: Optional[int] = None) -> li
             url = page.url
             row["maps_url"] = url
             row["lat"], row["lng"] = parse_latlng(url)
-
-            # 补地址
-            for sel in ('button[data-item-id="address"]', 'div[data-item-id="address"]',
-                        'button[aria-label*="Address"]'):
-                el = await page.query_selector(sel)
-                if el:
-                    txt = (await el.inner_text()).strip()
-                    if txt:
-                        row["address"] = txt.split("\n")[0]
-                        break
 
             # 回到列表（浏览器后退）
             await page.go_back()
@@ -256,7 +285,13 @@ async def collect_by_clicking(page: Page, max_items: Optional[int] = None) -> li
     return rows
 
 
-async def run(list_url: str, output: Path, headless: bool, max_items: Optional[int]):
+async def run(
+    list_url: str,
+    output: Path,
+    headless: bool,
+    max_items: Optional[int],
+    concurrency: int,
+):
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=headless,
@@ -282,13 +317,15 @@ async def run(list_url: str, output: Path, headless: bool, max_items: Optional[i
         rows = await collect_links(page, max_items=max_items)
 
         if rows:
-            print("📋 进入详情页补地址（每家约 2 秒）...")
-            for row in tqdm(rows, desc="补地址"):
-                await enrich_one(page, row)
+            print(f"📋 进入详情页并发补地址（并发 {concurrency}）...")
+            rows = await enrich_rows_parallel(ctx, rows, concurrency)
         else:
             # 路径 B：共享列表，用点击方式
             print("🔄 未检测到 place 链接，改用共享列表点击方式…")
             rows = await collect_by_clicking(page, max_items=max_items)
+            if rows:
+                print(f"📋 已收集详情链接，开始并发补地址（并发 {concurrency}）...")
+                rows = await enrich_rows_parallel(ctx, rows, concurrency)
 
         await browser.close()
 
@@ -319,10 +356,11 @@ def main():
     ap.add_argument("--output", type=Path, default=DATA_DIR / "my_places.csv")
     ap.add_argument("--show-browser", action="store_true", help="显示浏览器窗口（调试用）")
     ap.add_argument("--max-items", type=int, default=None, help="只抓前 N 项")
+    ap.add_argument("--concurrency", type=int, default=3, help="详情页并发数")
     args = ap.parse_args()
     try:
         asyncio.run(run(args.url, args.output, headless=not args.show_browser,
-                        max_items=args.max_items))
+                        max_items=args.max_items, concurrency=args.concurrency))
     except KeyboardInterrupt:
         print("\n⛔ 用户中止")
         sys.exit(1)

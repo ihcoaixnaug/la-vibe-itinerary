@@ -106,7 +106,7 @@ GPT-4o 在没有 schema 约束时会产生漂移，比如 `cuisine_primary` 输�
 conda create -n lbs python=3.12 -y && conda activate lbs
 pip install -r requirements.txt
 
-# 2. API Key（去 https://openrouter.ai/keys 申请，免费额度够用）
+# 2. API Key（统一走 OpenRouter；换模型只改 LLM_MODEL）
 cp .env.example .env   # 编辑 .env，填入 OPENROUTER_API_KEY=sk-or-...
 
 # 3. 用样例数据跑起来（30 家 LA 餐厅，已预处理）
@@ -115,8 +115,16 @@ streamlit run app.py   # 浏览器自动打开 http://localhost:8501
 # 4. 可选：用你自己的 Google Maps 数据
 cp data/my_places.csv data/my_places_backup.csv  # 备份
 # 替换 my_places.csv 为你的数据，然后：
-python scripts/02_process_data.py   # GPT-4o 增强，~30 家店约 $0.20、1 分钟
+python scripts/02_process_data.py   # LLM 并发增强，默认 deepseek/deepseek-chat
 python scripts/03_cluster_routes.py # 聚类 + 路径优化，即时完成
+```
+
+可选环境变量：
+
+```bash
+LLM_MODEL=deepseek/deepseek-chat
+LLM_CONCURRENCY=8
+SCRAPE_CONCURRENCY=3
 ```
 
 ---

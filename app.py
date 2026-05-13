@@ -21,6 +21,7 @@ import subprocess
 import sys
 import tempfile
 import time as _time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import permutations
 from pathlib import Path
 from typing import Literal, Optional
@@ -101,6 +102,10 @@ def _get_api_key() -> str:
 
 
 OPENROUTER_API_KEY = _get_api_key()
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+LLM_MODEL = os.getenv("LLM_MODEL", "deepseek/deepseek-chat")
+LLM_CONCURRENCY = int(os.getenv("LLM_CONCURRENCY", "8"))
+SCRAPE_CONCURRENCY = int(os.getenv("SCRAPE_CONCURRENCY", "3"))
 
 # ═══════════════════════════════════════════════════════════════
 # 配置
@@ -161,7 +166,7 @@ class EnrichedPlace(BaseModel):
 
 
 def _enrich_place_sync(row: dict) -> Optional[dict]:
-    """对单家店调用 GPT-4o 做 20 维标注，失败最多重试 2 次。"""
+    """对单家店调用 LLM 做 20 维标注，失败最多重试 2 次。"""
     if not OPENROUTER_API_KEY:
         return None
     prompt_path = ROOT / "prompts" / "enrich_prompt.txt"
@@ -173,12 +178,12 @@ def _enrich_place_sync(row: dict) -> Optional[dict]:
     if not name:
         return None
     from openai import OpenAI as _OpenAI
-    _client = _OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
+    _client = _OpenAI(base_url=OPENROUTER_BASE_URL, api_key=OPENROUTER_API_KEY)
     last_err: str = ""
     for attempt in range(3):
         try:
             resp = _client.chat.completions.create(
-                model="openai/gpt-4o",
+                model=LLM_MODEL,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": (
@@ -197,8 +202,7 @@ def _enrich_place_sync(row: dict) -> Optional[dict]:
             last_err = f"{type(_e).__name__}: {_e}"
             if attempt < 2:
                 _time.sleep(2 ** attempt)
-    import streamlit as _st
-    _st.warning(f"⚠️ [{name}] 处理失败（3次重试后）：{last_err}")
+    print(f"⚠️ [{name}] 处理失败（3次重试后）：{last_err}")
     return None
 
 # LA 餐厅常见菜系中文映射 · 全覆盖版（没匹配的兜底只显示英文）
@@ -332,8 +336,8 @@ T = {
         "**3.** Fork [the repo](https://github.com/ihcoaixnaug/la-vibe-itinerary), replace `data/my_places.csv` with yours",
     ),
     "import_step4": (
-        "**4.** 终端跑 `python scripts/02_process_data.py` → GPT-4o 自动给你的店打 20 维标签（约 30 秒、$0.20）",
-        "**4.** Run `python scripts/02_process_data.py` → GPT-4o auto-tags your places (~30s, ~$0.20)",
+        "**4.** 终端跑 `python scripts/02_process_data.py` → LLM 自动给你的店打 20 维标签",
+        "**4.** Run `python scripts/02_process_data.py` → LLM auto-tags your places",
     ),
     "import_btn": ("🚀 打开 Google Takeout", "🚀 Open Google Takeout"),
     "import_note": (
@@ -353,8 +357,8 @@ T = {
     "gen_btn": ("🚀 一键生成行程", "🚀 Generate Itinerary"),
     "db_caption": ("📊 数据库：{n} 家店  ·  {dp}+ 个 AI 标签",
                    "📊 Database: {n} places  ·  {dp}+ AI tags"),
-    "tech_caption": ("🤖 GPT-4o 自动归纳人均/招牌菜/氛围/场景\n\n🌐 DBSCAN 聚类 + TSP 最优路径",
-                     "🤖 GPT-4o auto-tags price / dishes / vibe / scenes\n\n🌐 DBSCAN clustering + TSP optimization"),
+    "tech_caption": ("🤖 LLM 自动归纳人均/招牌菜/氛围/场景\n\n🌐 DBSCAN 聚类 + TSP 最优路径",
+                     "🤖 LLM auto-tags price / dishes / vibe / scenes\n\n🌐 DBSCAN clustering + TSP optimization"),
     # Metrics
     "metric_hits": ("命中店铺", "Matches"),
     "metric_tags": ("AI 标签数", "AI Tags"),
@@ -365,7 +369,7 @@ T = {
     "metric_ai_n": ("{n} 家", "{n} places"),
     "metric_min_price": ("最低人均", "Min/Person"),
     # AI rec block
-    "ai_thinking": ("🤔 GPT-4o 正在分析需求：{q}", "🤔 GPT-4o analyzing: {q}"),
+    "ai_thinking": ("🤔 AI 正在分析需求：{q}", "🤔 AI analyzing: {q}"),
     "ai_failed": ("❌ AI 推荐失败：{e}", "❌ AI rec failed: {e}"),
     "ai_you_said": ("💬 你说：\"{q}\"", "💬 You asked: \"{q}\""),
     "ai_recs_title": ("🎯 AI 推荐：{names}", "🎯 AI Picks: {names}"),
@@ -574,7 +578,7 @@ def parse_budget(query: str) -> float | None:
 
 
 def build_places_summary(df: pd.DataFrame) -> str:
-    """把所有店压缩成 GPT-4o 易消化的紧凑列表。"""
+    """把所有店压缩成 LLM 易消化的紧凑列表。"""
     rows = []
     for _, r in df.iterrows():
         bf = ",".join(r["best_for"][:3]) if isinstance(r["best_for"], list) else ""
@@ -591,13 +595,13 @@ def build_places_summary(df: pd.DataFrame) -> str:
 
 @st.cache_data(show_spinner=False, ttl=600)
 def ai_recommend(query: str, places_summary: str, lang: str = "zh") -> dict:
-    """调 GPT-4o 做语义推荐。lang='zh' 返中文 reasoning，'en' 返英文。"""
+    """调 LLM 做语义推荐。lang='zh' 返中文 reasoning，'en' 返英文。"""
     if not OPENROUTER_API_KEY:
         return {"error": "OPENROUTER_API_KEY not configured"}
     try:
         from openai import OpenAI
         client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
+            base_url=OPENROUTER_BASE_URL,
             api_key=OPENROUTER_API_KEY,
         )
         lang_instruction = (
@@ -638,7 +642,7 @@ EXAMPLE for query "今晚约会，预算 $80，安静一点不排队":
 {example}
 """
         resp = client.chat.completions.create(
-            model="openai/gpt-4o",
+            model=LLM_MODEL,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": f"Query: {query}"},
@@ -723,7 +727,8 @@ if "_pending_scrape" in st.session_state:
     try:
         _proc = subprocess.Popen(
             [sys.executable, str(_scrape_script), "--url", _scrape_url,
-             "--output", str(_tmp_csv)],
+             "--output", str(_tmp_csv),
+             "--concurrency", str(max(1, min(SCRAPE_CONCURRENCY, 10)))],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, bufsize=1,
         )
@@ -771,18 +776,29 @@ if "_pending_upload" in st.session_state:
         )
         st.stop()
     _n = len(_rows)
-    st.info(f"⚙️ 正在用 GPT-4o 处理 {_n} 家店，请稍候……")
+    st.info(f"⚙️ 正在用 {LLM_MODEL} 并发处理 {_n} 家店，请稍候……")
     _prog = st.progress(0)
     _status = st.empty()
     _results, _failed = [], []
-    for _i, _row in enumerate(_rows):
-        _status.caption(f"处理中 {_i + 1}/{_n}：{_row.get('name', '')}")
-        _out = _enrich_place_sync(_row)
-        if _out:
-            _results.append(_out)
-        else:
-            _failed.append(_row.get("name", f"#{_i+1}"))
-        _prog.progress((_i + 1) / _n)
+    _done = 0
+    _workers = max(1, min(LLM_CONCURRENCY, _n))
+    with ThreadPoolExecutor(max_workers=_workers) as _executor:
+        _future_to_row = {
+            _executor.submit(_enrich_place_sync, _row): _row for _row in _rows
+        }
+        for _future in as_completed(_future_to_row):
+            _row = _future_to_row[_future]
+            _done += 1
+            _status.caption(f"处理中 {_done}/{_n}：{_row.get('name', '')}")
+            try:
+                _out = _future.result()
+            except Exception:
+                _out = None
+            if _out:
+                _results.append(_out)
+            else:
+                _failed.append(_row.get("name", f"#{_done}"))
+            _prog.progress(_done / _n)
     _prog.empty()
     _status.empty()
 

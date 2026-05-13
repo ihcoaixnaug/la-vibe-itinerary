@@ -1,7 +1,7 @@
 """
-阶段 3：GPT-4o 20 维度标签增强管线
+阶段 3：LLM 20 维度标签增强管线
 ================================================================
-读取 data/my_places.csv (5 列) → 调 GPT-4o → 写 data/enriched_places.csv (25 列)
+读取 data/my_places.csv (5 列) → 调 LLM → 写 data/enriched_places.csv (25 列)
 
 核心特性：
   ✅ Pydantic 强校验输出，schema 不合规自动重试
@@ -17,8 +17,8 @@
   # 测试 5 家
   python scripts/02_process_data.py --limit 5
 
-  # 改并发或换模型
-  python scripts/02_process_data.py --concurrency 3 --model openai/gpt-4o-mini
+  # 改并发或换模型。统一走 OpenRouter，只需要换模型名。
+  python scripts/02_process_data.py --concurrency 8 --model deepseek/deepseek-chat
 
   # 强制重新生成（忽略缓存）
   python scripts/02_process_data.py --no-cache
@@ -57,12 +57,13 @@ CACHE.mkdir(exist_ok=True, parents=True)
 
 # ---- 加载环境变量 ----
 load_dotenv(ROOT / ".env")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 if not API_KEY:
     sys.exit("❌ 没读到 OPENROUTER_API_KEY，检查项目根目录的 .env 文件")
 
 client = AsyncOpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url=OPENROUTER_BASE_URL,
     api_key=API_KEY,
     default_headers={
         "HTTP-Referer": os.getenv("OPENROUTER_HTTP_REFERER", ""),
@@ -131,19 +132,47 @@ def load_prompt() -> str:
     return p.read_text(encoding="utf-8")
 
 
+MODEL_PRICES_PER_1M = {
+    # OpenRouter model ids. Prices are best-effort estimates; OpenRouter model pages
+    # remain the source of truth.
+    "openai/gpt-4o": (2.50, 10.00),
+    "openai/gpt-4o-mini": (0.15, 0.60),
+    "openai/gpt-4.1-mini": (0.40, 1.60),
+    "deepseek/deepseek-chat-v3-0324": (0.20, 0.77),
+    "deepseek/deepseek-chat": (0.32, 0.89),
+    "deepseek/deepseek-v4-flash": (0.32, 0.89),
+    "deepseek/deepseek-chat-v3.1": (0.27, 1.10),
+    "deepseek/deepseek-chat:free": (0.0, 0.0),
+    "deepseek-v4-flash": (0.32, 0.89),
+    "deepseek-chat": (0.32, 0.89),
+    "moonshotai/kimi-k2.6": (0.74, 3.49),
+    "kimi-k2.6": (0.74, 3.49),
+    "moonshotai/kimi-k2": (0.60, 2.50),
+    "moonshot-v1-8k": (1.73, 1.73),
+    "moonshot-v1-32k": (3.46, 3.46),
+    "moonshot-v1-128k": (8.65, 8.65),
+}
+
+
 def estimate_cost_usd(tokens_in: int, tokens_out: int, model: str) -> float:
-    """根据当前 GPT-4o 在 OpenRouter 的官方价（2025）估算。"""
-    if "gpt-4o-mini" in model:
-        return tokens_in * 0.00000015 + tokens_out * 0.0000006
-    # gpt-4o 默认
-    return tokens_in * 0.0000025 + tokens_out * 0.00001
+    """按每百万 token 单价估算成本。未列出的模型按 gpt-4o-mini 兜底。"""
+    key = model.lower()
+    prices = None
+    for name, value in MODEL_PRICES_PER_1M.items():
+        if name in key:
+            prices = value
+            break
+    if prices is None:
+        prices = MODEL_PRICES_PER_1M["openai/gpt-4o-mini"]
+    input_per_1m, output_per_1m = prices
+    return tokens_in / 1_000_000 * input_per_1m + tokens_out / 1_000_000 * output_per_1m
 
 
 # ---- 单店调用 ----
 async def call_gpt(
     name: str, address: str, system_prompt: str, model: str
 ) -> tuple[dict, int, int]:
-    """调一次 GPT-4o，返回 (验证后的 data dict, tokens_in, tokens_out)"""
+    """调一次 LLM，返回 (验证后的 data dict, tokens_in, tokens_out)"""
     user_msg = (
         f"Restaurant: {name}\n"
         f"Address: {address}\n\n"
@@ -235,7 +264,10 @@ async def main(args):
         df = df.head(args.limit)
     n = len(df)
     print(f"📂 输入：{args.input.name} - {n} 家店")
-    print(f"🤖 模型：{args.model} | 并发：{args.concurrency} | 缓存：{'开' if not args.no_cache else '关'}")
+    print(
+        f"🤖 模型：{args.model} | base_url：{OPENROUTER_BASE_URL} | "
+        f"并发：{args.concurrency} | 缓存：{'开' if not args.no_cache else '关'}"
+    )
 
     system_prompt = load_prompt()
     sem = asyncio.Semaphore(args.concurrency)
@@ -254,7 +286,7 @@ async def main(args):
         for _, row in df.iterrows()
     ]
     results: list[dict] = []
-    for coro in tqdm.as_completed(tasks, total=n, desc="GPT-4o 增强中"):
+    for coro in tqdm.as_completed(tasks, total=n, desc="LLM 增强中"):
         r = await coro
         if r:
             results.append(r)
@@ -306,8 +338,8 @@ def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", type=Path, default=DATA / "my_places.csv")
     ap.add_argument("--output", type=Path, default=DATA / "enriched_places.csv")
-    ap.add_argument("--model", type=str, default="openai/gpt-4o")
-    ap.add_argument("--concurrency", type=int, default=5)
+    ap.add_argument("--model", type=str, default=os.getenv("LLM_MODEL", "deepseek/deepseek-chat"))
+    ap.add_argument("--concurrency", type=int, default=int(os.getenv("LLM_CONCURRENCY", "8")))
     ap.add_argument("--limit", type=int, default=None, help="只跑前 N 家")
     ap.add_argument("--no-cache", action="store_true", help="忽略并覆盖缓存")
     return ap.parse_args()
