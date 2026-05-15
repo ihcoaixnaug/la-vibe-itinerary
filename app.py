@@ -103,7 +103,7 @@ def _get_api_key() -> str:
 
 OPENROUTER_API_KEY = _get_api_key()
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-LLM_MODEL = os.getenv("LLM_MODEL", "deepseek/deepseek-chat")
+LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o")
 LLM_CONCURRENCY = int(os.getenv("LLM_CONCURRENCY", "8"))
 SCRAPE_CONCURRENCY = int(os.getenv("SCRAPE_CONCURRENCY", "3"))
 
